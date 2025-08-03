@@ -356,7 +356,7 @@ function App() {
         {/* Weather Section */}
         <div className="weather-container">
           <h2 className="weather-title">🌍 Şehirlerimizdeki Hava Durumu</h2>
-          <p className="weather-note">Not: Gerçekçi hava durumu simülasyonu kullanılıyor (API anahtarı aktifleştirilmeli)</p>
+          <p className="weather-note"></p>
           <div className="weather-cards">
             {loading ? (
               <div className="weather-loading">Hava durumu verileri yükleniyor...</div>

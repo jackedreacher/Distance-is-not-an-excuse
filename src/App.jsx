@@ -11,6 +11,7 @@ import CountdownTimer from './components/CountdownTimer'
 import GiftBox from './components/GiftBox'
 import LoveMessages from './components/LoveMessages'
 import DailyMotivation from './components/DailyMotivation'
+import MovieRecommendations from './components/MovieRecommendations'
 
 function App() {
   const [daysApart, setDaysApart] = useState(0)
@@ -152,6 +153,9 @@ function App() {
 
       {/* Love Messages */}
       <LoveMessages />
+
+      {/* Movie Recommendations */}
+      <MovieRecommendations />
 
         <footer className="footer">
           <p>Hayatımın aşkı için 💖 ile yapıldı</p>

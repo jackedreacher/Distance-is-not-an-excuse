@@ -1156,6 +1156,10 @@ body::before {
 
 .content-info {
   padding: 1.5rem;
+  background: rgba(24, 24, 24, 0.82);
+  border-radius: 0 0 20px 20px;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 1px 0 #222;
 }
 
 .content-title {
@@ -1164,33 +1168,28 @@ body::before {
   color: #fff;
   margin: 0 0 0.8rem 0;
   line-height: 1.3;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 1px 0 #222;
 }
 
 .content-meta {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.rating {
+  font-size: 0.95rem;
   color: #ffd700;
-  font-weight: 600;
-}
-
-.date {
-  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 1px 0 #222;
 }
 
 .content-overview {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.95rem;
+  color: #fff;
+  font-size: 0.98rem;
   line-height: 1.5;
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 1px 0 #222;
 }
 
 /* Modal Styles */

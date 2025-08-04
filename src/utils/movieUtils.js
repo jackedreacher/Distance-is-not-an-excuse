@@ -6,38 +6,38 @@ export const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
 // Get current movies (now playing)
 export const getCurrentMovies = async (max = 20) => {
   try {
+    const year = new Date().getFullYear();
     const response = await fetch(
-      `${TMDB_BASE_URL}/movie/now_playing?api_key=${TMDB_API_KEY}&language=tr-TR&region=TR&page=1`
+      `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}` +
+      `&language=tr-TR&region=TR&sort_by=vote_average.desc&vote_count.gte=50&primary_release_year=${year}&page=1`
     )
-    
     if (!response.ok) {
       throw new Error('Failed to fetch movies')
     }
-    
     const data = await response.json()
-    return data.results.slice(0, max) // Get first 10 movies
+    return data.results.slice(0, max)
   } catch (error) {
     console.error('Error fetching movies:', error)
-    return getMockMovies().slice(0, max) // Fallback to mock data
+    return getMockMovies().slice(0, max)
   }
 }
 
 // Get current TV shows (on the air)
 export const getCurrentTVShows = async (max = 20) => {
   try {
+    const year = new Date().getFullYear();
     const response = await fetch(
-      `${TMDB_BASE_URL}/tv/on_the_air?api_key=${TMDB_API_KEY}&language=tr-TR&page=1`
+      `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}` +
+      `&language=tr-TR&sort_by=vote_average.desc&vote_count.gte=50&first_air_date_year=${year}&page=1`
     )
-    
     if (!response.ok) {
       throw new Error('Failed to fetch TV shows')
     }
-    
     const data = await response.json()
-    return data.results.slice(0, max) // Get first 10 TV shows
+    return data.results.slice(0, max)
   } catch (error) {
     console.error('Error fetching TV shows:', error)
-    return getMockTVShows().slice(0, max) // Fallback to mock data
+    return getMockTVShows().slice(0, max)
   }
 }
 

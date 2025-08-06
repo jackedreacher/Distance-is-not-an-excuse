@@ -4,18 +4,28 @@ export const TMDB_BASE_URL = 'https://api.themoviedb.org/3'
 export const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'
 
 // Get current movies (now playing)
-export const getCurrentMovies = async (max = 20) => {
+export const getCurrentMovies = async (max = 120) => {
   try {
-    const year = new Date().getFullYear();
-    const response = await fetch(
-      `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}` +
-      `&language=tr-TR&region=TR&sort_by=vote_average.desc&vote_count.gte=50&primary_release_year=${year}&page=1`
-    )
-    if (!response.ok) {
-      throw new Error('Failed to fetch movies')
+    const yearMin = 2000;
+    const yearMax = new Date().getFullYear();
+    let allResults = [];
+    let page = 1;
+    while (allResults.length < max && page <= 5) { // fetch up to 5 pages (20 per page)
+      const response = await fetch(
+        `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}` +
+        `&language=tr-TR&region=TR&sort_by=vote_average.desc&vote_count.gte=50&primary_release_date.gte=${yearMin}-01-01&primary_release_date.lte=${yearMax}-12-31&page=${page}`
+      )
+      if (!response.ok) throw new Error('Failed to fetch movies')
+      const data = await response.json()
+      allResults = allResults.concat(data.results)
+      if (data.page >= data.total_pages) break
+      page++
     }
-    const data = await response.json()
-    return data.results.slice(0, max)
+    // Remove duplicates by id
+    const unique = Array.from(new Map(allResults.map(m => [m.id, m])).values())
+    // Sort by vote_average desc
+    unique.sort((a, b) => b.vote_average - a.vote_average)
+    return unique.slice(0, max)
   } catch (error) {
     console.error('Error fetching movies:', error)
     return getMockMovies().slice(0, max)
@@ -23,18 +33,28 @@ export const getCurrentMovies = async (max = 20) => {
 }
 
 // Get current TV shows (on the air)
-export const getCurrentTVShows = async (max = 20) => {
+export const getCurrentTVShows = async (max = 120) => {
   try {
-    const year = new Date().getFullYear();
-    const response = await fetch(
-      `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}` +
-      `&language=tr-TR&sort_by=vote_average.desc&vote_count.gte=50&first_air_date_year=${year}&page=1`
-    )
-    if (!response.ok) {
-      throw new Error('Failed to fetch TV shows')
+    const yearMin = 2000;
+    const yearMax = new Date().getFullYear();
+    let allResults = [];
+    let page = 1;
+    while (allResults.length < max && page <= 5) { // fetch up to 5 pages (20 per page)
+      const response = await fetch(
+        `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}` +
+        `&language=tr-TR&sort_by=vote_average.desc&vote_count.gte=50&first_air_date.gte=${yearMin}-01-01&first_air_date.lte=${yearMax}-12-31&page=${page}`
+      )
+      if (!response.ok) throw new Error('Failed to fetch TV shows')
+      const data = await response.json()
+      allResults = allResults.concat(data.results)
+      if (data.page >= data.total_pages) break
+      page++
     }
-    const data = await response.json()
-    return data.results.slice(0, max)
+    // Remove duplicates by id
+    const unique = Array.from(new Map(allResults.map(m => [m.id, m])).values())
+    // Sort by vote_average desc
+    unique.sort((a, b) => b.vote_average - a.vote_average)
+    return unique.slice(0, max)
   } catch (error) {
     console.error('Error fetching TV shows:', error)
     return getMockTVShows().slice(0, max)
@@ -299,6 +319,36 @@ const getMockTVShows = () => [
     overview: "Bir ofis çalışanlarının günlük hayatlarını anlatan komedi dizisi."
   }
 ]
+
+// Fetch movie genres from TMDB
+export const fetchMovieGenres = async () => {
+  try {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/genre/movie/list?api_key=${TMDB_API_KEY}&language=tr-TR`
+    )
+    if (!response.ok) throw new Error('Failed to fetch movie genres')
+    const data = await response.json()
+    return data.genres // [{ id, name }]
+  } catch (error) {
+    console.error('Error fetching movie genres:', error)
+    return []
+  }
+}
+
+// Fetch TV genres from TMDB
+export const fetchTVGenres = async () => {
+  try {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/genre/tv/list?api_key=${TMDB_API_KEY}&language=tr-TR`
+    )
+    if (!response.ok) throw new Error('Failed to fetch TV genres')
+    const data = await response.json()
+    return data.genres // [{ id, name }]
+  } catch (error) {
+    console.error('Error fetching TV genres:', error)
+    return []
+  }
+}
 
 // Format date
 export const formatDate = (dateString) => {

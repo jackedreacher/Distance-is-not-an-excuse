@@ -12,6 +12,7 @@ import GiftBox from './components/GiftBox'
 import LoveMessages from './components/LoveMessages'
 import DailyMotivation from './components/DailyMotivation'
 import MovieRecommendations from './components/MovieRecommendations'
+import MesafeOyunu from './components/MesafeOyunu'
 
 function App() {
   const [daysApart, setDaysApart] = useState(0)
@@ -156,6 +157,8 @@ function App() {
 
       {/* Movie Recommendations */}
       <MovieRecommendations />
+
+      <MesafeOyunu />
 
         <footer className="footer">
           <p>Hayatımın aşkı için 💖 ile yapıldı</p>

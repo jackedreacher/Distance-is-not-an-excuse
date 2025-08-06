@@ -7,11 +7,13 @@ import {
   TMDB_IMAGE_BASE_URL,
   formatDate,
   formatRuntime,
-  getGenreNames
+  getGenreNames,
+  fetchMovieGenres,
+  fetchTVGenres
 } from '../utils/movieUtils'
 
 const PAGE_SIZE = 6
-const MAX_ITEMS = 20
+const MAX_ITEMS = 120 // Artık 100+ içerik için
 
 const MovieRecommendations = () => {
   const [movies, setMovies] = useState([])
@@ -24,10 +26,15 @@ const MovieRecommendations = () => {
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [moviePage, setMoviePage] = useState(1)
   const [tvPage, setTVPage] = useState(1)
+  const [movieGenres, setMovieGenres] = useState([])
+  const [tvGenres, setTVGenres] = useState([])
+  const [selectedMovieGenre, setSelectedMovieGenre] = useState('')
+  const [selectedTVGenre, setSelectedTVGenre] = useState('')
   const modalRef = useRef(null)
 
   useEffect(() => {
     loadContent()
+    fetchGenres()
     const interval = setInterval(() => {
       loadContent()
     }, 60 * 60 * 1000) // 1 saat
@@ -42,6 +49,15 @@ const MovieRecommendations = () => {
       }, 50)
     }
   }, [selectedItem])
+
+  const fetchGenres = async () => {
+    const [movieGenresData, tvGenresData] = await Promise.all([
+      fetchMovieGenres(),
+      fetchTVGenres()
+    ])
+    setMovieGenres(movieGenresData)
+    setTVGenres(tvGenresData)
+  }
 
   const loadContent = async () => {
     setLoading(true)
@@ -77,6 +93,21 @@ const MovieRecommendations = () => {
   }
   const totalMoviePages = Math.ceil(movies.length / PAGE_SIZE)
   const totalTVPages = Math.ceil(tvShows.length / PAGE_SIZE)
+
+  // Genre filtering
+  const filterByGenre = (items, selectedGenre) => {
+    if (!selectedGenre) return items
+    return items.filter(item => {
+      // TMDB API: genre_ids is array of ids, genres is array of {id, name}
+      if (item.genre_ids && Array.isArray(item.genre_ids)) {
+        return item.genre_ids.includes(Number(selectedGenre))
+      }
+      if (item.genres && Array.isArray(item.genres)) {
+        return item.genres.some(g => g.id === Number(selectedGenre) || g.name === selectedGenre)
+      }
+      return false
+    })
+  }
 
   const handleItemClick = async (item, type) => {
     setLoading(true)
@@ -295,6 +326,39 @@ const MovieRecommendations = () => {
         </button>
       </div>
 
+      {/* Genre filter dropdowns */}
+      <div className="genre-filter-row">
+        {activeTab === 'movies' ? (
+          <select
+            className="genre-dropdown"
+            value={selectedMovieGenre}
+            onChange={e => {
+              setSelectedMovieGenre(e.target.value)
+              setMoviePage(1)
+            }}
+          >
+            <option value="">Tüm Türler</option>
+            {movieGenres.map(genre => (
+              <option key={genre.id} value={genre.id}>{genre.name}</option>
+            ))}
+          </select>
+        ) : (
+          <select
+            className="genre-dropdown"
+            value={selectedTVGenre}
+            onChange={e => {
+              setSelectedTVGenre(e.target.value)
+              setTVPage(1)
+            }}
+          >
+            <option value="">Tüm Türler</option>
+            {tvGenres.map(genre => (
+              <option key={genre.id} value={genre.id}>{genre.name}</option>
+            ))}
+          </select>
+        )}
+      </div>
+
       {loading ? (
         <div className="loading-container">
           <div className="loading-spinner">🎬</div>
@@ -304,8 +368,8 @@ const MovieRecommendations = () => {
         <>
           <div className="content-grid">
             {activeTab === 'movies' 
-              ? getPagedItems(movies, moviePage).map(movie => renderItemCard(movie, 'movie'))
-              : getPagedItems(tvShows, tvPage).map(show => renderItemCard(show, 'tv'))
+              ? getPagedItems(filterByGenre(movies, selectedMovieGenre), moviePage).map(movie => renderItemCard(movie, 'movie'))
+              : getPagedItems(filterByGenre(tvShows, selectedTVGenre), tvPage).map(show => renderItemCard(show, 'tv'))
             }
           </div>
           <div className="pagination">
@@ -316,11 +380,11 @@ const MovieRecommendations = () => {
                   onClick={() => setMoviePage(p => Math.max(1, p - 1))}
                   disabled={moviePage === 1}
                 >Önceki</button>
-                <span className="pagination-info">{moviePage} / {totalMoviePages}</span>
+                <span className="pagination-info">{moviePage} / {Math.ceil(filterByGenre(movies, selectedMovieGenre).length / PAGE_SIZE)}</span>
                 <button 
                   className="pagination-btn" 
-                  onClick={() => setMoviePage(p => Math.min(totalMoviePages, p + 1))}
-                  disabled={moviePage === totalMoviePages}
+                  onClick={() => setMoviePage(p => Math.min(Math.ceil(filterByGenre(movies, selectedMovieGenre).length / PAGE_SIZE), p + 1))}
+                  disabled={moviePage === Math.ceil(filterByGenre(movies, selectedMovieGenre).length / PAGE_SIZE)}
                 >Sonraki</button>
               </>
             ) : (
@@ -330,11 +394,11 @@ const MovieRecommendations = () => {
                   onClick={() => setTVPage(p => Math.max(1, p - 1))}
                   disabled={tvPage === 1}
                 >Önceki</button>
-                <span className="pagination-info">{tvPage} / {totalTVPages}</span>
+                <span className="pagination-info">{tvPage} / {Math.ceil(filterByGenre(tvShows, selectedTVGenre).length / PAGE_SIZE)}</span>
                 <button 
                   className="pagination-btn" 
-                  onClick={() => setTVPage(p => Math.min(totalTVPages, p + 1))}
-                  disabled={tvPage === totalTVPages}
+                  onClick={() => setTVPage(p => Math.min(Math.ceil(filterByGenre(tvShows, selectedTVGenre).length / PAGE_SIZE), p + 1))}
+                  disabled={tvPage === Math.ceil(filterByGenre(tvShows, selectedTVGenre).length / PAGE_SIZE)}
                 >Sonraki</button>
               </>
             )}

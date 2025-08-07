@@ -1,29 +1,27 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
 // Import utility functions
 import { calculateTimeDifference } from './utils/timeUtils'
-import { fetchWeather, CITY1, CITY2 } from './utils/weatherUtils'
 
 // Import components
-import WeatherSection from './components/WeatherSection'
 import CountdownTimer from './components/CountdownTimer'
 import GiftBox from './components/GiftBox'
-import LoveMessages from './components/LoveMessages'
-import DailyMotivation from './components/DailyMotivation'
-import MovieRecommendations from './components/MovieRecommendations'
-import MesafeOyunu from './components/MesafeOyunu'
+import Navigation from './components/Navigation'
+
+// Import pages
+import WeatherPage from './pages/WeatherPage'
+import LoveMessagesPage from './pages/LoveMessagesPage'
+import DailyMotivationPage from './pages/DailyMotivationPage'
+import MovieRecommendationsPage from './pages/MovieRecommendationsPage'
+import MesafeOyunuPage from './pages/MesafeOyunuPage'
 
 function App() {
   const [daysApart, setDaysApart] = useState(0)
   const [hoursApart, setHoursApart] = useState(0)
   const [minutesApart, setMinutesApart] = useState(0)
   const [secondsApart, setSecondsApart] = useState(0)
-  
-  // Weather states
-  const [weather1, setWeather1] = useState(null)
-  const [weather2, setWeather2] = useState(null)
-  const [loading, setLoading] = useState(true)
   
   // Mobile interactive features
   const [giftBoxTaps, setGiftBoxTaps] = useState(0)
@@ -52,8 +50,7 @@ function App() {
       // Simulate refresh
       setTimeout(() => {
         setPullToRefresh(false)
-        // Refresh weather data
-        loadWeather()
+        window.location.reload()
       }, 1000)
     }
   }
@@ -73,33 +70,16 @@ function App() {
     return () => clearInterval(interval)
   }, [])
 
-  // Load weather function for refresh
-  const loadWeather = async () => {
-    setLoading(true)
-    await Promise.all([
-      fetchWeather(CITY1, setWeather1),
-      fetchWeather(CITY2, setWeather2)
-    ])
-    setLoading(false)
-  }
-
-  // Fetch weather on component mount
-  useEffect(() => {
-    loadWeather()
-    
-    // Refresh weather every 30 minutes
-    const weatherInterval = setInterval(loadWeather, 30 * 60 * 1000)
-    
-    return () => clearInterval(weatherInterval)
-  }, [])
-
   return (
     <div 
-      className="app"
+      className="app-container"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      {/* Navigation */}
+      <Navigation />
+      
       {/* Pull to refresh indicator */}
       {pullToRefresh && (
         <div className="pull-to-refresh">
@@ -132,38 +112,38 @@ function App() {
         setSquirrelMessage={setSquirrelMessage}
       />
       
-      <div className="container">
-        <header className="header">
-          <h1 className="title">💕 Birbirimize Geri Sayım 💕</h1>
-          <p className="subtitle">Her an bizi birbirimize daha da yaklaştırıyor...</p>
-        </header>
-
-              {/* Weather Section */}
-      <WeatherSection loading={loading} weather1={weather1} weather2={weather2} />
-
-      {/* Countdown Timer */}
-      <CountdownTimer 
-        daysApart={daysApart} 
-        hoursApart={hoursApart} 
-        minutesApart={minutesApart} 
-        secondsApart={secondsApart} 
-      />
-
-      {/* Daily Motivation */}
-      <DailyMotivation />
-
-      {/* Love Messages */}
-      <LoveMessages />
-
-      {/* Movie Recommendations */}
-      <MovieRecommendations />
-
-      <MesafeOyunu />
-
-        <footer className="footer">
-          <p>Hayatımın aşkı için 💖 ile yapıldı</p>
-          <p>13 Temmuz 2026'ya geri sayım - mükemmel buluşmamız</p>
-        </footer>
+      <div className="main-content">
+        <Routes>
+          {/* Main page with interactive components */}
+          <Route path="/" element={
+            <div className="container">
+              <header className="header">
+                <h1 className="title">💕 Birbirimize Geri Sayım 💕</h1>
+                <p className="subtitle">Her an bizi birbirimize daha da yaklaştırıyor...</p>
+              </header>
+              
+              {/* Countdown Timer */}
+              <CountdownTimer
+                daysApart={daysApart}
+                hoursApart={hoursApart}
+                minutesApart={minutesApart}
+                secondsApart={secondsApart}
+              />
+              
+              <footer className="footer">
+                <p>Hayatımın aşkı için 💖 ile yapıldı</p>
+                <p>13 Temmuz 2026'ya geri sayım - mükemmel buluşmamız</p>
+              </footer>
+            </div>
+          } />
+          
+          {/* Informational pages */}
+          <Route path="/weather" element={<WeatherPage />} />
+          <Route path="/love-messages" element={<LoveMessagesPage />} />
+          <Route path="/motivation" element={<DailyMotivationPage />} />
+          <Route path="/movies" element={<MovieRecommendationsPage />} />
+          <Route path="/mesafe-oyunu" element={<MesafeOyunuPage />} />
+        </Routes>
       </div>
     </div>
   )

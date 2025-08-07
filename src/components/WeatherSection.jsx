@@ -3,7 +3,7 @@ import { getWeatherIcon, getWeatherMessage, CITY1, CITY2 } from '../utils/weathe
 const WeatherSection = ({ loading, weather1, weather2 }) => {
   return (
     <div className="weather-container">
-      <h2 className="weather-title">🌍 Şehirlerimizdeki Hava Durumu</h2>
+     
       <p className="weather-note"></p>
       <div className="weather-cards">
         {loading ? (

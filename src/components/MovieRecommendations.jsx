@@ -293,8 +293,7 @@ const MovieRecommendations = () => {
   return (
     <div className="movie-recommendations">
       <div className="recommendations-header">
-        <h2 className="recommendations-title">🎬 Birlikte İzleyebileceğiniz Öneriler</h2>
-        <p className="recommendations-subtitle">Güncel film ve diziler</p>
+       
         {isUsingMockData ? (
           <div className="api-notice">
             <p>📡 API bağlantısı kurulamadı, örnek veriler gösteriliyor</p>

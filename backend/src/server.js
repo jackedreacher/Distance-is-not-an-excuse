@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
+const User = require('./models/User');
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +27,9 @@ const app = express();
 // Create HTTP server
 const server = createServer(app);
 
+// Store active user connections
+const activeConnections = new Map();
+
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
@@ -33,21 +38,97 @@ const io = new Server(server, {
   }
 });
 
+// Socket.IO authentication middleware
+io.use(async (socket, next) => {
+  try {
+    const token = socket.handshake.auth.token;
+    
+    if (!token) {
+      return next(new Error('Authentication error'));
+    }
+    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId).select('-password');
+    
+    if (!user) {
+      return next(new Error('User not found'));
+    }
+    
+    socket.userId = user._id.toString();
+    socket.user = user;
+    next();
+  } catch (error) {
+    next(new Error('Authentication error'));
+  }
+});
+
 // Socket.IO event handlers
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+  console.log(`User connected: ${socket.user.username} (${socket.id})`);
   
-  // Authenticate socket connection
-  socket.on('authenticate', (token) => {
-    // In a real implementation, you would verify the JWT token here
-    // For now, we'll just emit a success message
-    socket.emit('authenticated', { success: true });
+  // Handle multiple device connections for same user
+  const userId = socket.userId;
+  
+  // If user already has active connections, store this as additional connection
+  if (activeConnections.has(userId)) {
+    const userConnections = activeConnections.get(userId);
+    userConnections.add(socket.id);
+    console.log(`User ${socket.user.username} now has ${userConnections.size} active connections`);
+  } else {
+    // First connection for this user
+    activeConnections.set(userId, new Set([socket.id]));
+  }
+  
+  // Join user to their personal room
+  socket.join(`user_${userId}`);
+  
+  // Notify other connections of this user about the new connection
+  socket.to(`user_${userId}`).emit('newDeviceConnected', {
+    deviceId: socket.id,
+    timestamp: new Date()
   });
   
-  // Disconnect
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+  // Handle disconnect
+  socket.on('disconnect', (reason) => {
+    console.log(`User disconnected: ${socket.user.username} (${socket.id}) - Reason: ${reason}`);
+    
+    // Remove this connection from active connections
+    if (activeConnections.has(userId)) {
+      const userConnections = activeConnections.get(userId);
+      userConnections.delete(socket.id);
+      
+      if (userConnections.size === 0) {
+        // No more connections for this user
+        activeConnections.delete(userId);
+        console.log(`User ${socket.user.username} fully disconnected`);
+      } else {
+        console.log(`User ${socket.user.username} still has ${userConnections.size} active connections`);
+        // Notify other connections about this disconnection
+        socket.to(`user_${userId}`).emit('deviceDisconnected', {
+          deviceId: socket.id,
+          timestamp: new Date()
+        });
+      }
+    }
   });
+  
+  // Handle errors
+  socket.on('error', (error) => {
+    console.error(`Socket error for user ${socket.user.username}:`, error);
+  });
+});
+
+// Authenticate socket connection
+socket.on('authenticate', (token) => {
+  // In a real implementation, you would verify the JWT token here
+  // For now, we'll just emit a success message
+  socket.emit('authenticated', { success: true });
+});
+
+// Disconnect
+socket.on('disconnect', () => {
+  console.log('User disconnected:', socket.id);
+});
 });
 
 // Middleware

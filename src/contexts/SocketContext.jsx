@@ -1,41 +1,41 @@
-import { createContext, useContext, useEffect, useState, useRef } from 'react';
+import { createContext, useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 
 const SocketContext = createContext();
 
-export const useSocket = () => {
-  const context = useContext(SocketContext);
-  if (!context) {
-    throw new Error('useSocket must be used within a SocketProvider');
-  }
-  return context;
-};
+export { SocketContext };
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
   const [roomState, setRoomState] = useState(null);
+  const [deviceConnections, setDeviceConnections] = useState([]);
   const { user } = useAuth();
   const userId = user?.id;
   const socketRef = useRef(socket);
+  const reconnectTimeoutRef = useRef(null);
 
   useEffect(() => {
-    // Only create socket if we have a user ID and token
     if (!userId) {
       return;
     }
 
-    // Get token from localStorage
     const token = localStorage.getItem('token');
     if (!token) {
       return;
     }
 
-    // If we already have a socket, check if it's for the same user
+    // Cleanup existing socket with proper disconnect
     if (socketRef.current) {
-      // Close existing socket if it exists
-      socketRef.current.close();
+      socketRef.current.removeAllListeners();
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+
+    // Clear any pending reconnection
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
     }
 
     // Create new socket connection
@@ -46,7 +46,8 @@ export const SocketProvider = ({ children }) => {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
-      timeout: 20000
+      timeout: 20000,
+      forceNew: true // Force new connection
     });
 
     newSocket.on('connect', () => {
@@ -57,11 +58,28 @@ export const SocketProvider = ({ children }) => {
     newSocket.on('disconnect', (reason) => {
       console.log('Disconnected from Socket.IO server:', reason);
       setConnected(false);
+      
+      // Only attempt reconnection for network issues, not manual disconnects
+      if (reason === 'io server disconnect') {
+        // Server initiated disconnect, don't reconnect automatically
+        return;
+      }
     });
 
     newSocket.on('connect_error', (error) => {
       console.error('Socket.IO connection error:', error);
       setConnected(false);
+    });
+
+    // Handle multiple device notifications
+    newSocket.on('newDeviceConnected', (data) => {
+      console.log('New device connected:', data);
+      setDeviceConnections(prev => [...prev, data]);
+    });
+
+    newSocket.on('deviceDisconnected', (data) => {
+      console.log('Device disconnected:', data);
+      setDeviceConnections(prev => prev.filter(conn => conn.deviceId !== data.deviceId));
     });
 
     newSocket.on('roomState', (state) => {
@@ -93,14 +111,17 @@ export const SocketProvider = ({ children }) => {
     setSocket(newSocket);
     socketRef.current = newSocket;
 
-    // Cleanup function
     return () => {
       if (newSocket) {
-        newSocket.close();
+        newSocket.removeAllListeners();
+        newSocket.disconnect();
         socketRef.current = null;
       }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
     };
-  }, [userId]); // Only recreate socket when userId changes
+  }, [userId]);
 
   const joinRoom = (roomId) => {
     if (socketRef.current) {
@@ -136,6 +157,7 @@ export const SocketProvider = ({ children }) => {
     socket,
     connected,
     roomState,
+    deviceConnections,
     joinRoom,
     updateContent,
     startTyping,

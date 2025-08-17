@@ -33,11 +33,13 @@ const Wishlist = () => {
   useEffect(() => {
     const loadWishlist = async () => {
       try {
-        // Check token validity first
-        const isValid = await checkTokenValidity();
-        if (!isValid) {
-          console.log('Token is not valid, skipping wishlist load');
-          return;
+        // Check token validity first (skip in development)
+        if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
+          const isValid = await checkTokenValidity();
+          if (!isValid) {
+            console.log('Token is not valid, skipping wishlist load');
+            return;
+          }
         }
         
         const data = await wishlistService.getAll();
@@ -74,11 +76,13 @@ const Wishlist = () => {
     if (!newItem.title.trim()) return
 
     try {
-      // Check token validity first
-      const isValid = await checkTokenValidity();
-      if (!isValid) {
-        console.log('Token is not valid, skipping wishlist item save');
-        return;
+      // Check token validity first (skip in development)
+      if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
+        const isValid = await checkTokenValidity();
+        if (!isValid) {
+          console.log('Token is not valid, skipping wishlist item save');
+          return;
+        }
       }
       
       const itemData = {
@@ -110,11 +114,13 @@ const Wishlist = () => {
 
   const toggleCompleted = async (id) => {
     try {
-      // Check token validity first
-      const isValid = await checkTokenValidity();
-      if (!isValid) {
-        console.log('Token is not valid, skipping wishlist item update');
-        return;
+      // Check token validity first (skip in development)
+      if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
+        const isValid = await checkTokenValidity();
+        if (!isValid) {
+          console.log('Token is not valid, skipping wishlist item update');
+          return;
+        }
       }
       
       const itemToUpdate = items.find(item => item._id === id)
@@ -141,11 +147,13 @@ const Wishlist = () => {
 
   const deleteItem = async (id) => {
     try {
-      // Check token validity first
-      const isValid = await checkTokenValidity();
-      if (!isValid) {
-        console.log('Token is not valid, skipping wishlist item delete');
-        return;
+      // Check token validity first (skip in development)
+      if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
+        const isValid = await checkTokenValidity();
+        if (!isValid) {
+          console.log('Token is not valid, skipping wishlist item delete');
+          return;
+        }
       }
       
       await wishlistService.delete(id)

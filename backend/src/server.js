@@ -4,10 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
-const jwt = require('jsonwebtoken');
-const User = require('./models/User');
+
 
 // Load environment variables
 dotenv.config();
@@ -62,7 +59,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   console.error('Error stack:', err.stack);
   console.error('Error message:', err.message);
   res.status(500).json({ 
@@ -75,6 +72,14 @@ app.use((err, req, res, next) => {
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
+
+// Start server (only when not in Vercel environment)
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5001;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 // Export the Express app for Vercel
 module.exports = app;

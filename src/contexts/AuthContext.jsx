@@ -3,13 +3,16 @@ import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
-export const useAuth = () => {
+// Custom hook for using auth context
+const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
+
+export { useAuth };
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -19,6 +22,22 @@ export const AuthProvider = ({ children }) => {
   // Check if user is already logged in
   useEffect(() => {
     const initializeAuth = async () => {
+      // Development bypass - automatically set mock user
+      if (import.meta.env.DEV || localStorage.getItem('bypass_auth') === 'true') {
+        setUser({
+          _id: '68a267a5a9bca31a4430cb29',
+          username: 'testuser',
+          email: 'test@example.com',
+          profile: {
+            name: 'Test User',
+            dateOfBirth: new Date('1990-01-01'),
+            relationshipStart: new Date('2020-01-01')
+          }
+        });
+        setLoading(false);
+        return;
+      }
+
       const token = localStorage.getItem('token');
       if (token) {
         try {

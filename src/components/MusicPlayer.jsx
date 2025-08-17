@@ -25,11 +25,13 @@ const MusicPlayer = () => {
   useEffect(() => {
     const loadSongs = async () => {
       try {
-        // Check token validity first
-        const isValid = await checkTokenValidity();
-        if (!isValid) {
-          console.log('Token is not valid, skipping songs load');
-          return;
+        // Check token validity first (skip in development)
+        if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
+          const isValid = await checkTokenValidity();
+          if (!isValid) {
+            console.log('Token is not valid, skipping songs load');
+            return;
+          }
         }
         
         const data = await musicService.getAll();

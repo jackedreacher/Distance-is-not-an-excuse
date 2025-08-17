@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 const Navigation = () => {
   const location = useLocation()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
 
   // Update isMobile state on window resize
@@ -16,13 +18,21 @@ const Navigation = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const navItems = [
-    { path: '/', label: '🏠 Ana Sayfa', },
-    { path: '/weather', label: '🌍 Hava Durumu', },
-    { path: '/love-messages', label: '💌 Aşk Mesajları', },
-    { path: '/motivation', label: '🌟 Motivasyon', },
-    { path: '/movies', label: '🎬 Filmler', },
-    { path: '/mesafe-oyunu', label: '💞 Mesafe Oyunu', }
+  const navItems = user ? [
+    { path: '/', label: '🏠 Ana Sayfa' },
+    { path: '/weather', label: '🌍 Hava Durumu' },
+    { path: '/love-messages', label: '💌 Aşk Mesajları' },
+    { path: '/motivation', label: '🌟 Motivasyon' },
+    { path: '/movies', label: '🎬 Filmler' },
+    { path: '/mesafe-oyunu', label: '💞 Mesafe Oyunu' },
+    { path: '/mood-tracker', label: '😊 Ruh Halimiz' },
+    { path: '/wishlist', label: '心愿 Dilek Listesi' },
+    { path: '/music-playlist', label: '🎵 Şarkı Listemiz' },
+    { path: '/surprise-notifications', label: '🎉 Sürprizler' },
+    { path: '/rooms', label: '💕 Odalar' }
+  ] : [
+    { path: '/login', label: '🔐 Giriş Yap' },
+    { path: '/register', label: '📝 Kayıt Ol' }
   ]
 
   const handleNavigation = (path) => {
@@ -40,7 +50,7 @@ const Navigation = () => {
               className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
               onClick={() => handleNavigation(item.path)}
             >
-              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-label">{item.label.split(' ')[0]}</span>
               <span className="nav-label">{item.label.split(' ')[1]}</span>
             </button>
           ))}
@@ -60,7 +70,6 @@ const Navigation = () => {
                   className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
                   onClick={() => handleNavigation(item.path)}
                 >
-                  <span className="nav-icon">{item.icon}</span>
                   <span className="nav-label">{item.label}</span>
                 </button>
               </li>

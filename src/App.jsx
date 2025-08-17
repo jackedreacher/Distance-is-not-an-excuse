@@ -16,6 +16,16 @@ import LoveMessagesPage from './pages/LoveMessagesPage'
 import DailyMotivationPage from './pages/DailyMotivationPage'
 import MovieRecommendationsPage from './pages/MovieRecommendationsPage'
 import MesafeOyunuPage from './pages/MesafeOyunuPage'
+import MoodTrackerPage from './pages/MoodTrackerPage'
+import WishlistPage from './pages/WishlistPage'
+import MusicPlaylistPage from './pages/MusicPlaylistPage'
+import SurpriseNotificationsPage from './pages/SurpriseNotificationsPage'
+
+// Import Contexts
+import { AuthProvider } from './contexts/AuthContext.jsx'
+import { SocketProvider } from './contexts/SocketContext.jsx'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 
 function App() {
   const [daysApart, setDaysApart] = useState(0)
@@ -71,81 +81,91 @@ function App() {
   }, [])
 
   return (
-    <div 
-      className="app-container"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Navigation */}
-      <Navigation />
-      
-      {/* Pull to refresh indicator */}
-      {pullToRefresh && (
-        <div className="pull-to-refresh">
-          <div className="refresh-spinner">🔄</div>
-          <p>Yenileniyor...</p>
-        </div>
-      )}
-      
-      <div className="hearts-bg">
-        {[...Array(20)].map((_, i) => (
-          <div key={i} className="floating-heart" style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 3}s`,
-            animationDuration: `${3 + Math.random() * 2}s`
-          }}>
-            ❤️
-          </div>
-        ))}
-      </div>
-      
-      {/* Gift Box and Squirrel */}
-      <GiftBox 
-        giftBoxTaps={giftBoxTaps}
-        setGiftBoxTaps={setGiftBoxTaps}
-        giftBoxOpen={giftBoxOpen}
-        setGiftBoxOpen={setGiftBoxOpen}
-        squirrelVisible={squirrelVisible}
-        setSquirrelVisible={setSquirrelVisible}
-        squirrelMessage={squirrelMessage}
-        setSquirrelMessage={setSquirrelMessage}
-      />
-      
-      <div className="main-content">
-        <Routes>
-          {/* Main page with interactive components */}
-          <Route path="/" element={
-            <div className="container">
-              <header className="header">
-                <h1 className="title">💕 Birbirimize Geri Sayım 💕</h1>
-                <p className="subtitle">Her an bizi birbirimize daha da yaklaştırıyor...</p>
-              </header>
-              
-              {/* Countdown Timer */}
-              <CountdownTimer
-                daysApart={daysApart}
-                hoursApart={hoursApart}
-                minutesApart={minutesApart}
-                secondsApart={secondsApart}
-              />
-              
-              <footer className="footer">
-                <p>Hayatımın aşkı için 💖 ile yapıldı</p>
-                <p>13 Temmuz 2026'ya geri sayım - mükemmel buluşmamız</p>
-              </footer>
+    <AuthProvider>
+      <SocketProvider>
+          <div
+            className="app-container"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Navigation */}
+            <Navigation />
+            
+            {/* Pull to refresh indicator */}
+            {pullToRefresh && (
+              <div className="pull-to-refresh">
+                <div className="refresh-spinner">🔄</div>
+                <p>Yenileniyor...</p>
+              </div>
+            )}
+            
+            <div className="hearts-bg">
+              {[...Array(20)].map((_, i) => (
+                <div key={i} className="floating-heart" style={{
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${3 + Math.random() * 2}s`
+                }}>
+                  ❤️
+                </div>
+              ))}
             </div>
-          } />
-          
-          {/* Informational pages */}
-          <Route path="/weather" element={<WeatherPage />} />
-          <Route path="/love-messages" element={<LoveMessagesPage />} />
-          <Route path="/motivation" element={<DailyMotivationPage />} />
-          <Route path="/movies" element={<MovieRecommendationsPage />} />
-          <Route path="/mesafe-oyunu" element={<MesafeOyunuPage />} />
-        </Routes>
-      </div>
-    </div>
+            
+            {/* Gift Box and Squirrel */}
+            <GiftBox 
+              giftBoxTaps={giftBoxTaps}
+              setGiftBoxTaps={setGiftBoxTaps}
+              giftBoxOpen={giftBoxOpen}
+              setGiftBoxOpen={setGiftBoxOpen}
+              squirrelVisible={squirrelVisible}
+              setSquirrelVisible={setSquirrelVisible}
+              squirrelMessage={squirrelMessage}
+              setSquirrelMessage={setSquirrelMessage}
+            />
+            
+            <div className="main-content">
+              <Routes>
+                {/* Main page with interactive components */}
+                <Route path="/" element={
+                  <div className="container">
+                    <header className="header">
+                      <h1 className="title">💕 Birbirimize Geri Sayım 💕</h1>
+                      <p className="subtitle">Her an bizi birbirimize daha da yaklaştırıyor...</p>
+                    </header>
+                    
+                    {/* Countdown Timer */}
+                    <CountdownTimer
+                      daysApart={daysApart}
+                      hoursApart={hoursApart}
+                      minutesApart={minutesApart}
+                      secondsApart={secondsApart}
+                    />
+                    
+                    <footer className="footer">
+                      <p>Hayatımın aşkı için 💖 ile yapıldı</p>
+                      <p>13 Temmuz 2026'ya geri sayım - mükemmel buluşmamız</p>
+                    </footer>
+                  </div>
+                } />
+                
+                {/* Informational pages */}
+                <Route path="/weather" element={<WeatherPage />} />
+                <Route path="/love-messages" element={<LoveMessagesPage />} />
+                <Route path="/motivation" element={<DailyMotivationPage />} />
+                <Route path="/movies" element={<MovieRecommendationsPage />} />
+                <Route path="/mesafe-oyunu" element={<MesafeOyunuPage />} />
+                <Route path="/mood-tracker" element={<MoodTrackerPage />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/music-playlist" element={<MusicPlaylistPage />} />
+                <Route path="/surprise-notifications" element={<SurpriseNotificationsPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+              </Routes>
+            </div>
+          </div>
+      </SocketProvider>
+    </AuthProvider>
   )
 }
 

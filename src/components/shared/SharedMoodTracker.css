@@ -1,0 +1,357 @@
+/* Shared Mood Tracker Styles */
+.shared-mood-tracker {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border: 1px solid #e0e0e0;
+  width: 100%;
+}
+
+.mood-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 1rem 0;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.mood-loading {
+  text-align: center;
+  color: #6c757d;
+  font-size: 1.1rem;
+  font-style: italic;
+  padding: 2rem;
+}
+
+.mood-error {
+  background: #f8d7da;
+  border: 1px solid #f5c2c7;
+  color: #842029;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.mood-form {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e0e0e0;
+}
+
+.mood-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.mood-option {
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mood-option:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mood-option.selected {
+  background: #6f42c1;
+  box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+}
+
+.mood-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.mood-label {
+  font-size: 0.9rem;
+}
+
+.mood-message {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 1rem;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  resize: vertical;
+  min-height: 100px;
+  margin-bottom: 1rem;
+}
+
+.mood-message:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.mood-submit-btn {
+  background: #007bff;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto 1rem;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+  font-family: 'Poppins', sans-serif;
+}
+
+.mood-submit-btn:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+.mood-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.partner-typing {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  font-weight: 500;
+  margin-top: 1rem;
+}
+
+.mood-history {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 2rem;
+  border: 1px solid #e0e0e0;
+}
+
+.mood-history-title {
+  color: #333;
+  font-size: 1.3rem;
+  margin: 0 0 1rem 0;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.no-moods {
+  text-align: center;
+  color: #6c757d;
+  font-size: 1.1rem;
+  font-style: italic;
+  padding: 2rem;
+}
+
+.moods-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.mood-entry {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.mood-entry:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mood-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mood-user {
+  font-weight: 600;
+  color: #fff;
+  background: #007bff;
+  padding: 0.2rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+}
+
+.mood-emoji {
+  font-size: 1.5rem;
+}
+
+.mood-label {
+  font-weight: 600;
+  color: #333;
+  background: #e9ecef;
+  padding: 0.2rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+}
+
+.mood-date {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.mood-content {
+  color: #6c757d;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e9ecef;
+  padding-top: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .shared-mood-tracker {
+    padding: 1.5rem;
+  }
+  
+  .mood-form {
+    padding: 1.5rem;
+  }
+  
+  .mood-options {
+    gap: 0.5rem;
+  }
+  
+  .mood-option {
+    min-width: 80px;
+    padding: 0.5rem;
+  }
+  
+  .mood-emoji {
+    font-size: 1.5rem;
+  }
+  
+  .mood-label {
+    font-size: 0.7rem;
+  }
+  
+  .mood-history {
+    padding: 1.5rem;
+  }
+  
+  .moods-list {
+    padding-right: 5px;
+  }
+  
+  .mood-entry {
+    padding: 1rem;
+  }
+  
+  .mood-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .mood-user,
+  .mood-emoji,
+  .mood-label,
+  .mood-date {
+    font-size: 0.8rem;
+  }
+  
+  .mood-title {
+    font-size: 1.5rem;
+  }
+  
+  .mood-history-title {
+    font-size: 1.2rem;
+  }
+}
+
+.gender-selection {
+  margin-bottom: 2rem;
+}
+
+.gender-selection h3 {
+  color: #333;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.gender-options {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.gender-option {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 1rem;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+  backdrop-filter: blur(10px);
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+}
+
+.gender-option:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  background: #e9ecef;
+}
+
+.gender-option.selected {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  border-color: transparent;
+  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+  color: #fff;
+}
+
+.gender-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.gender-label {
+  font-size: 1rem;
+}

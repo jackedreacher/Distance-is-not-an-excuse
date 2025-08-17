@@ -39,7 +39,7 @@ export const SocketProvider = ({ children }) => {
     }
 
     // Create new socket connection
-    const newSocket = io('http://localhost:5001', {
+    const newSocket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001', {
       auth: {
         token: token
       },

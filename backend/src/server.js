@@ -24,7 +24,13 @@ const app = express();
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors({
-  origin: process.env.FRONTEND_URL || ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5174'],
+  origin: process.env.FRONTEND_URL || [
+    'http://localhost:5173', 
+    'http://127.0.0.1:5173', 
+    'http://localhost:5174',
+    'https://distance-is-not-an-excuse-e1efyjaae-jackedreachers-projects.vercel.app',
+    'https://distance-is-not-an-excuse-j1hpw67i0-jackedreachers-projects.vercel.app'
+  ],
   credentials: true
 })); // Enable CORS with specific origins
 app.use(morgan('combined')); // Logging

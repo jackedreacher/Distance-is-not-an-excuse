@@ -32,13 +32,15 @@ export const SocketProvider = ({ children }) => {
       clearTimeout(reconnectTimeoutRef.current);
     }
 
-    // Create new socket connection without authentication
-    const newSocket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001', {
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001';
+    console.log('Connecting to Socket.IO server at:', socketUrl);
+    
+    const newSocket = io(socketUrl, {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      forceNew: true,
       timeout: 20000,
-      forceNew: true // Force new connection
     });
 
     newSocket.on('connect', () => {

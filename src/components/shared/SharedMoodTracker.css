@@ -57,7 +57,7 @@
   border: none;
   border-radius: 8px;
   padding: 1rem;
-  color: #fff;
+  color: #87CEEB;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -132,7 +132,7 @@
 }
 
 .mood-submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.9;
   cursor: not-allowed;
 }
 
@@ -315,7 +315,7 @@
 }
 
 .gender-option {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(135, 206, 235, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 15px;
   padding: 1rem;
@@ -334,8 +334,8 @@
 }
 
 .gender-option:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(135, 206, 235, 0.2);
+  border-color: rgba(255, 255, 255, 0.7);
   transform: translateY(-2px);
   background: #e9ecef;
 }

@@ -1,3 +1,4 @@
+/* eslint-env node */
 const Song = require('../models/Song');
 const User = require('../models/User');
 
@@ -41,15 +42,38 @@ exports.getSongs = async (req, res) => {
 // Add new song
 exports.addSong = async (req, res) => {
   try {
-    const { title, artist, story, url } = req.body;
+    const { title, artist, story, url, user } = req.body;
 
     // Validate input
     if (!title || !artist) {
       return res.status(400).json({ message: 'Title and artist are required' });
     }
 
-    // Demo mode: create a default user ID if no authentication
-    let userId = req.user ? req.user._id : null;
+    // Demo mode: create or find demo user based on gender
+    let userId = null;
+    if (user && ['female', 'male', 'other'].includes(user)) {
+      // Try to find existing demo user with this gender
+      let demoUser = await User.findOne({ 
+        username: `demo-${user}`,
+        'profile.gender': user 
+      });
+      
+      // If not found, create a new demo user
+      if (!demoUser) {
+        demoUser = new User({
+          username: `demo-${user}`,
+          email: `demo-${user}@example.com`,
+          password: 'demo123', // This will be hashed automatically
+          profile: {
+            name: user === 'female' ? 'Demo Kadın' : user === 'male' ? 'Demo Erkek' : 'Demo Kullanıcı',
+            gender: user
+          }
+        });
+        await demoUser.save();
+      }
+      
+      userId = demoUser._id;
+    }
 
     // Create song
     const newSong = new Song({

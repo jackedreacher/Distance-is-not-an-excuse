@@ -1,9 +1,13 @@
+/* eslint-env node */
+/* eslint-disable no-undef */
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 
 
 // Load environment variables
@@ -20,6 +24,42 @@ const eventRoutes = require('./routes/events');
 
 // Initialize app
 const app = express();
+const server = createServer(app);
+
+// Socket.IO yapılandırması
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || [
+      'http://localhost:5173', 
+      'http://127.0.0.1:5173', 
+      'http://localhost:5174',
+      'https://distance-is-not-an-excuse-e1efyjaae-jackedreachers-projects.vercel.app',
+      'https://distance-is-not-an-excuse-j1hpw67i0-jackedreachers-projects.vercel.app'
+    ],
+    credentials: true
+  }
+});
+
+// No authentication middleware - allow all connections
+io.use(async (socket, next) => {
+  // Set a demo user for all connections
+  socket.user = {
+    id: 'demo-user',
+    name: 'Demo User',
+    username: 'demo-user'
+  };
+  socket.userId = 'demo-user';
+  next();
+});
+
+// Socket events
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.user.username}`);
+  
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.user.username}`);
+  });
+});
 
 // Middleware
 app.use(helmet()); // Security headers
@@ -79,10 +119,10 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Start server (only when not in Vercel environment)
+// Start server
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5001;
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }

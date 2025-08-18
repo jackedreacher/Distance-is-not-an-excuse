@@ -74,7 +74,7 @@
 .wishlist-add-btn {
   padding: 12px;
   background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
-  color: white;
+  color: #87CEEB;
   border: none;
   border-radius: 5px;
   font-size: 1rem;
@@ -89,7 +89,7 @@
 }
 
 .wishlist-add-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.9;
   cursor: not-allowed;
 }
 
@@ -120,7 +120,7 @@
 }
 
 .wishlist-item.completed {
-  opacity: 0.7;
+  opacity: 0.9;
   background: #f8f9fa;
 }
 

@@ -240,8 +240,8 @@ const Wishlist = () => {
            onChange={handleInputChange}
            className="wishlist-select"
          >
-           <option value="female">Kadın</option>
-           <option value="male">Erkek</option>
+           <option value="female">mermi</option>
+           <option value="male">yusuf</option>
          </select>
          
          <button
@@ -331,7 +331,7 @@ const Wishlist = () => {
                   
                   <div className="wishlist-item-footer">
                     <span className="wishlist-item-gender">
-                      {item.gender === 'female' ? '👩 Kadın' : '👨 Erkek'}
+                      {item.gender === 'female' ? '👩 mermi' : '👨 yusuf'}
                     </span>
                     <span className="wishlist-item-date">
                       Eklendi: {formatDate(item.createdAt)}

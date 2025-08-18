@@ -162,14 +162,14 @@ const MoodTracker = () => {
                 onClick={() => setGender('female')}
               >
                 <span className="gender-emoji">👩</span>
-                <span className="gender-label">Kadın</span>
+                <span className="gender-label">mermi</span>
               </button>
               <button
                 className={`gender-option ${gender === 'male' ? 'selected' : ''}`}
                 onClick={() => setGender('male')}
               >
                 <span className="gender-emoji">👨</span>
-                <span className="gender-label">Erkek</span>
+                <span className="gender-label">yusuf</span>
               </button>
               <button
                 className={`gender-option ${gender === 'other' ? 'selected' : ''}`}
@@ -245,8 +245,8 @@ const MoodTracker = () => {
                       <span className="mood-history-emoji">{getMoodEmoji(mood.mood)}</span>
                       <div className="mood-history-info">
                         <span className="mood-history-user">
-                          {mood.gender === 'female' ? '👩 Kadın' :
-                           mood.gender === 'male' ? '👨 Erkek' :
+                          {mood.gender === 'female' ? '👩 mermi' :
+                           mood.gender === 'male' ? '👨 yusuf' :
                            '👤 Diğer'}
                         </span>
                         <span className="mood-history-date">{formatDate(mood.createdAt)}</span>

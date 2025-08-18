@@ -1,10 +1,11 @@
+/* eslint-env node */
 const mongoose = require('mongoose');
 
 const songSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
   },
   title: {
     type: String,
@@ -37,3 +38,4 @@ songSchema.index({ userId: 1, title: 1 });
 songSchema.index({ userId: 1, artist: 1 });
 
 module.exports = mongoose.model('Song', songSchema);
+/* eslint-enable */

@@ -66,6 +66,96 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Advanced Music Player Styles */
+.animated-avatar {
+  cursor: pointer;
+  animation: animateAvatar 0.5s linear infinite;
+  transition: transform 0.3s ease;
+}
+
+.animated-avatar:hover {
+  transform: scale(1.05);
+}
+
+@keyframes animateAvatar {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.objectFitCover {
+  object-fit: cover;
+}
+
+.objectFitContain {
+  object-fit: contain;
+}
+
+.musicTimerDiv {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.musicCurrentTime,
+.musicTotalLength {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #b3b3b3;
+}
+
+.musicProgressBar {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  background: #404040;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.musicProgressBar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #1db954;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.musicProgressBar::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #1ed760;
+}
+
+.musicProgressBar::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #1db954;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.musicProgressBar::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  background: #1ed760;
+}
+
+.musicProgressBar:hover {
+  height: 8px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

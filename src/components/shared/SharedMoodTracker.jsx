@@ -124,7 +124,7 @@ const SharedMoodTracker = () => {
               onClick={() => setGender('female')}
             >
               <span className="gender-emoji">👩</span>
-              <span className="gender-label">Kadın</span>
+              <span className="gender-label">mermi</span>
             </button>
             <button
               type="button"
@@ -132,7 +132,7 @@ const SharedMoodTracker = () => {
               onClick={() => setGender('male')}
             >
               <span className="gender-emoji">👨</span>
-              <span className="gender-label">Erkek</span>
+              <span className="gender-label">yusuf</span>
             </button>
           </div>
         </div>
@@ -164,8 +164,8 @@ const SharedMoodTracker = () => {
                 <div key={mood._id} className="mood-entry">
                   <div className="mood-header">
                     <span className="mood-user">
-                      {mood.gender === 'female' ? '👩 Kadın' :
-                       mood.gender === 'male' ? '👨 Erkek' :
+                      {mood.gender === 'female' ? '👩 mermi' :
+                       mood.gender === 'male' ? '👨 yusuf' :
                        '👤 Diğer'}
                     </span>
                     <span className="mood-emoji">{moodInfo.emoji}</span>

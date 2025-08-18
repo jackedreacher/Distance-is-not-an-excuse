@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
-import { useAuth } from '../hooks/useAuth.js';
 
 const SocketContext = createContext();
 
@@ -11,18 +10,13 @@ export const SocketProvider = ({ children }) => {
   const [connected, setConnected] = useState(false);
   const [roomState, setRoomState] = useState(null);
   const [deviceConnections, setDeviceConnections] = useState([]);
-  const { user } = useAuth();
-  const userId = user?.id;
+  // Use a default user ID for demo purposes
+  const userId = 'demo-user';
   const socketRef = useRef(socket);
   const reconnectTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (!userId) {
-      return;
-    }
-
-    const token = localStorage.getItem('token');
-    if (!token) {
       return;
     }
 
@@ -38,11 +32,8 @@ export const SocketProvider = ({ children }) => {
       clearTimeout(reconnectTimeoutRef.current);
     }
 
-    // Create new socket connection
-    const newSocket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001', {
-      auth: {
-        token: token
-      },
+    // Create new socket connection without authentication
+    const newSocket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001', {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,

@@ -1,92 +1,30 @@
-// API service for connecting frontend to backend
+// API configuration
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 // Check if backend is available
 const isBackendAvailable = () => {
-  return API_BASE_URL && API_BASE_URL !== '' && !API_BASE_URL.includes('localhost') || import.meta.env.DEV;
+  return true; // Enable backend connection
 };
 
-// Fallback data for demo mode
+// Fallback responses for when backend is not available
 const getFallbackResponse = (type) => {
   switch (type) {
     case 'moods':
-      return [];
+      return { success: true, data: [] };
+    case 'mood':
+      return { success: true, data: { id: Date.now(), mood: 'happy', date: new Date() } };
+    case 'tasks':
+      return { success: true, data: [] };
+    case 'task':
+      return { success: true, data: { id: Date.now(), title: 'Demo Task', completed: false } };
     case 'wishlist':
-      return [];
+      return { success: true, data: [] };
     case 'music':
-      return [];
-    case 'profile':
-      return { user: null };
+      return { success: true, data: [] };
+    case 'surprises':
+      return { success: true, data: [] };
     default:
       return { success: true, message: 'Demo mode - no backend connected' };
-  }
-};
-
-// Helper function to get auth headers
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `Bearer ${token}` })
-  };
-};
-
-// Auth API calls
-export const authService = {
-  register: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(userData)
-    });
-    return response.json();
-  },
-
-  login: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(credentials)
-    });
-    return response.json();
-  },
-
-  logout: async () => {
-    const response = await fetch(`${API_BASE_URL}/auth/logout`, {
-      method: 'POST',
-      headers: getAuthHeaders()
-    });
-    return response.json();
-  },
-
-  getProfile: async () => {
-    if (!isBackendAvailable()) {
-      return getFallbackResponse('profile');
-    }
-    const response = await fetch(`${API_BASE_URL}/auth/profile`, {
-      headers: getAuthHeaders()
-    });
-    return response.json();
-  },
-
-  refreshToken: async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No token available');
-    }
-    
-    const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token })
-    });
-    return response.json();
   }
 };
 
@@ -97,34 +35,50 @@ export const moodService = {
       return getFallbackResponse('moods');
     }
     const response = await fetch(`${API_BASE_URL}/moods`, {
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   },
 
-
   create: async (moodData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('mood');
+    }
     const response = await fetch(`${API_BASE_URL}/moods`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(moodData)
     });
     return response.json();
   },
 
   update: async (id, moodData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('mood');
+    }
     const response = await fetch(`${API_BASE_URL}/moods/${id}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(moodData)
     });
     return response.json();
   },
 
   delete: async (id) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
     const response = await fetch(`${API_BASE_URL}/moods/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   }
@@ -133,27 +87,42 @@ export const moodService = {
 // Task API calls
 export const taskService = {
   createTask: async (taskData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('task');
+    }
     const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(taskData)
     });
     return response.json();
   },
   
   updateTask: async (id, taskData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('task');
+    }
     const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(taskData)
     });
     return response.json();
   },
   
   deleteTask: async (id) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
     const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   }
@@ -162,27 +131,42 @@ export const taskService = {
 // Planning API calls
 export const planningService = {
   createEvent: async (eventData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('event');
+    }
     const response = await fetch(`${API_BASE_URL}/events`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(eventData)
     });
     return response.json();
   },
   
   updateEvent: async (id, eventData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('event');
+    }
     const response = await fetch(`${API_BASE_URL}/events/${id}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(eventData)
     });
     return response.json();
   },
   
   deleteEvent: async (id) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
     const response = await fetch(`${API_BASE_URL}/events/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   }
@@ -195,33 +179,50 @@ export const wishlistService = {
       return getFallbackResponse('wishlist');
     }
     const response = await fetch(`${API_BASE_URL}/wishlist`, {
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   },
 
   create: async (itemData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('wishlist');
+    }
     const response = await fetch(`${API_BASE_URL}/wishlist`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(itemData)
     });
     return response.json();
   },
 
   update: async (id, itemData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('wishlist');
+    }
     const response = await fetch(`${API_BASE_URL}/wishlist/${id}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(itemData)
     });
     return response.json();
   },
 
   delete: async (id) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
     const response = await fetch(`${API_BASE_URL}/wishlist/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   }
@@ -234,33 +235,50 @@ export const musicService = {
       return getFallbackResponse('music');
     }
     const response = await fetch(`${API_BASE_URL}/music`, {
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   },
 
   add: async (songData) => {
-    const response = await fetch(`${API_BASE_URL}/songs`, {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('music');
+    }
+    const response = await fetch(`${API_BASE_URL}/music`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(songData)
     });
     return response.json();
   },
 
   update: async (id, songData) => {
-    const response = await fetch(`${API_BASE_URL}/songs/${id}`, {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('music');
+    }
+    const response = await fetch(`${API_BASE_URL}/music/${id}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(songData)
     });
     return response.json();
   },
 
   delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/songs/${id}`, {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
+    const response = await fetch(`${API_BASE_URL}/music/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   }
@@ -269,34 +287,51 @@ export const musicService = {
 // Surprise API calls
 export const surpriseService = {
   getAll: async () => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('surprises');
+    }
     const response = await fetch(`${API_BASE_URL}/surprises`, {
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   },
-
   create: async (surpriseData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('surprises');
+    }
     const response = await fetch(`${API_BASE_URL}/surprises`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(surpriseData)
     });
     return response.json();
   },
-
   update: async (id, surpriseData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('surprises');
+    }
     const response = await fetch(`${API_BASE_URL}/surprises/${id}`, {
       method: 'PUT',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(surpriseData)
     });
     return response.json();
   },
-
   delete: async (id) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
     const response = await fetch(`${API_BASE_URL}/surprises/${id}`, {
       method: 'DELETE',
-      headers: getAuthHeaders()
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return response.json();
   }

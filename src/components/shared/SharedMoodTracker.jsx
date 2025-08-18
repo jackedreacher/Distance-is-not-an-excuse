@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { moodService } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth.js';
+
 import './SharedMoodTracker.css';
 
 const SharedMoodTracker = () => {
-  const { user } = useAuth();
+
   const [moods, setMoods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

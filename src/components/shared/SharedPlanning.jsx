@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { planningService } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth.js';
+
 import { useSocket } from '../../contexts/SocketContext';
 import './SharedPlanning.css';
 
 const SharedPlanning = ({ channelId }) => {
-  const { user } = useAuth();
+  // Use demo user for shared component
+  const user = { id: 'demo-user', name: 'Demo User' };
   const { socket } = useSocket();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);

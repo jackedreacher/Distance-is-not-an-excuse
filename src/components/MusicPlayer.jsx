@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { musicService } from '../services/api'
-import { useAuth } from '../hooks/useAuth.js'
 
 const MusicPlayer = () => {
   const [songs, setSongs] = useState([])
@@ -19,20 +18,13 @@ const MusicPlayer = () => {
   const [showEmbed, setShowEmbed] = useState(false) // Whether to show embedded player
   
   const audioRef = useRef(null)
-  const { checkTokenValidity } = useAuth()
+
 
   // Load songs from API on component mount
   useEffect(() => {
     const loadSongs = async () => {
       try {
-        // Check token validity first (skip in development)
-        if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
-          const isValid = await checkTokenValidity();
-          if (!isValid) {
-            console.log('Token is not valid, skipping songs load');
-            return;
-          }
-        }
+        // Load songs directly without authentication
         
         const data = await musicService.getAll();
         // Backend now returns array directly, not wrapped in songs property
@@ -45,7 +37,7 @@ const MusicPlayer = () => {
     };
     
     loadSongs();
-  }, [checkTokenValidity])
+  }, [])
 
   // Handle audio playback
   useEffect(() => {

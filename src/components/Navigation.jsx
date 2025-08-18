@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth.js'
 
 const Navigation = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, loading } = useAuth()
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
   
   // Update isMobile state on window resize
@@ -18,14 +16,7 @@ const Navigation = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
   
-  console.log('Navigation render - user state:', user, 'loading:', loading)
-  
-  // Don't render navigation while loading
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  const navItems = user ? [
+  const navItems = [
     { path: '/', label: '🏠 Ana Sayfa' },
     { path: '/weather', label: '🌍 Hava Durumu' },
     { path: '/love-messages', label: '💌 Aşk Mesajları' },
@@ -35,11 +26,7 @@ const Navigation = () => {
     { path: '/mood-tracker', label: '😊 Ruh Halimiz' },
     { path: '/wishlist', label: '心愿 Dilek Listesi' },
     { path: '/music-playlist', label: '🎵 Şarkı Listemiz' },
-    { path: '/surprise-notifications', label: '🎉 Sürprizler' },
-    { path: '/rooms', label: '💕 Odalar' }
-  ] : [
-    { path: '/login', label: '🔐 Giriş Yap' },
-    { path: '/register', label: '📝 Kayıt Ol' }
+    { path: '/surprise-notifications', label: '🎉 Sürprizler' }
   ]
 
   const handleNavigation = (path) => {

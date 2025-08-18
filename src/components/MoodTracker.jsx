@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { moodService } from '../services/api'
-import { useAuth } from '../hooks/useAuth.js'
 
 const MoodTracker = () => {
   const [moods, setMoods] = useState([])
@@ -8,7 +7,7 @@ const MoodTracker = () => {
   const [message, setMessage] = useState('')
   const [gender, setGender] = useState('') // 'female', 'male', or 'other'
   const [view, setView] = useState('log') // 'log' or 'history'
-  const { checkTokenValidity } = useAuth()
+
 
   // Mood options with emojis
   const moodOptions = [
@@ -28,43 +27,34 @@ const MoodTracker = () => {
       try {
         console.log('Attempting to load moods...');
         
-        // Check token validity first
-        const isValid = await checkTokenValidity();
-        if (!isValid) {
-          console.log('Token is not valid, attempting to load moods anyway');
-          // Don't return here, try to load moods anyway
-        }
+        // Load moods directly without authentication
         
         const data = await moodService.getAll();
         console.log('Data received from moodService.getAll():', data);
         
-        if (data) {
+        if (data && Array.isArray(data)) {
           setMoods(data);
           console.log('Moods loaded successfully:', data.length);
         } else {
-          console.log('No data received from moodService.getAll()');
+          console.log('No valid array data received from moodService.getAll(), using empty array');
+          setMoods([]);
         }
       } catch (error) {
         console.error('Error loading moods:', error);
         console.error('Error details:', error.message, error.stack);
+        // Ensure moods is always an array even on error
+        setMoods([]);
       }
     };
     
     loadMoods();
-  }, [checkTokenValidity])
+  }, [])
 
   const handleMoodSubmit = async () => {
     if (!selectedMood || !gender) return
 
     try {
-      // Check token validity first (skip in development)
-      if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
-        const isValid = await checkTokenValidity();
-        if (!isValid) {
-          console.log('Token is not valid, skipping mood save');
-          return;
-        }
-      }
+      // Save mood directly without authentication
       
       const moodData = {
         mood: selectedMood,

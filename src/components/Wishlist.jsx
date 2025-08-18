@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { wishlistService } from '../services/api'
-import { useAuth } from '../hooks/useAuth.js'
 
 const Wishlist = () => {
   const [items, setItems] = useState([])
@@ -12,7 +11,7 @@ const Wishlist = () => {
     gender: 'female', // Default to female
   })
   const [view, setView] = useState('all') // 'all', 'planned', 'completed'
-  const { checkTokenValidity } = useAuth()
+
 
   // Categories for wishlist items
   const categories = [
@@ -33,14 +32,7 @@ const Wishlist = () => {
   useEffect(() => {
     const loadWishlist = async () => {
       try {
-        // Check token validity first (skip in development)
-        if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
-          const isValid = await checkTokenValidity();
-          if (!isValid) {
-            console.log('Token is not valid, skipping wishlist load');
-            return;
-          }
-        }
+        // Load wishlist directly without authentication
         
         const data = await wishlistService.getAll();
         console.log('Wishlist data received:', data);
@@ -62,7 +54,7 @@ const Wishlist = () => {
     };
     
     loadWishlist();
-  }, [checkTokenValidity])
+  }, [])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -76,14 +68,7 @@ const Wishlist = () => {
     if (!newItem.title.trim()) return
 
     try {
-      // Check token validity first (skip in development)
-      if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
-        const isValid = await checkTokenValidity();
-        if (!isValid) {
-          console.log('Token is not valid, skipping wishlist item save');
-          return;
-        }
-      }
+      // Save wishlist item directly without authentication
       
       const itemData = {
         ...newItem,
@@ -114,14 +99,7 @@ const Wishlist = () => {
 
   const toggleCompleted = async (id) => {
     try {
-      // Check token validity first (skip in development)
-      if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
-        const isValid = await checkTokenValidity();
-        if (!isValid) {
-          console.log('Token is not valid, skipping wishlist item update');
-          return;
-        }
-      }
+      // Update wishlist item directly without authentication
       
       const itemToUpdate = items.find(item => item._id === id)
       if (itemToUpdate) {
@@ -147,14 +125,7 @@ const Wishlist = () => {
 
   const deleteItem = async (id) => {
     try {
-      // Check token validity first (skip in development)
-      if (!import.meta.env.DEV && localStorage.getItem('bypass_auth') !== 'true') {
-        const isValid = await checkTokenValidity();
-        if (!isValid) {
-          console.log('Token is not valid, skipping wishlist item delete');
-          return;
-        }
-      }
+      // Delete wishlist item directly without authentication
       
       await wishlistService.delete(id)
       setItems(prev => prev.filter(item => item._id !== id))

@@ -1,10 +1,11 @@
+/* eslint-env node */
 const mongoose = require('mongoose');
 
 const moodSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false // Made optional for demo mode
   },
   mood: {
     type: String,
@@ -31,3 +32,4 @@ moodSchema.index({ userId: 1, createdAt: -1 });
 moodSchema.index({ gender: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Mood', moodSchema);
+/* eslint-enable */

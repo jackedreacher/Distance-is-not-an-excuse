@@ -4,19 +4,8 @@ const User = require('../models/User');
 // Get all moods for user and partner
 exports.getMoods = async (req, res) => {
   try {
-    // Get user and their partner
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Find moods for user and partner
-    let userIds = [user._id];
-    if (user.partnerId) {
-      userIds.push(user.partnerId);
-    }
-
-    const moods = await Mood.find({ userId: { $in: userIds } })
+    // Demo mode: return all moods without user filtering
+    const moods = await Mood.find({})
       .sort({ createdAt: -1 })
       .populate('userId', 'username profile.name profile.gender');
 
@@ -40,9 +29,9 @@ exports.createMood = async (req, res) => {
       return res.status(400).json({ message: 'Mood is required' });
     }
 
-    // Create mood
+    // Create mood (demo mode - use a default user ID)
     const newMood = new Mood({
-      userId: req.user._id,
+      userId: null, // Demo mode: no user association
       mood,
       message,
       gender
@@ -75,10 +64,7 @@ exports.updateMood = async (req, res) => {
       return res.status(404).json({ message: 'Mood not found' });
     }
 
-    // Check if user owns this mood
-    if (moodDoc.userId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to update this mood' });
-    }
+    // Demo mode: skip user authorization check
 
     // Update mood
     moodDoc.mood = mood || moodDoc.mood;
@@ -110,10 +96,7 @@ exports.deleteMood = async (req, res) => {
       return res.status(404).json({ message: 'Mood not found' });
     }
 
-    // Check if user owns this mood
-    if (moodDoc.userId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to delete this mood' });
-    }
+    // Demo mode: skip user authorization check
 
     // Delete mood
     await Mood.findByIdAndDelete(id);

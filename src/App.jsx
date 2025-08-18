@@ -22,10 +22,7 @@ import MusicPlaylistPage from './pages/MusicPlaylistPage'
 import SurpriseNotificationsPage from './pages/SurpriseNotificationsPage'
 
 // Import Contexts
-import { AuthProvider } from './contexts/AuthContextProvider.jsx'
 import { SocketProvider } from './contexts/SocketContext.jsx'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
 
 function App() {
   const [daysApart, setDaysApart] = useState(0)
@@ -81,7 +78,6 @@ function App() {
   }, [])
 
   return (
-    <AuthProvider>
       <SocketProvider>
           <div
             className="app-container"
@@ -159,13 +155,11 @@ function App() {
                 <Route path="/wishlist" element={<WishlistPage />} />
                 <Route path="/music-playlist" element={<MusicPlaylistPage />} />
                 <Route path="/surprise-notifications" element={<SurpriseNotificationsPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
+
               </Routes>
             </div>
           </div>
       </SocketProvider>
-    </AuthProvider>
   )
 }
 

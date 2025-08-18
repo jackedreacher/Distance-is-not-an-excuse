@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const songController = require('../controllers/songs');
-const auth = require('../middleware/auth');
+// const auth = require('../middleware/auth'); // Removed for demo mode
 
-// All routes require authentication
-router.use(auth);
+// All routes are now public for demo mode
+// router.use(auth); // Disabled authentication
 
 // Get all songs for user and partner
 router.get('/', songController.getSongs);

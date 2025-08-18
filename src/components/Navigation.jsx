@@ -5,9 +5,9 @@ import { useAuth } from '../hooks/useAuth.js'
 const Navigation = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
-
+  
   // Update isMobile state on window resize
   useEffect(() => {
     const handleResize = () => {
@@ -17,6 +17,13 @@ const Navigation = () => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+  
+  console.log('Navigation render - user state:', user, 'loading:', loading)
+  
+  // Don't render navigation while loading
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   const navItems = user ? [
     { path: '/', label: '🏠 Ana Sayfa' },

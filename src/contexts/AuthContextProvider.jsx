@@ -12,8 +12,22 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       // Authentication bypass - automatically set mock user
       // Enable bypass in both development and production for demo purposes
-      if (import.meta.env.DEV || localStorage.getItem('bypass_auth') === 'true' || import.meta.env.PROD) {
-        setUser({
+      console.log('Auth bypass check:', {
+        isDev: import.meta.env.DEV,
+        bypassAuth: localStorage.getItem('bypass_auth'),
+        isProd: import.meta.env.PROD,
+        mode: import.meta.env.MODE,
+        nodeEnv: import.meta.env.NODE_ENV
+      });
+      
+      // Always enable bypass for demo purposes - works in both dev and production
+      const shouldBypass = true; // Force bypass for demo
+      
+      if (shouldBypass) {
+        // Set localStorage flag for consistency
+        localStorage.setItem('bypass_auth', 'true');
+        console.log('Setting mock user for bypass');
+        const mockUser = {
           _id: '68a267a5a9bca31a4430cb29',
           username: 'testuser',
           email: 'test@example.com',
@@ -22,7 +36,9 @@ export const AuthProvider = ({ children }) => {
             dateOfBirth: new Date('1990-01-01'),
             relationshipStart: new Date('2020-01-01')
           }
-        });
+        };
+        setUser(mockUser);
+        console.log('Mock user set:', mockUser);
         setLoading(false);
         return;
       }

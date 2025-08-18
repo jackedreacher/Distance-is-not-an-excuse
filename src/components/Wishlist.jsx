@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { wishlistService } from '../services/api'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth.js'
 
 const Wishlist = () => {
   const [items, setItems] = useState([])

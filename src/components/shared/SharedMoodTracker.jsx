@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { moodService } from '../../services/api';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth.js';
 import './SharedMoodTracker.css';
 
 const SharedMoodTracker = () => {

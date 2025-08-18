@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { moodService } from '../services/api'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth.js'
 
 const MoodTracker = () => {
   const [moods, setMoods] = useState([])

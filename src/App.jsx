@@ -22,7 +22,7 @@ import MusicPlaylistPage from './pages/MusicPlaylistPage'
 import SurpriseNotificationsPage from './pages/SurpriseNotificationsPage'
 
 // Import Contexts
-import { AuthProvider } from './contexts/AuthContext.jsx'
+import { AuthProvider } from './contexts/AuthContextProvider.jsx'
 import { SocketProvider } from './contexts/SocketContext.jsx'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'

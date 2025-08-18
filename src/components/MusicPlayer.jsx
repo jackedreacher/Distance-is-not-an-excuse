@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { musicService } from '../services/api'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth.js'
 
 const MusicPlayer = () => {
   const [songs, setSongs] = useState([])

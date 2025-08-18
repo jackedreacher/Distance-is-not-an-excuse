@@ -1,6 +1,27 @@
 // API service for connecting frontend to backend
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
+// Check if backend is available
+const isBackendAvailable = () => {
+  return API_BASE_URL && API_BASE_URL !== '' && !API_BASE_URL.includes('localhost') || import.meta.env.DEV;
+};
+
+// Fallback data for demo mode
+const getFallbackResponse = (type) => {
+  switch (type) {
+    case 'moods':
+      return [];
+    case 'wishlist':
+      return [];
+    case 'music':
+      return [];
+    case 'profile':
+      return { user: null };
+    default:
+      return { success: true, message: 'Demo mode - no backend connected' };
+  }
+};
+
 // Helper function to get auth headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -43,6 +64,9 @@ export const authService = {
   },
 
   getProfile: async () => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('profile');
+    }
     const response = await fetch(`${API_BASE_URL}/auth/profile`, {
       headers: getAuthHeaders()
     });
@@ -69,6 +93,9 @@ export const authService = {
 // Mood API calls
 export const moodService = {
   getAll: async () => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('moods');
+    }
     const response = await fetch(`${API_BASE_URL}/moods`, {
       headers: getAuthHeaders()
     });
@@ -164,6 +191,9 @@ export const planningService = {
 // Wishlist API calls
 export const wishlistService = {
   getAll: async () => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('wishlist');
+    }
     const response = await fetch(`${API_BASE_URL}/wishlist`, {
       headers: getAuthHeaders()
     });
@@ -200,7 +230,10 @@ export const wishlistService = {
 // Music API calls
 export const musicService = {
   getAll: async () => {
-    const response = await fetch(`${API_BASE_URL}/songs`, {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('music');
+    }
+    const response = await fetch(`${API_BASE_URL}/music`, {
       headers: getAuthHeaders()
     });
     return response.json();

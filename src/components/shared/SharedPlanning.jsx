@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { planningService } from '../../services/api';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth.js';
 import { useSocket } from '../../contexts/SocketContext';
 import './SharedPlanning.css';
 

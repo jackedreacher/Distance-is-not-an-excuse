@@ -2149,6 +2149,27 @@ body::before {
   padding: 0;
   margin: 0;
   flex-grow: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+/* Custom scrollbar for desktop navigation */
+.nav-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.nav-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.nav-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.nav-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .nav-item-wrapper {
@@ -2205,8 +2226,30 @@ body::before {
 
 .mobile-nav-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
+  overflow-x: auto;
+  padding: 0 10px;
+  gap: 10px;
+}
+
+/* Custom scrollbar for mobile navigation */
+.mobile-nav-container::-webkit-scrollbar {
+  height: 4px;
+}
+
+.mobile-nav-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.mobile-nav-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.mobile-nav-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .mobile-navigation .nav-item {
@@ -2223,6 +2266,7 @@ body::before {
   align-items: center;
   text-align: center;
   min-width: 60px;
+  flex-shrink: 0;
 }
 
 .mobile-navigation .nav-item:hover {

@@ -234,7 +234,7 @@ export const musicService = {
     if (!isBackendAvailable()) {
       return getFallbackResponse('music');
     }
-    const response = await fetch(`${API_BASE_URL}/music`, {
+    const response = await fetch(`${API_BASE_URL}/songs`, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -246,7 +246,7 @@ export const musicService = {
     if (!isBackendAvailable()) {
       return getFallbackResponse('music');
     }
-    const response = await fetch(`${API_BASE_URL}/music`, {
+    const response = await fetch(`${API_BASE_URL}/songs`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -260,7 +260,7 @@ export const musicService = {
     if (!isBackendAvailable()) {
       return getFallbackResponse('music');
     }
-    const response = await fetch(`${API_BASE_URL}/music/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/songs/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -274,7 +274,46 @@ export const musicService = {
     if (!isBackendAvailable()) {
       return getFallbackResponse('delete');
     }
-    const response = await fetch(`${API_BASE_URL}/music/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/songs/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.json();
+  },
+
+  getSongsByChannel: async (channelId) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('music');
+    }
+    const response = await fetch(`${API_BASE_URL}/songs?channel=${channelId}`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.json();
+  },
+
+  createSong: async (songData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('music');
+    }
+    const response = await fetch(`${API_BASE_URL}/songs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(songData)
+    });
+    return response.json();
+  },
+
+  deleteSong: async (id) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
+    const response = await fetch(`${API_BASE_URL}/songs/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

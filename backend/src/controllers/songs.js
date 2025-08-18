@@ -4,6 +4,14 @@ const User = require('../models/User');
 // Get all songs for user and partner
 exports.getSongs = async (req, res) => {
   try {
+    // Demo mode: if no user authentication, return all songs
+    if (!req.user) {
+      const songs = await Song.find({})
+        .sort({ createdAt: -1 })
+        .populate('userId', 'username profile.name profile.gender');
+      return res.json(songs);
+    }
+
     // Get user and their partner
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -40,9 +48,12 @@ exports.addSong = async (req, res) => {
       return res.status(400).json({ message: 'Title and artist are required' });
     }
 
+    // Demo mode: create a default user ID if no authentication
+    let userId = req.user ? req.user._id : null;
+
     // Create song
     const newSong = new Song({
-      userId: req.user._id,
+      userId: userId,
       title,
       artist,
       story,
@@ -51,8 +62,10 @@ exports.addSong = async (req, res) => {
 
     await newSong.save();
 
-    // Populate user info
-    await newSong.populate('userId', 'username profile.name profile.gender');
+    // Populate user info if userId exists
+    if (userId) {
+      await newSong.populate('userId', 'username profile.name profile.gender');
+    }
 
     res.status(201).json(newSong);
   } catch (error) {
@@ -76,9 +89,12 @@ exports.updateSong = async (req, res) => {
       return res.status(404).json({ message: 'Song not found' });
     }
 
-    // Check if user owns this song
-    if (song.userId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to update this song' });
+    // Demo mode: skip authorization check if no user authentication
+    if (req.user) {
+      // Check if user owns this song
+      if (song.userId && song.userId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Not authorized to update this song' });
+      }
     }
 
     // Update song
@@ -89,8 +105,10 @@ exports.updateSong = async (req, res) => {
 
     await song.save();
 
-    // Populate user info
-    await song.populate('userId', 'username profile.name profile.gender');
+    // Populate user info if userId exists
+    if (song.userId) {
+      await song.populate('userId', 'username profile.name profile.gender');
+    }
 
     res.json(song);
   } catch (error) {
@@ -113,9 +131,12 @@ exports.deleteSong = async (req, res) => {
       return res.status(404).json({ message: 'Song not found' });
     }
 
-    // Check if user owns this song
-    if (song.userId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to delete this song' });
+    // Demo mode: skip authorization check if no user authentication
+    if (req.user) {
+      // Check if user owns this song
+      if (song.userId && song.userId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Not authorized to delete this song' });
+      }
     }
 
     // Delete song

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { musicService } from '../services/api'
 import youtubeApi from '../services/youtubeApi'
-import YouTubePlayer from './YouTubePlayer'
 import DraggableProgressBar from './DraggableProgressBar'
+import { usePlayer } from '../contexts/PlayerContext'
+import EmbeddedMiniPlayer from './EmbeddedMiniPlayer'
 
 const MusicPlayer = () => {
   const [songs, setSongs] = useState([])
@@ -13,14 +14,8 @@ const MusicPlayer = () => {
     url: '',
     user: ''
   })
-  const [currentSongIndex, setCurrentSongIndex] = useState(-1)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [volume, setVolume] = useState(0.7)
   const [view, setView] = useState('playlist')
   const [albumArt, setAlbumArt] = useState('')
-  const [audioProgress, setAudioProgress] = useState(0)
-  const [musicCurrentTime, setMusicCurrentTime] = useState('00 : 00')
-  const [musicTotalLength, setMusicTotalLength] = useState('00 : 00')
   const [avatarClassIndex, setAvatarClassIndex] = useState(0)
   
   // YouTube API states
@@ -29,28 +24,44 @@ const MusicPlayer = () => {
   const [isSearching, setIsSearching] = useState(false)
   const [showYouTubeSearch, setShowYouTubeSearch] = useState(false)
   
-  // YouTube Player states
-  const [youtubePlayer, setYoutubePlayer] = useState(null)
-  const [isYouTubeVideo, setIsYouTubeVideo] = useState(false)
-  const [currentVideoId, setCurrentVideoId] = useState('')
-  
-  const audioRef = useRef(null)
-  const youtubePlayerRef = useRef(null)
+  // Local volume for UI (synchronized with global context)
+  const [volume, setVolume] = useState(0.7)
   
   // Avatar animation classes
   const avatarClass = ['objectFitCover', 'objectFitContain', 'none']
 
+  // Global Player Context
+  const {
+    playSong: playFromContext,
+    togglePlay,
+    playNext: playNextGlobal,
+    playPrevious: playPrevGlobal,
+    isPlaying: isPlayingGlobal,
+    currentSong,
+    currentSongIndex: ctxCurrentSongIndex,
+    progress: ctxProgress,
+    currentTime: ctxCurrentTime,
+    duration: ctxDuration,
+    seekTo,
+    setSongs: setSongsContext,
+    setPlayerVolume
+  } = usePlayer()
+
+  const formatTime = (secs) => {
+    if (!secs || isNaN(secs)) return '00:00'
+    const m = Math.floor(secs / 60)
+    const s = Math.floor(secs % 60)
+    return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`
+  }
 
   // Load songs from API on component mount
   useEffect(() => {
     const loadSongs = async () => {
       try {
-        // Load songs directly without authentication
-        
         const data = await musicService.getAll();
-        // Backend now returns array directly, not wrapped in songs property
         if (Array.isArray(data)) {
           setSongs(data);
+          setSongsContext(data);
         }
       } catch (error) {
         console.error('Error loading songs:', error);
@@ -60,52 +71,9 @@ const MusicPlayer = () => {
     loadSongs();
   }, [])
 
-  // Handle audio event listeners only
+  // Update global volume when local volume changes
   useEffect(() => {
-    if (audioRef.current && currentSongIndex >= 0) {
-      const audio = audioRef.current
-      
-      // Add event listeners for time updates and metadata
-      const handleTimeUpdate = () => {
-        // Time update is now handled by handleAudioUpdate
-      }
-      
-      const handleLoadedMetadata = () => {
-        console.log('Audio metadata loaded, duration:', audio.duration)
-      }
-      
-      const handleCanPlay = () => {
-        console.log('Audio can start playing')
-      }
-      
-      const handleError = (e) => {
-        console.error('Audio error:', e)
-        setIsPlaying(false)
-      }
-      
-      audio.addEventListener('timeupdate', handleTimeUpdate)
-      audio.addEventListener('loadedmetadata', handleLoadedMetadata)
-      audio.addEventListener('canplay', handleCanPlay)
-      audio.addEventListener('error', handleError)
-      
-      // Cleanup event listeners
-      return () => {
-        audio.removeEventListener('timeupdate', handleTimeUpdate)
-        audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
-        audio.removeEventListener('canplay', handleCanPlay)
-        audio.removeEventListener('error', handleError)
-      }
-    }
-  }, [currentSongIndex])
-
-  // Handle volume change
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume
-      console.log('Volume set to:', volume)
-      console.log('Audio element volume:', audioRef.current.volume)
-      console.log('Audio element muted:', audioRef.current.muted)
-    }
+    setPlayerVolume(volume);
   }, [volume])
   
   // Handle avatar class change
@@ -116,34 +84,11 @@ const MusicPlayer = () => {
       setAvatarClassIndex(avatarClassIndex + 1)
     }
   }
-  
-
-  
-  // Handle audio update for progress and time display
-  const handleAudioUpdate = () => {
-    if (audioRef.current) {
-      // Input total length of the audio
-      let minutes = Math.floor(audioRef.current.duration / 60)
-      let seconds = Math.floor(audioRef.current.duration % 60)
-      let musicTotalLength0 = `${minutes < 10 ? `0${minutes}` : minutes} : ${seconds < 10 ? `0${seconds}` : seconds}`
-      setMusicTotalLength(musicTotalLength0)
-      
-      // Input Music Current Time
-      let currentMin = Math.floor(audioRef.current.currentTime / 60)
-      let currentSec = Math.floor(audioRef.current.currentTime % 60)
-      let musicCurrentT = `${currentMin < 10 ? `0${currentMin}` : currentMin} : ${currentSec < 10 ? `0${currentSec}` : currentSec}`
-      setMusicCurrentTime(musicCurrentT)
-      
-      const progress = parseInt((audioRef.current.currentTime / audioRef.current.duration) * 100)
-      setAudioProgress(isNaN(progress) ? 0 : progress)
-    }
-  }
 
   // Test audio context and user interaction
   const testAudio = () => {
     console.log('🔊 SES TESTİ BAŞLATILDI!');
-    console.log('audioRef.current:', audioRef.current);
-    console.log('currentSongIndex:', currentSongIndex);
+    console.log('ctxCurrentSongIndex:', ctxCurrentSongIndex);
     console.log('songs length:', songs.length);
     
     // If there are songs available, try to play the first audio song
@@ -152,41 +97,9 @@ const MusicPlayer = () => {
       if (audioSongs.length > 0) {
         console.log('🎵 Playing first audio song for test');
         const firstAudioIndex = songs.findIndex(song => getURLType(song.url) === 'audio');
-        playSong(firstAudioIndex);
+        playFromContext(firstAudioIndex, songs);
         return;
       }
-    }
-    
-    if (audioRef.current) {
-      console.log('=== AUDIO TEST ===');
-      console.log('Audio src:', audioRef.current.src);
-      console.log('Audio volume:', audioRef.current.volume);
-      console.log('Audio muted:', audioRef.current.muted);
-      console.log('Audio paused:', audioRef.current.paused);
-      console.log('Audio readyState:', audioRef.current.readyState);
-      console.log('Audio duration:', audioRef.current.duration);
-      console.log('Audio currentTime:', audioRef.current.currentTime);
-      
-      // Try to play with user interaction
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          console.log('✅ Audio test successful - sound should be playing');
-        }).catch(e => {
-          console.error('❌ Audio test failed:', e);
-        });
-      }
-    } else {
-      console.log('❌ audioRef.current is null - no audio element found');
-      
-      // Try to create a test audio element
-      const testAudioElement = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.wav');
-      testAudioElement.volume = 0.5;
-      testAudioElement.play().then(() => {
-        console.log('✅ Test audio played successfully');
-      }).catch(e => {
-        console.error('❌ Test audio failed:', e);
-      });
     }
   };
 
@@ -209,7 +122,9 @@ const MusicPlayer = () => {
       const data = await musicService.add(songData)
       // Backend now returns song directly, not wrapped in song property
       if (data && data.title) {
-        setSongs(prev => [data, ...prev])
+        const updatedSongs = [data, ...songs];
+        setSongs(updatedSongs);
+        setSongsContext(updatedSongs);
         setNewSong({
           title: '',
           artist: '',
@@ -281,47 +196,6 @@ const MusicPlayer = () => {
     searchYouTubeMusic(searchQuery);
   };
 
-  // YouTube Player event handlers
-  const handleYouTubeReady = (playerControls) => {
-    setYoutubePlayer(playerControls);
-  };
-
-  const handleYouTubeStateChange = (event) => {
-    // YouTube Player States:
-    // -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (video cued)
-    const state = event.data;
-    
-    if (state === 1) { // Playing
-      setIsPlaying(true);
-    } else if (state === 2 || state === 0) { // Paused or Ended
-      setIsPlaying(false);
-    }
-    
-    if (state === 0) { // Ended
-      playNext(); // Auto-play next song
-    }
-  };
-
-  // Toggle play/pause for YouTube videos
-  const toggleYouTubePlayback = () => {
-    if (youtubePlayer) {
-      if (isPlaying) {
-        youtubePlayer.pause();
-      } else {
-        youtubePlayer.play();
-      }
-    }
-  };
-
-  // Update YouTube volume
-  const updateYouTubeVolume = (newVolume) => {
-    if (youtubePlayer) {
-      youtubePlayer.setVolume(newVolume * 100); // YouTube expects 0-100
-    }
-  };
-
-
-
   const fetchAlbumArt = async (song) => {
     // For now, we'll use a placeholder image
     // In a real implementation, you would use an API like Spotify or YouTube Data API
@@ -347,114 +221,23 @@ const MusicPlayer = () => {
     return 'https://placehold.co/300x300/667eea/white?text=No+Artwork';
   };
 
-  const playSong = async (index) => {
-    const song = songs[index];
-    const urlType = getURLType(song.url);
-    
-    // Fetch album artwork
-    const artUrl = await fetchAlbumArt(song);
-    setAlbumArt(artUrl);
-    
-    if (urlType === 'audio') {
-      // Handle direct audio files with HTML5 audio element
-      if (currentSongIndex === index) {
-        // Toggle play/pause for the same song
-        if (audioRef.current) {
-          if (isPlaying) {
-            audioRef.current.pause();
-            setIsPlaying(false);
-          } else {
-            const playPromise = audioRef.current.play();
-            if (playPromise !== undefined) {
-              playPromise.then(() => {
-                setIsPlaying(true);
-                console.log('Audio started playing successfully');
-              }).catch(e => {
-                console.log("Playback failed:", e);
-                setIsPlaying(false);
-              });
-            }
-          }
-        }
-      } else {
-        // Play a different song
-        setCurrentSongIndex(index);
-        // Reset current time handled by handleAudioUpdate; // Reset time
-        
-        // Wait for the next render cycle to ensure audio element is updated
-        setTimeout(() => {
-          if (audioRef.current) {
-            audioRef.current.load();
-            const playPromise = audioRef.current.play();
-            if (playPromise !== undefined) {
-              playPromise.then(() => {
-                setIsPlaying(true);
-                console.log('New song started playing successfully');
-              }).catch(e => {
-                console.log("Playback failed:", e);
-                setIsPlaying(false);
-              });
-            }
-          }
-        }, 100);
-      }
-    } else if (urlType === 'youtube') {
-      // Handle YouTube videos
-      const videoId = extractYouTubeId(song.url);
-      if (videoId) {
-        setCurrentSongIndex(index);
-        setCurrentVideoId(videoId);
-        setIsYouTubeVideo(true);
-        setIsPlaying(false); // Will be set to true when YouTube player starts
-      }
-    } else {
-      // Handle other types (Spotify, etc.)
-      if (song.url) {
-        setCurrentSongIndex(index);
-        setIsYouTubeVideo(false);
-        setIsPlaying(false); // Don't auto-play embeds
-      }
+  // Update album art when current song changes
+  useEffect(() => {
+    if (currentSong) {
+      fetchAlbumArt(currentSong).then(setAlbumArt);
     }
-  };
-
-  const playNext = () => {
-    if (songs.length > 0) {
-      const nextIndex = (currentSongIndex + 1) % songs.length
-      playSong(nextIndex)
-    }
-  }
-
-  const playPrevious = () => {
-    if (songs.length > 0) {
-      const prevIndex = currentSongIndex === 0 ? songs.length - 1 : currentSongIndex - 1
-      playSong(prevIndex)
-    }
-  }
+  }, [currentSong]);
 
   const deleteSong = async (id) => {
     try {
       await musicService.delete(id)
-      setSongs(prev => {
-        const newSongs = prev.filter(song => song._id !== id)
-        // If we're deleting the currently playing song, stop playback
-        if (currentSongIndex >= 0 && prev[currentSongIndex]?._id === id) {
-          setIsPlaying(false)
-          setCurrentSongIndex(-1)
-        }
-        return newSongs
-      })
+      const updatedSongs = songs.filter(song => song._id !== id);
+      setSongs(updatedSongs);
+      setSongsContext(updatedSongs);
     } catch (error) {
       console.error('Error deleting song:', error)
     }
   }
-
-
-
-
-
-  // This useEffect is now handled in the main audio playback useEffect above
-
-  const currentSong = currentSongIndex >= 0 ? songs[currentSongIndex] : null
 
   return (
     <div className="spotify-player">
@@ -496,7 +279,7 @@ const MusicPlayer = () => {
                 placeholder="Şarkı adını girin..."
                 value={newSong.title}
                 onChange={handleInputChange}
-                className="spotify-input"
+                className="form-input"
               />
             </div>
             
@@ -508,20 +291,32 @@ const MusicPlayer = () => {
                 placeholder="Sanatçı adını girin..."
                 value={newSong.artist}
                 onChange={handleInputChange}
-                className="spotify-input"
+                className="form-input"
               />
             </div>
             
             <div className="form-group">
-              <label className="form-label">Şarkı Bağlantısı</label>
-              <div className="url-input-container">
+              <label className="form-label">Özel Mesajınız (İsteğe bağlı)</label>
+              <textarea
+                name="story"
+                placeholder="Bu şarkıyla ilgili özel bir mesajınız var mı?"
+                value={newSong.story}
+                onChange={handleInputChange}
+                className="form-textarea"
+                rows="3"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label className="form-label">Şarkı URL'si</label>
+              <div className="url-input-group">
                 <input
-                  type="text"
+                  type="url"
                   name="url"
-                  placeholder="YouTube, Spotify veya diğer bağlantı..."
+                  placeholder="Spotify, YouTube veya ses dosyası URL'si..."
                   value={newSong.url}
                   onChange={handleInputChange}
-                  className="spotify-input"
+                  className="form-input url-input"
                 />
                 <button
                   type="button"
@@ -531,64 +326,53 @@ const MusicPlayer = () => {
                   🔍 YouTube'da Ara
                 </button>
               </div>
-              
-              {/* YouTube Search Modal */}
-              {showYouTubeSearch && (
-                <div className="youtube-search-modal">
-                  <div className="youtube-search-header">
-                    <h3>YouTube'da Müzik Ara</h3>
-                    <button
-                      className="close-search-btn"
-                      onClick={() => setShowYouTubeSearch(false)}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  
-                  <form onSubmit={handleSearchSubmit} className="youtube-search-form">
-                    <input
-                      type="text"
-                      placeholder="Şarkı veya sanatçı adı girin..."
-                      value={searchQuery}
-                      onChange={handleSearchInputChange}
-                      className="youtube-search-input"
-                    />
-                    <button type="submit" className="youtube-search-submit" disabled={isSearching}>
-                      {isSearching ? '🔄 Aranıyor...' : '🔍 Ara'}
-                    </button>
-                  </form>
-                  
-                  {/* Search Results */}
-                  <div className="youtube-search-results">
-                    {youtubeSearchResults.map((track, index) => (
-                      <div key={index} className="youtube-track-item" onClick={() => selectYouTubeTrack(track)}>
-                        <img src={track.thumbnail} alt={track.title} className="track-thumbnail" />
-                        <div className="track-info">
-                          <div className="track-title">{track.title}</div>
-                          <div className="track-artist">{track.artist}</div>
+            </div>
+            
+            {/* YouTube Search Panel */}
+            {showYouTubeSearch && (
+              <div className="youtube-search-panel">
+                <form onSubmit={handleSearchSubmit} className="search-form">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={handleSearchInputChange}
+                    placeholder="Şarkı veya sanatçı adı girin..."
+                    className="search-input"
+                  />
+                  <button type="submit" className="search-submit-btn" disabled={isSearching}>
+                    {isSearching ? '🔍 Aranıyor...' : '🔍 Ara'}
+                  </button>
+                </form>
+                
+                {youtubeSearchResults.length > 0 && (
+                  <div className="search-results">
+                    <h4>Arama Sonuçları:</h4>
+                    <div className="results-list">
+                      {youtubeSearchResults.map((track, index) => (
+                        <div
+                          key={index}
+                          className="result-item"
+                          onClick={() => selectYouTubeTrack(track)}
+                        >
+                          <img
+                            src={track.thumbnail}
+                            alt={track.title}
+                            className="result-thumbnail"
+                          />
+                          <div className="result-info">
+                            <div className="result-title">{track.title}</div>
+                            <div className="result-artist">{track.artist}</div>
+                          </div>
                         </div>
-                        <button className="select-track-btn">Seç</button>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
             
             <div className="form-group">
-              <label className="form-label">Hikaye</label>
-              <textarea
-                name="story"
-                placeholder="Bu şarkının bizim için özel hikayesi..."
-                value={newSong.story}
-                onChange={handleInputChange}
-                className="spotify-textarea"
-                rows="4"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label className="form-label">Kim Ekliyor?</label>
+              <label className="form-label">Kim ekliyor?</label>
               <div className="user-selector">
                 <button
                   type="button"
@@ -647,9 +431,9 @@ const MusicPlayer = () => {
                     <div className="play-overlay">
                       <button 
                         className="play-overlay-btn"
-                        onClick={() => setIsPlaying(!isPlaying)}
+                        onClick={() => togglePlay()}
                       >
-                        {isPlaying ? '⏸️' : '▶️'}
+                        {isPlayingGlobal ? '⏸️' : '▶️'}
                       </button>
                     </div>
                   </div>
@@ -657,16 +441,16 @@ const MusicPlayer = () => {
                 
                 <div className="song-info-section">
                   <div className="song-meta">
-                    <h2 className="current-title">{currentSong.title}</h2>
-                    <p className="current-artist">{currentSong.artist}</p>
-                    {currentSong.story && (
+                    <h2 className="current-title">{currentSong?.title}</h2>
+                    <p className="current-artist">{currentSong?.artist}</p>
+                    {currentSong?.story && (
                       <p className="current-story">{currentSong.story}</p>
                     )}
                   </div>
                   
                   <div className="player-controls-section">
                     <div className="main-controls">
-                      <button className="control-btn" onClick={playPrevious}>
+                      <button className="control-btn" onClick={playPrevGlobal}>
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                           <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.588a.7.7 0 0 1-1.05.606L4 8.149V13.3a.7.7 0 0 1-1.4 0V1.7a.7.7 0 0 1 .7-.7z"/>
                         </svg>
@@ -674,15 +458,9 @@ const MusicPlayer = () => {
                       
                       <button 
                         className="play-btn"
-                        onClick={() => {
-                          if (isYouTubeVideo) {
-                            toggleYouTubePlayback();
-                          } else {
-                            setIsPlaying(!isPlaying);
-                          }
-                        }}
+                        onClick={togglePlay}
                       >
-                        {isPlaying ? (
+                        {isPlayingGlobal ? (
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M5.5 3.5A1.5 1.5 0 0 1 7 2h2a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 9 14H7a1.5 1.5 0 0 1-1.5-1.5v-9z"/>
                           </svg>
@@ -693,7 +471,7 @@ const MusicPlayer = () => {
                         )}
                       </button>
                       
-                      <button className="control-btn" onClick={playNext}>
+                      <button className="control-btn" onClick={playNextGlobal}>
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                           <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05 1.107A.7.7 0 0 0 1 1.712v12.588a.7.7 0 0 0 1.05.606L12 8.149V13.3a.7.7 0 0 0 1.4 0V1.7a.7.7 0 0 0-.7-.7z"/>
                         </svg>
@@ -703,16 +481,14 @@ const MusicPlayer = () => {
                     {getURLType(currentSong.url) === 'audio' && (
                       <div className="progress-section">
                         <DraggableProgressBar
-                          value={audioProgress}
+                          value={ctxProgress}
                           onChange={(value) => {
-                            setAudioProgress(value);
-                            if (audioRef.current) {
-                              audioRef.current.currentTime = value * audioRef.current.duration / 100;
-                            }
+                            const newTime = (value / 100) * (ctxDuration || 0)
+                            seekTo(newTime)
                           }}
                           min={0}
                           max={100}
-                          label={`${musicCurrentTime} / ${musicTotalLength}`}
+                          label={`${formatTime(ctxCurrentTime || 0)} / ${formatTime(ctxDuration || 0)}`}
                           color="#87CEEB"
                           height={6}
                           showValue={false}
@@ -733,9 +509,6 @@ const MusicPlayer = () => {
                         onChange={(e) => {
                           const newVolume = parseFloat(e.target.value);
                           setVolume(newVolume);
-                          if (isYouTubeVideo) {
-                            updateYouTubeVolume(newVolume);
-                          }
                         }}
                         className="volume-slider"
                       />
@@ -797,11 +570,11 @@ const MusicPlayer = () => {
                   {songs.map((song, index) => (
                     <div
                       key={song._id}
-                      className={`song-row ${currentSongIndex === index ? 'active' : ''}`}
-                      onClick={() => playSong(index)}
+                      className={`song-row ${ctxCurrentSongIndex === index ? 'active' : ''}`}
+                      onClick={() => playFromContext(index, songs)}
                     >
                       <div className="song-col song-number">
-                        {currentSongIndex === index && isPlaying ? (
+                        {ctxCurrentSongIndex === index && isPlayingGlobal ? (
                           <div className="playing-indicator">
                             <div className="bar"></div>
                             <div className="bar"></div>
@@ -869,56 +642,9 @@ const MusicPlayer = () => {
               </div>
             )}
           </div>
+          {/* Embedded Mini Player (contained) */}
+          <EmbeddedMiniPlayer />
         </div>
-      )}
-      
-      {/* Audio Element */}
-      {currentSong && getURLType(currentSong.url) === 'audio' && (
-        <audio
-          ref={audioRef}
-          src={currentSong.url}
-          onEnded={playNext}
-          onTimeUpdate={handleAudioUpdate}
-          onLoadStart={() => {
-            console.log('Audio load started');
-            if (audioRef.current) {
-              audioRef.current.volume = volume;
-            }
-          }}
-          onCanPlay={() => {
-            console.log('Audio can play');
-            if (audioRef.current) {
-              audioRef.current.volume = volume;
-              console.log('Audio volume set to:', audioRef.current.volume);
-              console.log('Audio muted:', audioRef.current.muted);
-            }
-          }}
-          onPlay={() => {
-            console.log('Audio started playing');
-            if (audioRef.current) {
-              audioRef.current.volume = volume;
-              console.log('Current volume:', audioRef.current.volume);
-            }
-          }}
-          onPause={() => console.log('Audio paused')}
-          onError={(e) => {
-            console.error('Audio error:', e);
-            console.error('Audio src:', currentSong.url);
-          }}
-          preload="metadata"
-          crossOrigin="anonymous"
-        />
-      )}
-      
-      {/* YouTube Player */}
-      {currentSong && isYouTubeVideo && currentVideoId && (
-        <YouTubePlayer
-          ref={youtubePlayerRef}
-          videoId={currentVideoId}
-          onReady={handleYouTubeReady}
-          onStateChange={handleYouTubeStateChange}
-          volume={volume * 100}
-        />
       )}
     </div>
   )

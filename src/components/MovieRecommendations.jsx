@@ -132,9 +132,12 @@ const MovieRecommendations = () => {
     try {
       console.log('🔄 Loading liked items...')
       
-      // Use direct fetch to bypass any service issues
-      const response = await fetch('http://localhost:5001/api/movie-likes')
-      const data = await response.json()
+      // Eski: doğrudan localhost'a fetch atıyordu
+      // const response = await fetch('http://localhost:5001/api/movie-likes')
+      // const data = await response.json()
+      
+      // Yeni: service üzerinden, VITE_API_BASE_URL kullanarak
+      const data = await movieLikesService.getAll()
       console.log('📡 API response:', data)
       console.log('📊 Response type:', typeof data, 'Is array:', Array.isArray(data))
       

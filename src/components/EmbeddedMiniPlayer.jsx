@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { usePlayer } from '../contexts/PlayerContext';
-import YouTubePlayer from './YouTubePlayer';
+// Removed: import YouTubePlayer from './YouTubePlayer';
 import './EmbeddedMiniPlayer.css';
 
 const EmbeddedMiniPlayer = () => {
@@ -13,15 +13,15 @@ const EmbeddedMiniPlayer = () => {
     progress,
     currentTime,
     duration,
-    playerType,
-    currentVideoId,
+    // Removed: playerType,
+    // Removed: currentVideoId,
     togglePlay,
     playNext,
     playPrevious,
     seekTo,
     setPlayerVolume,
-    handleYouTubeReady,
-    handleYouTubeStateChange
+    // Removed: handleYouTubeReady,
+    // Removed: handleYouTubeStateChange
   } = usePlayer();
 
   // Format time display
@@ -54,17 +54,7 @@ const EmbeddedMiniPlayer = () => {
 
   return (
     <div className={`embedded-mini-player ${isExpanded ? 'expanded' : 'compact'}`}>
-      {/* YouTube Player (hidden) */}
-      {playerType === 'youtube' && currentVideoId && (
-        <div style={{ display: 'none' }}>
-          <YouTubePlayer
-            videoId={currentVideoId}
-            onReady={handleYouTubeReady}
-            onStateChange={handleYouTubeStateChange}
-            autoplay={true}
-          />
-        </div>
-      )}
+      {/* Removed internal YouTubePlayer. We now rely on the global instance mounted in GlobalHeroPlayer */}
 
       {/* Compact Player Content */}
       <div className="embedded-player-content">

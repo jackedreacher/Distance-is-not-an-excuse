@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const YouTubePlayer = ({ videoId, onReady, onStateChange, autoplay = false, controls = true }) => {
+const YouTubePlayer = ({ videoId, onReady, onStateChange, autoplay = false, controls = true, privacyEnhanced = true }) => {
   const playerRef = useRef(null);
   const [player, setPlayer] = useState(null);
   const [isAPIReady, setIsAPIReady] = useState(false);
@@ -28,6 +28,7 @@ const YouTubePlayer = ({ videoId, onReady, onStateChange, autoplay = false, cont
         height: '100%',
         width: '100%',
         videoId: videoId,
+        host: privacyEnhanced ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com',
         playerVars: {
           autoplay: autoplay ? 1 : 0,
           controls: controls ? 1 : 0,
@@ -37,7 +38,8 @@ const YouTubePlayer = ({ videoId, onReady, onStateChange, autoplay = false, cont
           fs: 0,
           cc_load_policy: 0,
           iv_load_policy: 3,
-          autohide: 0
+          autohide: 0,
+          origin: window.location.origin
         },
         events: {
           onReady: (event) => {
@@ -50,7 +52,7 @@ const YouTubePlayer = ({ videoId, onReady, onStateChange, autoplay = false, cont
         }
       });
     }
-  }, [isAPIReady, videoId, player, autoplay, controls, onStateChange]);
+  }, [isAPIReady, videoId, player, autoplay, controls, onStateChange, privacyEnhanced]);
 
   // Video değiştiğinde player'ı güncelle
   useEffect(() => {
@@ -59,33 +61,42 @@ const YouTubePlayer = ({ videoId, onReady, onStateChange, autoplay = false, cont
     }
   }, [player, videoId]);
 
+  const isAttached = () => {
+    try {
+      const iframe = player?.getIframe?.();
+      return !!(iframe && document.body.contains(iframe));
+    } catch {
+      return false;
+    }
+  };
+
   // Player kontrolları
   const play = () => {
-    if (player) player.playVideo();
+    if (player && isAttached()) player.playVideo();
   };
 
   const pause = () => {
-    if (player) player.pauseVideo();
+    if (player && isAttached()) player.pauseVideo();
   };
 
   const stop = () => {
-    if (player) player.stopVideo();
+    if (player && isAttached()) player.stopVideo();
   };
 
   const setVolume = (volume) => {
-    if (player) player.setVolume(volume);
+    if (player && isAttached()) player.setVolume(volume);
   };
 
   const getCurrentTime = () => {
-    return player ? player.getCurrentTime() : 0;
+    return player && isAttached() ? player.getCurrentTime() : 0;
   };
 
   const getDuration = () => {
-    return player ? player.getDuration() : 0;
+    return player && isAttached() ? player.getDuration() : 0;
   };
 
   const seekTo = (seconds) => {
-    if (player) player.seekTo(seconds);
+    if (player && isAttached()) player.seekTo(seconds, true);
   };
 
   // Player kontrollarını parent component'e gönder
@@ -105,8 +116,8 @@ const YouTubePlayer = ({ videoId, onReady, onStateChange, autoplay = false, cont
   }, [player]);
 
   return (
-    <div className="youtube-player-container" style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}>
-      <div ref={playerRef} style={{ width: '1px', height: '1px' }} />
+    <div className="youtube-player-container" style={{ position: 'fixed', bottom: 0, left: 0, width: '320px', height: '200px', opacity: 0, pointerEvents: 'none', zIndex: -1 }}>
+      <div ref={playerRef} style={{ width: '100%', height: '100%' }} />
     </div>
   );
 };

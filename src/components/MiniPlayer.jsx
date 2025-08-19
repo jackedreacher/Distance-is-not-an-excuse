@@ -1,7 +1,8 @@
 import { } from 'react';
 import { usePlayer } from '../contexts/PlayerContext';
-import YouTubePlayer from './YouTubePlayer';
+// Removed: import YouTubePlayer from './YouTubePlayer';
 import './MiniPlayer.css';
+import { Link } from 'react-router-dom';
 
 const MiniPlayer = () => {
   const {
@@ -11,8 +12,8 @@ const MiniPlayer = () => {
     progress,
     currentTime,
     duration,
-    playerType,
-    currentVideoId,
+    // Removed: playerType,
+    // Removed: currentVideoId,
     miniPlayerVisible,
     isExpanded,
     setIsExpanded,
@@ -22,8 +23,8 @@ const MiniPlayer = () => {
     seekTo,
     setPlayerVolume,
     hideMiniPlayer,
-    handleYouTubeReady,
-    handleYouTubeStateChange
+    // Removed: handleYouTubeReady,
+    // Removed: handleYouTubeStateChange
   } = usePlayer();
 
   // Format time display
@@ -50,23 +51,30 @@ const MiniPlayer = () => {
     setPlayerVolume(newVolume);
   };
 
-  if (!miniPlayerVisible || !currentSong) {
+  // Empty state: no song has been selected/played yet
+  if (!currentSong) {
+    return (
+      <div className="mini-player empty">
+        <div className="mini-player-content">
+          <div className="mini-empty-icon">🎧</div>
+          <div className="mini-empty-text">
+            <div className="mini-empty-title">Henüz müzik açmadın</div>
+            <div className="mini-empty-subtitle">Sevdiğimiz şarkılardan birini seçmek için müzik sayfasına gidelim</div>
+          </div>
+          <Link to="/music-playlist" className="mini-empty-btn">Müzik çalara git</Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Respect user choice to hide the mini-player when a song exists
+  if (!miniPlayerVisible) {
     return null;
   }
 
   return (
     <div className={`mini-player ${isExpanded ? 'expanded' : 'collapsed'}`}>
-      {/* YouTube Player (hidden) */}
-      {playerType === 'youtube' && currentVideoId && (
-        <div style={{ display: 'none' }}>
-          <YouTubePlayer
-            videoId={currentVideoId}
-            onReady={handleYouTubeReady}
-            onStateChange={handleYouTubeStateChange}
-            autoplay={true}
-          />
-        </div>
-      )}
+      {/* Removed internal YouTubePlayer. Using global YouTube instance only. */}
 
       {/* Mini Player Content */}
       <div className="mini-player-content">

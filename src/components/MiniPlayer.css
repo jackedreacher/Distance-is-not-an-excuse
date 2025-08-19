@@ -1,0 +1,51 @@
+.mini-player.empty {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 40;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  backdrop-filter: blur(8px);
+  padding: 12px 14px;
+}
+
+.mini-player.empty .mini-player-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mini-empty-icon {
+  font-size: 20px;
+}
+
+.mini-empty-text {
+  flex: 1;
+}
+
+.mini-empty-title {
+  font-weight: 600;
+  color: #111827;
+}
+
+.mini-empty-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.mini-empty-btn {
+  background: #111827;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.mini-empty-btn:hover {
+  background: #0b1220;
+  transform: translateY(-1px);
+}

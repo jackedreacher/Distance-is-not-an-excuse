@@ -1,4 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useRef, useEffect } from 'react';
+import youtubeApi from '../services/youtubeApi';
 
 const PlayerContext = createContext();
 
@@ -31,6 +33,73 @@ export const PlayerProvider = ({ children }) => {
   
   // Audio ref for direct audio files
   const audioRef = useRef(null);
+
+  // --- Persistence: load from localStorage on mount ---
+  useEffect(() => {
+    try {
+      const savedSongs = localStorage.getItem('player:songs');
+      const savedIndex = localStorage.getItem('player:currentIndex');
+      const savedType = localStorage.getItem('player:type');
+      const savedVideoId = localStorage.getItem('player:ytVideoId');
+      const savedVolume = localStorage.getItem('player:volume');
+
+      if (savedSongs) setSongs(JSON.parse(savedSongs));
+      if (savedIndex !== null) setCurrentSongIndex(parseInt(savedIndex, 10));
+      if (savedType) setPlayerType(savedType);
+      if (savedVideoId) setCurrentVideoId(savedVideoId);
+      if (savedVolume !== null) setVolume(Math.max(0, Math.min(1, parseFloat(savedVolume))));
+    } catch (e) {
+      console.warn('Player state restore failed:', e);
+    }
+  }, []);
+
+  // If we have a valid current song, show mini player after hydration
+  useEffect(() => {
+    if (currentSongIndex >= 0 && currentSongIndex < songs.length) {
+      setMiniPlayerVisible(true);
+    }
+  }, [currentSongIndex, songs.length]);
+
+  // --- Persistence: save to localStorage on changes ---
+  useEffect(() => {
+    try {
+      localStorage.setItem('player:songs', JSON.stringify(songs));
+    } catch (e) {
+      console.warn('Persist songs failed:', e);
+    }
+  }, [songs]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('player:currentIndex', String(currentSongIndex));
+    } catch (e) {
+      console.warn('Persist current index failed:', e);
+    }
+  }, [currentSongIndex]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('player:type', playerType);
+    } catch (e) {
+      console.warn('Persist player type failed:', e);
+    }
+  }, [playerType]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('player:ytVideoId', currentVideoId || '');
+    } catch (e) {
+      console.warn('Persist video id failed:', e);
+    }
+  }, [currentVideoId]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('player:volume', String(volume));
+    } catch (e) {
+      console.warn('Persist volume failed:', e);
+    }
+  }, [volume]);
 
   // Initialize audio element if it doesn't exist
   useEffect(() => {
@@ -107,10 +176,20 @@ export const PlayerProvider = ({ children }) => {
   // YouTube player handlers
   const handleYouTubeReady = (playerControls) => {
     setYoutubePlayer(playerControls);
+    // Player hazır olduğunda sesi mevcut seviyeye ayarla
+    try {
+      if (playerControls?.setVolume) {
+        playerControls.setVolume(volume * 100);
+      }
+    } catch (e) {
+      // sessizce yut: bazı tarayıcılarda hazır olmadan setVolume hata fırlatabilir
+      void e;
+    }
   };
 
   // Track interval for YouTube time updates
   const youtubeTimerRef = useRef(null);
+  const youtubeMetaTimerRef = useRef(null);
 
   const clearYouTubeTimer = () => {
     if (youtubeTimerRef.current) {
@@ -119,8 +198,23 @@ export const PlayerProvider = ({ children }) => {
     }
   };
 
+  const clearYouTubeMetaTimer = () => {
+    if (youtubeMetaTimerRef.current) {
+      clearInterval(youtubeMetaTimerRef.current);
+      youtubeMetaTimerRef.current = null;
+    }
+  };
+
   const handleYouTubeStateChange = (evtOrState) => {
     const state = typeof evtOrState === 'number' ? evtOrState : evtOrState?.data;
+    if (import.meta.env.DEV) {
+      console.debug('[YT] onStateChange:', state, {
+        isPlaying,
+        hasPlayer: !!youtubePlayer,
+        ct: youtubePlayer?.getCurrentTime?.(),
+        dur: youtubePlayer?.getDuration?.(),
+      });
+    }
     // YouTube Player States: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (video cued)
     if (state === 1) { // Playing
       setIsPlaying(true);
@@ -135,22 +229,147 @@ export const PlayerProvider = ({ children }) => {
           setProgress(dur ? (ct / dur) * 100 : 0);
         }
       }, 500);
+      if (import.meta.env.DEV) console.debug('[YT] timer started via state=PLAYING');
     } else if (state === 2) { // Paused
       setIsPlaying(false);
+      // Güncel değerleri bir kez çekerek UI'ı senkron tut
+      if (youtubePlayer) {
+        const ct = youtubePlayer.getCurrentTime?.() ?? 0;
+        const dur = youtubePlayer.getDuration?.() ?? 0;
+        setCurrentTime(ct);
+        setDuration(dur || 0);
+        setProgress(dur ? (ct / dur) * 100 : 0);
+      }
       clearYouTubeTimer();
+      if (import.meta.env.DEV) console.debug('[YT] timer cleared via state=PAUSED');
     } else if (state === 0) { // Ended
       setIsPlaying(false);
       clearYouTubeTimer();
+      if (import.meta.env.DEV) console.debug('[YT] ended, playNext');
       playNext();
+    } else if (state === 5 || state === 3) { // Cued or Buffering
+      // Metadata hazır olana kadar kısa süreliğine duration'ı poll et
+      if (!youtubeMetaTimerRef.current) {
+        let attempts = 0;
+        youtubeMetaTimerRef.current = setInterval(() => {
+          attempts += 1;
+          if (!youtubePlayer) return;
+          const dur = youtubePlayer.getDuration?.() ?? 0;
+          const ct = youtubePlayer.getCurrentTime?.() ?? 0;
+          if (dur > 0) {
+            setDuration(dur);
+            setCurrentTime(ct);
+            setProgress(dur ? (ct / dur) * 100 : 0);
+            clearYouTubeMetaTimer();
+            if (import.meta.env.DEV) console.debug('[YT] meta ready (state 3/5), cleared meta poller');
+          } else if (attempts > 30) {
+            // 9 saniye sonra bırak (30 * 300ms)
+            clearYouTubeMetaTimer();
+            if (import.meta.env.DEV) console.debug('[YT] meta poller gave up');
+          }
+        }, 300);
+        if (import.meta.env.DEV) console.debug('[YT] meta poller started (state 3/5)');
+      }
     }
   };
+
+  // Olası yarış koşullarına karşı: isPlaying veya player referansı sonradan gelirse interval başlat
+  useEffect(() => {
+    if (playerType !== 'youtube') return;
+    if (isPlaying && youtubePlayer) {
+      clearYouTubeTimer();
+      youtubeTimerRef.current = setInterval(() => {
+        const ct = youtubePlayer.getCurrentTime?.() ?? 0;
+        const dur = youtubePlayer.getDuration?.() ?? 0;
+        setCurrentTime(ct);
+        setDuration(dur || 0);
+        setProgress(dur ? (ct / dur) * 100 : 0);
+      }, 500);
+      if (import.meta.env.DEV) console.debug('[YT] timer started via effect');
+    } else {
+      clearYouTubeTimer();
+      if (import.meta.env.DEV) console.debug('[YT] timer cleared via effect');
+    }
+  }, [playerType, isPlaying, youtubePlayer]);
+
+  // YouTube player hazır olduğunda ve videoId değiştiğinde videoyu yükle/oynat (hazırlık yarışı koşullarını yakalamak için)
+  useEffect(() => {
+    if (playerType !== 'youtube') return;
+    if (!youtubePlayer || !currentVideoId) return;
+
+    try {
+      if (youtubePlayer.player && typeof youtubePlayer.player.loadVideoById === 'function') {
+        youtubePlayer.player.loadVideoById(currentVideoId);
+      } else if (typeof youtubePlayer.seekTo === 'function') {
+        // Yedek: farklı sarma varsa setCurrentTime ile tetiklenebilir ama burada gerek yok
+      }
+      if (typeof youtubePlayer.play === 'function') {
+        // Autoplay engellenebilir; kullanıcı etkileşimi gerekirse sessizce hata alırız
+        youtubePlayer.play();
+      }
+      if (import.meta.env.DEV) console.debug('[YT] load/play requested for', currentVideoId);
+      // Metadata polling'i tetikle
+      clearYouTubeMetaTimer();
+      let attempts = 0;
+      youtubeMetaTimerRef.current = setInterval(() => {
+        attempts += 1;
+        const dur = youtubePlayer.getDuration?.() ?? 0;
+        const ct = youtubePlayer.getCurrentTime?.() ?? 0;
+        if (dur > 0) {
+          setDuration(dur);
+          setCurrentTime(ct);
+          setProgress(dur ? (ct / dur) * 100 : 0);
+          clearYouTubeMetaTimer();
+          if (import.meta.env.DEV) console.debug('[YT] meta ready after load/play');
+        } else if (attempts > 30) {
+          clearYouTubeMetaTimer();
+          if (import.meta.env.DEV) console.debug('[YT] meta poller gave up after load/play');
+        }
+      }, 300);
+    } catch (e) {
+      console.warn('YouTube video yüklenirken hata:', e);
+    }
+  }, [playerType, youtubePlayer, currentVideoId]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       clearYouTubeTimer();
+      clearYouTubeMetaTimer();
     };
   }, []);
+
+  // Resolve Spotify link to a YouTube URL using song metadata or Spotify oEmbed
+  const resolveSpotifyToYouTube = async (song) => {
+    try {
+      let qTitle = song.title?.trim();
+      let qArtist = song.artist?.trim();
+
+      if ((!qTitle || !qArtist) && song.url) {
+        try {
+          const resp = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(song.url)}`);
+          if (resp.ok) {
+            const meta = await resp.json();
+            if (!qTitle && meta.title) qTitle = meta.title;
+            if (!qArtist && meta.author_name) qArtist = meta.author_name;
+          }
+        } catch (e) {
+          console.warn('Spotify oEmbed alınamadı:', e);
+        }
+      }
+
+      const query = [qTitle, qArtist].filter(Boolean).join(' ');
+      if (!query) return null;
+
+      const results = await youtubeApi.searchMusic(query, 1);
+      if (Array.isArray(results) && results.length > 0) {
+        return results[0].url;
+      }
+    } catch (err) {
+      console.error('Spotify -> YouTube dönüşüm hatası (Context):', err);
+    }
+    return null;
+  };
 
   // Playback controls
   const playSong = async (index, songList = null) => {
@@ -161,8 +380,23 @@ export const PlayerProvider = ({ children }) => {
     const targetSongs = songList || songs;
     if (index < 0 || index >= targetSongs.length) return;
 
-    const song = targetSongs[index];
-    const urlType = getURLType(song.url);
+    let song = targetSongs[index];
+    let urlType = getURLType(song.url);
+
+    // If it's a Spotify link, try resolving to YouTube on the fly
+    if (song.url && song.url.includes('spotify.com')) {
+      const ytUrl = await resolveSpotifyToYouTube(song);
+      if (ytUrl) {
+        urlType = 'youtube';
+        song = { ...song, url: ytUrl };
+        // persist into local state list so subsequent plays are instant
+        const updated = [...targetSongs];
+        updated[index] = song;
+        setSongs(updated);
+      } else {
+        console.warn('Spotify bağlantısı çözümlenemedi.');
+      }
+    }
 
     // Stop current playback
     if (audioRef.current) {
@@ -189,9 +423,14 @@ export const PlayerProvider = ({ children }) => {
       const videoId = extractYouTubeId(song.url);
       setCurrentVideoId(videoId);
       
+      // Wait for controls to be ready; use underlying player if exposed
       if (youtubePlayer && videoId) {
-        youtubePlayer.loadVideoById(videoId);
-        youtubePlayer.play();
+        if (youtubePlayer.player && typeof youtubePlayer.player.loadVideoById === 'function') {
+          youtubePlayer.player.loadVideoById(videoId);
+        }
+        if (typeof youtubePlayer.play === 'function') {
+          youtubePlayer.play();
+        }
       }
     }
   };
@@ -232,8 +471,35 @@ export const PlayerProvider = ({ children }) => {
   const seekTo = (time) => {
     if (playerType === 'audio' && audioRef.current) {
       audioRef.current.currentTime = time;
+      // UI'yı anında senkron tut
+      const dur = audioRef.current.duration || 0;
+      const ct = audioRef.current.currentTime || 0;
+      setCurrentTime(ct);
+      setDuration(dur);
+      setProgress(dur ? (ct / dur) * 100 : 0);
     } else if (playerType === 'youtube' && youtubePlayer) {
       youtubePlayer.seekTo(time);
+      // Anında UI senkronizasyonu (YouTube)
+      try {
+        const dur = youtubePlayer.getDuration?.() ?? duration;
+        const ct = youtubePlayer.getCurrentTime?.() ?? time;
+        setDuration(dur || 0);
+        setCurrentTime(ct || 0);
+        setProgress(dur ? (ct / dur) * 100 : 0);
+      } catch {
+        // sessizce geç
+      }
+      // Oynatma sürüyorsa polling'i yeniden başlat (olası clear durumlarına karşı)
+      if (isPlaying) {
+        clearYouTubeTimer();
+        youtubeTimerRef.current = setInterval(() => {
+          const ct2 = youtubePlayer.getCurrentTime?.() ?? 0;
+          const dur2 = youtubePlayer.getDuration?.() ?? 0;
+          setCurrentTime(ct2);
+          setDuration(dur2 || 0);
+          setProgress(dur2 ? (ct2 / dur2) * 100 : 0);
+        }, 500);
+      }
     }
   };
 

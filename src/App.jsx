@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import './App.css'
 
 // Import utility functions
@@ -9,6 +9,7 @@ import { calculateTimeDifference } from './utils/timeUtils'
 import CountdownTimer from './components/CountdownTimer'
 import GiftBox from './components/GiftBox'
 import Navigation from './components/Navigation'
+import MiniPlayer from './components/MiniPlayer'
 
 // Import pages
 import WeatherPage from './pages/WeatherPage'
@@ -23,13 +24,19 @@ import SurpriseNotificationsPage from './pages/SurpriseNotificationsPage'
 
 // Import Contexts
 import { SocketProvider } from './contexts/SocketContext.jsx'
+import GlobalHeroPlayer from './components/GlobalHeroPlayer'
+import { usePlayer } from './contexts/PlayerContext.jsx'
 
 function App() {
   const [daysApart, setDaysApart] = useState(0)
   const [hoursApart, setHoursApart] = useState(0)
   const [minutesApart, setMinutesApart] = useState(0)
   const [secondsApart, setSecondsApart] = useState(0)
-  
+  // Hero Player Visibility State
+  const [showHeroPlayer, setShowHeroPlayer] = useState(false)
+  // Swipe state for hero drawer
+  const [heroTouchStartX, setHeroTouchStartX] = useState(null)
+  const [heroSwipeHandled, setHeroSwipeHandled] = useState(false)
   // Mobile interactive features
   const [giftBoxTaps, setGiftBoxTaps] = useState(0)
   const [giftBoxOpen, setGiftBoxOpen] = useState(false)
@@ -38,9 +45,14 @@ function App() {
   const [touchStartY, setTouchStartY] = useState(0)
   const [squirrelMessage, setSquirrelMessage] = useState('')
 
+  const { currentSong, currentVideoId } = usePlayer()
+  const navigate = useNavigate()
+
   // Pull to refresh functionality
   const handleTouchStart = (e) => {
     setTouchStartY(e.touches[0].clientY)
+    setHeroTouchStartX(e.touches[0].clientX)
+    setHeroSwipeHandled(false)
   }
 
   const handleTouchMove = (e) => {
@@ -49,6 +61,23 @@ function App() {
     
     if (diff > 100 && window.scrollY === 0) {
       setPullToRefresh(true)
+    }
+
+    // Horizontal swipe for right-side drawer
+    const touchX = e.touches[0].clientX
+    const startX = heroTouchStartX ?? touchX
+    const deltaX = touchX - startX
+    if (!heroSwipeHandled) {
+      // Close when swiping to the right while drawer is open
+      if (showHeroPlayer && deltaX > 60) {
+        setShowHeroPlayer(false)
+        setHeroSwipeHandled(true)
+      }
+      // Open when swiping from the right edge to the left while drawer is closed
+      else if (!showHeroPlayer && startX > window.innerWidth - 24 && deltaX < -60) {
+        setShowHeroPlayer(true)
+        setHeroSwipeHandled(true)
+      }
     }
   }
 
@@ -60,6 +89,17 @@ function App() {
         window.location.reload()
       }, 1000)
     }
+    setHeroTouchStartX(null)
+    setHeroSwipeHandled(false)
+  }
+
+  // When clicking the hero player toggle, if there is no current song/video yet, go to playlist
+  const handleHeroToggleClick = () => {
+    if (!showHeroPlayer && !currentSong && !currentVideoId) {
+      navigate('/music-playlist')
+      return
+    }
+    setShowHeroPlayer((v) => !v)
   }
 
   useEffect(() => {
@@ -77,6 +117,17 @@ function App() {
     return () => clearInterval(interval)
   }, [])
 
+  // Close drawer on ESC key
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape' && showHeroPlayer) {
+        setShowHeroPlayer(false)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [showHeroPlayer])
+
   return (
       <SocketProvider>
           <div
@@ -87,6 +138,31 @@ function App() {
           >
             {/* Navigation */}
             <Navigation />
+
+            {/* Hero Player Toggle Button (only when closed) */}
+            {!showHeroPlayer && (
+              <button
+                type="button"
+                className={`hero-toggle-btn ${showHeroPlayer ? 'open' : ''}`}
+                aria-label={showHeroPlayer ? 'Müzik çalarını gizle' : 'Müzik çalarını aç'}
+                onClick={handleHeroToggleClick}
+              >
+                {showHeroPlayer ? '− Çaları Gizle' : '🎵 Çaları Aç'}
+              </button>
+            )}
+
+            {/* Backdrop for Right-side Drawer */}
+            {showHeroPlayer && (
+              <div
+                className={`hero-backdrop ${showHeroPlayer ? 'open' : ''}`}
+                onClick={() => setShowHeroPlayer(false)}
+              />
+            )}
+
+            {/* Right-side Drawer for GlobalHeroPlayer */}
+            <div className={`hero-drawer ${showHeroPlayer ? 'open' : ''}`}>
+              <GlobalHeroPlayer onClose={() => setShowHeroPlayer(false)} />
+            </div>
             
             {/* Pull to refresh indicator */}
             {pullToRefresh && (
@@ -121,6 +197,7 @@ function App() {
             />
             
             <div className="main-content">
+              {/* Removed inline GlobalHeroPlayer rendering to avoid nesting inside content */}
               <Routes>
                 {/* Main page with interactive components */}
                 <Route path="/" element={

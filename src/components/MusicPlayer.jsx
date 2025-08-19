@@ -111,15 +111,68 @@ const MusicPlayer = () => {
     }))
   }
 
+  // Helper: detect url type
+  const getURLType = (url) => {
+    if (!url) return 'unknown';
+    if (url.includes('youtube.com') || url.includes('youtu.be')) return 'youtube';
+    if (url.includes('spotify.com')) return 'spotify';
+    if (url.match(/\.(mp3|wav|ogg|m4a|flac|aac)$/i)) return 'audio';
+    return 'unknown';
+  };
+
+  // Resolve Spotify link to playable YouTube URL using title/artist or oEmbed fallback
+  const resolveSpotifyToYouTube = async (song) => {
+    try {
+      let qTitle = song.title?.trim();
+      let qArtist = song.artist?.trim();
+
+      // If title/artist are missing, try Spotify oEmbed to fetch metadata
+      if ((!qTitle || !qArtist) && song.url) {
+        try {
+          const resp = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(song.url)}`);
+          if (resp.ok) {
+            const meta = await resp.json();
+            // meta.title is typically like "Song Name"
+            if (!qTitle && meta.title) qTitle = meta.title;
+            if (!qArtist && meta.author_name) qArtist = meta.author_name;
+          }
+        } catch (e) {
+          console.warn('Spotify oEmbed alınamadı:', e);
+        }
+      }
+
+      const query = [qTitle, qArtist].filter(Boolean).join(' ');
+      if (!query) return null;
+
+      const results = await youtubeApi.searchMusic(query, 1);
+      if (Array.isArray(results) && results.length > 0) {
+        return results[0].url; // https://www.youtube.com/watch?v=...
+      }
+    } catch (err) {
+      console.error('Spotify -> YouTube dönüşüm hatası:', err);
+    }
+    return null;
+  };
+
   const handleAddSong = async () => {
     if (!newSong.title.trim() || !newSong.artist.trim() || !newSong.user) return
 
     try {
-      const songData = {
-        ...newSong
+      let finalSongData = { ...newSong };
+
+      // If Spotify URL entered, try to convert to a playable YouTube URL before saving
+      const urlType = getURLType(finalSongData.url);
+      if (urlType === 'spotify') {
+        const ytUrl = await resolveSpotifyToYouTube(finalSongData);
+        if (ytUrl) {
+          finalSongData.url = ytUrl;
+        } else {
+          alert('Spotify bağlantısını doğrudan çalamıyoruz. YouTube aramasıyla eşleşme bulunamadı. Lütfen YouTube bağlantısı veya ses dosyası URL’si girin ya da YouTube arama panelinden seçim yapın.');
+          return;
+        }
       }
 
-      const data = await musicService.add(songData)
+      const data = await musicService.add(finalSongData)
       // Backend now returns song directly, not wrapped in song property
       if (data && data.title) {
         const updatedSongs = [data, ...songs];
@@ -138,20 +191,6 @@ const MusicPlayer = () => {
       console.error('Error saving song:', error)
     }
   }
-
-  const getURLType = (url) => {
-    if (!url) return 'unknown';
-    
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      return 'youtube';
-    } else if (url.includes('spotify.com')) {
-      return 'spotify';
-    } else if (url.match(/\.(mp3|wav|ogg|m4a|flac|aac)$/i)) {
-      return 'audio';
-    } else {
-      return 'unknown';
-    }
-  };
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -326,6 +365,9 @@ const MusicPlayer = () => {
                   🔍 YouTube'da Ara
                 </button>
               </div>
+              <p style={{fontSize:'12px', color:'#9aa4b2', marginTop:'6px'}}>
+                İpucu: Spotify linki eklerseniz otomatik olarak YouTube eşleşmesi bulunup kaydedilir.
+              </p>
             </div>
             
             {/* YouTube Search Panel */}

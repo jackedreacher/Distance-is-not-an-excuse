@@ -1494,6 +1494,100 @@ body::before {
   }
 }
 
+/* Search Bar Styles */
+.search-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 20px;
+  border: 2px solid rgba(135, 206, 235, 0.3);
+  border-radius: 25px;
+  font-size: 16px;
+  background: rgba(135, 206, 235, 0.1);
+  color: #87CEEB;
+  transition: all 0.3s ease;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: #87CEEB;
+  background: rgba(135, 206, 235, 0.2);
+  box-shadow: 0 0 10px rgba(135, 206, 235, 0.3);
+}
+
+.search-bar::placeholder {
+  color: rgba(135, 206, 235, 0.7);
+}
+
+/* Like Button Styles */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.like-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  color: rgba(135, 206, 235, 0.5);
+}
+
+.like-btn:hover {
+  background: rgba(135, 206, 235, 0.1);
+  transform: scale(1.1);
+}
+
+.like-btn.liked {
+  color: #ff6b6b;
+  animation: heartBeat 0.6s ease;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Empty Watchlist Styles */
+.empty-watchlist {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(135, 206, 235, 0.8);
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-watchlist h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #87CEEB;
+}
+
+.empty-watchlist p {
+  font-size: 16px;
+  opacity: 0.7;
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
 /* Responsive design for motivation */
 @media (max-width: 768px) {
   .motivation-card {
@@ -3534,7 +3628,7 @@ body::before {
 }
 
 .song-title {
-  color: #ffffff;
+  color: #87CEEB;
   font-size: 1rem;
   font-weight: 500;
   margin: 0;
@@ -3587,8 +3681,8 @@ body::before {
 }
 
 .action-btn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  color: #87CEEB;
+  background: rgba(135, 206, 235, 0.1);
 }
 
 .delete-btn:hover {

@@ -21,6 +21,7 @@ const songRoutes = require('./routes/songs');
 const surpriseRoutes = require('./routes/surprises');
 const taskRoutes = require('./routes/tasks');
 const eventRoutes = require('./routes/events');
+const movieLikesRoutes = require('./routes/movieLikes');
 
 // Initialize app
 const app = express();
@@ -93,6 +94,7 @@ app.use('/api/songs', songRoutes);
 app.use('/api/surprises', surpriseRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/movie-likes', movieLikesRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

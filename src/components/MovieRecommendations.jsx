@@ -9,11 +9,13 @@ import {
   formatRuntime,
   getGenreNames,
   fetchMovieGenres,
-  fetchTVGenres
+  fetchTVGenres,
+  searchContent
 } from '../utils/movieUtils'
+import { movieLikesService } from '../services/api'
 
 const PAGE_SIZE = 6
-const MAX_ITEMS = 120 // Artık 100+ içerik için
+const MAX_ITEMS = 1000 // Daha fazla içerik (1000 film ve 1000 dizi)
 
 const MovieRecommendations = () => {
   const [movies, setMovies] = useState([])
@@ -26,20 +28,36 @@ const MovieRecommendations = () => {
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [moviePage, setMoviePage] = useState(1)
   const [tvPage, setTVPage] = useState(1)
+  const [watchlistPage, setWatchlistPage] = useState(1)
   const [movieGenres, setMovieGenres] = useState([])
   const [tvGenres, setTVGenres] = useState([])
   const [selectedMovieGenre, setSelectedMovieGenre] = useState('')
   const [selectedTVGenre, setSelectedTVGenre] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [likedItems, setLikedItems] = useState([])
   const modalRef = useRef(null)
+  // Global search mode state
+  const [searchMode, setSearchMode] = useState('local') // 'local' | 'global'
+  const [globalResults, setGlobalResults] = useState({ movies: [], tvShows: [] })
+  const [isGlobalSearching, setIsGlobalSearching] = useState(false)
+  const debounceRef = useRef(null)
 
   useEffect(() => {
     loadContent()
     fetchGenres()
+    loadLikedItems()
+    
     const interval = setInterval(() => {
       loadContent()
     }, 60 * 60 * 1000) // 1 saat
     return () => clearInterval(interval)
   }, [])
+
+  // Debug likedItems state changes
+  useEffect(() => {
+    console.log('🎯 likedItems state changed:', likedItems.length, 'items')
+    console.log('📋 Current likedItems:', likedItems)
+  }, [likedItems])
 
   useEffect(() => {
     if (selectedItem && modalRef.current) {
@@ -50,6 +68,30 @@ const MovieRecommendations = () => {
     }
   }, [selectedItem])
 
+  // Global TMDB search (debounced)
+  useEffect(() => {
+    if (searchMode !== 'global') return
+    if (!searchQuery || searchQuery.trim().length < 2) {
+      setGlobalResults({ movies: [], tvShows: [] })
+      return
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(async () => {
+      setIsGlobalSearching(true)
+      try {
+        const results = await searchContent(searchQuery)
+        setGlobalResults(results)
+      } catch (e) {
+        console.error('Global search error:', e)
+      } finally {
+        setIsGlobalSearching(false)
+      }
+    }, 400)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [searchQuery, searchMode])
+  
   const fetchGenres = async () => {
     const [movieGenresData, tvGenresData] = await Promise.all([
       fetchMovieGenres(),
@@ -86,13 +128,108 @@ const MovieRecommendations = () => {
     setLoading(false)
   }
 
+  const loadLikedItems = async () => {
+    try {
+      console.log('🔄 Loading liked items...')
+      
+      // Use direct fetch to bypass any service issues
+      const response = await fetch('http://localhost:5001/api/movie-likes')
+      const data = await response.json()
+      console.log('📡 API response:', data)
+      console.log('📊 Response type:', typeof data, 'Is array:', Array.isArray(data))
+      
+      if (Array.isArray(data)) {
+        console.log('✅ Setting state with', data.length, 'items')
+        // Convert database items to the format expected by the component
+        const formattedLikes = data.map(item => ({
+          id: item.movieId,
+          type: item.type,
+          title: item.title,
+          poster_path: item.posterPath,
+          overview: item.overview,
+          release_date: item.releaseDate,
+          vote_average: item.voteAverage,
+          genre_ids: item.genres,
+          original_title: item.originalTitle,
+          original_language: item.originalLanguage
+        }))
+        console.log('🎬 Formatted likes:', formattedLikes)
+        setLikedItems(formattedLikes)
+        console.log('✅ State set with', formattedLikes.length, 'items')
+      } else {
+        console.log('❌ No data received or not an array')
+        setLikedItems([])
+      }
+    } catch (error) {
+      console.error('💥 Error loading liked items:', error)
+      setLikedItems([])
+    }
+  }
+
   // Pagination helpers
   const getPagedItems = (items, page) => {
     const start = (page - 1) * PAGE_SIZE
     return items.slice(start, start + PAGE_SIZE)
   }
-  const totalMoviePages = Math.ceil(movies.length / PAGE_SIZE)
-  const totalTVPages = Math.ceil(tvShows.length / PAGE_SIZE)
+
+  // Like system
+  const toggleLike = async (item, type) => {
+    console.log('toggleLike called with:', { item, type })
+    console.log('Current likedItems:', likedItems)
+    const itemWithType = { ...item, type }
+    const isLiked = likedItems.some(liked => liked.id === item.id && liked.type === type)
+    console.log('isLiked:', isLiked)
+    
+    try {
+      if (isLiked) {
+        // Unlike: remove from database and local state
+        console.log('Unliking item...')
+        const response = await movieLikesService.unlike(item.id, type)
+        console.log('Unlike response:', response)
+        setLikedItems(prev => prev.filter(liked => !(liked.id === item.id && liked.type === type)))
+      } else {
+        // Like: add to database and local state
+        const movieData = {
+          gender: 'male', // Default gender value
+          movieId: item.id,
+          title: item.title || item.name,
+          type: type,
+          posterPath: item.poster_path,
+          overview: item.overview,
+          releaseDate: item.release_date || item.first_air_date,
+          voteAverage: item.vote_average,
+          genres: [], // Empty array for now, can be populated later
+          originalTitle: item.original_title || item.original_name,
+          originalLanguage: item.original_language
+        }
+        
+        console.log('Adding movie data:', movieData)
+        const response = await movieLikesService.add(movieData)
+        console.log('Add response:', response)
+        setLikedItems(prev => [...prev, itemWithType])
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error)
+      // Optionally show user feedback here
+    }
+  }
+
+  const isItemLiked = (item, type) => {
+    const result = likedItems.some(liked => liked.id === item.id && liked.type === type)
+    console.log(`isItemLiked check for ${item.title || item.name} (${item.id}, ${type}):`, result, 'likedItems:', likedItems)
+    return result
+  }
+
+  // Search and filter functions
+  const searchItems = (items, query) => {
+    if (!query) return items
+    return items.filter(item => {
+      const title = item.title || item.name || ''
+      const overview = item.overview || ''
+      return title.toLowerCase().includes(query.toLowerCase()) ||
+             overview.toLowerCase().includes(query.toLowerCase())
+    })
+  }
 
   // Genre filtering
   const filterByGenre = (items, selectedGenre) => {
@@ -107,6 +244,28 @@ const MovieRecommendations = () => {
       }
       return false
     })
+  }
+
+  // Combined filtering
+  const getFilteredItems = (items, genre, query) => {
+    let filtered = filterByGenre(items, genre)
+    filtered = searchItems(filtered, query)
+    return filtered
+  }
+
+  // Helper to compute active items based on search mode and tab
+  const getActiveItemsFor = (tab) => {
+    if (tab === 'watchlist') {
+      return searchItems(likedItems, searchQuery)
+    }
+    const isMovies = tab === 'movies'
+    if (searchMode === 'global' && searchQuery.trim().length >= 2) {
+      const base = isMovies ? globalResults.movies : globalResults.tvShows
+      return filterByGenre(base, isMovies ? selectedMovieGenre : selectedTVGenre)
+    } else {
+      const base = isMovies ? movies : tvShows
+      return getFilteredItems(base, isMovies ? selectedMovieGenre : selectedTVGenre, searchQuery)
+    }
   }
 
   const handleItemClick = async (item, type) => {
@@ -137,9 +296,8 @@ const MovieRecommendations = () => {
     <div 
       key={item.id} 
       className="content-card"
-      onClick={() => handleItemClick(item, type)}
     >
-      <div className="content-poster">
+      <div className="content-poster" onClick={() => handleItemClick(item, type)}>
         {item.poster_path ? (
           <img 
             src={item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_IMAGE_BASE_URL}${item.poster_path}`}
@@ -167,16 +325,28 @@ const MovieRecommendations = () => {
         </div>
       </div>
       <div className="content-info">
-        <h3 className="content-title">
-          {type === 'movie' ? item.title : item.name}
-        </h3>
+        <div className="content-header">
+          <h3 className="content-title" onClick={() => handleItemClick(item, type)}>
+            {type === 'movie' ? item.title : item.name}
+          </h3>
+          <button 
+            className={`like-btn ${isItemLiked(item, type) ? 'liked' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleLike(item, type)
+            }}
+            title={isItemLiked(item, type) ? 'İzleneceklerden çıkar' : 'İzleneceklere ekle'}
+          >
+            {isItemLiked(item, type) ? '❤️' : '🤍'}
+          </button>
+        </div>
         <div className="content-meta">
           <span className="rating">⭐ {item.vote_average?.toFixed(1) || 'N/A'}</span>
           <span className="date">
             {formatDate(type === 'movie' ? item.release_date : item.first_air_date)}
           </span>
         </div>
-        <p className="content-overview">
+        <p className="content-overview" onClick={() => handleItemClick(item, type)}>
           {item.overview?.length > 100 
             ? `${item.overview.substring(0, 100)}...` 
             : item.overview || 'Özet bilgisi yok'}
@@ -310,6 +480,66 @@ const MovieRecommendations = () => {
         </div>
       </div>
 
+      <div className="search-container">
+        <input
+          type="text"
+          className="search-input"
+          placeholder={searchMode === 'global' ? 'TMDB Global Arama: Film veya dizi ara...' : 'Film veya dizi ara...'}
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value)
+            setMoviePage(1)
+            setTVPage(1)
+            setWatchlistPage(1)
+          }}
+        />
+        <span className="search-icon">{isGlobalSearching ? '🔄' : '🔍'}</span>
+        <div className="search-mode-toggle" style={{ display: 'flex', gap: 8, marginLeft: 8 }}>
+          <button 
+            className={`mode-btn ${searchMode === 'local' ? 'active' : ''}`}
+            onClick={() => {
+              setSearchMode('local')
+              setMoviePage(1); setTVPage(1); setWatchlistPage(1)
+            }}
+          >Yerel</button>
+          <button 
+            className={`mode-btn ${searchMode === 'global' ? 'active' : ''}`}
+            onClick={() => {
+              setSearchMode('global')
+              setMoviePage(1); setTVPage(1)
+            }}
+          >Global (TMDB)</button>
+        </div>
+      </div>
+
+      {searchMode === 'global' && searchQuery.trim().length >= 2 && (globalResults.movies.length > 0 || globalResults.tvShows.length > 0) && (
+        <div className="global-suggestions" style={{ background: 'rgba(0,0,0,0.4)', borderRadius: 8, padding: 12, margin: '8px 0' }}>
+          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+            <div style={{ minWidth: 240, flex: 1 }}>
+              <h4 style={{ margin: '0 0 8px 0' }}>Filmler</h4>
+              {globalResults.movies.slice(0, 5).map(m => (
+                <div key={`gm-${m.id}`} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', cursor: 'pointer' }} onClick={() => handleItemClick(m, 'movie')}>
+                  {m.poster_path && (<img src={`${TMDB_IMAGE_BASE_URL}${m.poster_path}`} alt={m.title} style={{ width: 32, height: 48, objectFit: 'cover', borderRadius: 4 }} />)}
+                  <span>{m.title} {m.release_date ? `(${new Date(m.release_date).getFullYear()})` : ''}</span>
+                </div>
+              ))}
+              {globalResults.movies.length === 0 && <div style={{ opacity: 0.7 }}>Sonuç yok</div>}
+            </div>
+            <div style={{ minWidth: 240, flex: 1 }}>
+              <h4 style={{ margin: '0 0 8px 0' }}>Diziler</h4>
+              {globalResults.tvShows.slice(0, 5).map(t => (
+                <div key={`gt-${t.id}`} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', cursor: 'pointer' }} onClick={() => handleItemClick(t, 'tv')}>
+                  {t.poster_path && (<img src={`${TMDB_IMAGE_BASE_URL}${t.poster_path}`} alt={t.name} style={{ width: 32, height: 48, objectFit: 'cover', borderRadius: 4 }} />)}
+                  <span>{t.name} {t.first_air_date ? `(${new Date(t.first_air_date).getFullYear()})` : ''}</span>
+                </div>
+              ))}
+              {globalResults.tvShows.length === 0 && <div style={{ opacity: 0.7 }}>Sonuç yok</div>}
+            </div>
+          </div>
+          <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>Not: Tüm sonuçlar aşağıdaki listede görüntülenir ve sayfalanır.</div>
+        </div>
+      )}
+
       <div className="tabs">
         <button 
           className={`tab ${activeTab === 'movies' ? 'active' : ''}`}
@@ -323,40 +553,52 @@ const MovieRecommendations = () => {
         >
           📺 Diziler
         </button>
+        <button 
+          className={`tab ${activeTab === 'watchlist' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveTab('watchlist')
+            console.log('🎯 Watchlist clicked. likedItems length:', likedItems.length)
+            console.log('🎯 Current likedItems:', likedItems)
+          }}
+        >
+          ❤️ İzlenecekler ({likedItems.length})
+        </button>
       </div>
 
       {/* Genre filter dropdowns */}
-      <div className="genre-filter-row">
-        {activeTab === 'movies' ? (
-          <select
-            className="genre-dropdown"
-            value={selectedMovieGenre}
-            onChange={e => {
-              setSelectedMovieGenre(e.target.value)
-              setMoviePage(1)
-            }}
-          >
-            <option value="">Tüm Türler</option>
-            {movieGenres.map(genre => (
-              <option key={genre.id} value={genre.id}>{genre.name}</option>
-            ))}
-          </select>
-        ) : (
-          <select
-            className="genre-dropdown"
-            value={selectedTVGenre}
-            onChange={e => {
-              setSelectedTVGenre(e.target.value)
-              setTVPage(1)
-            }}
-          >
-            <option value="">Tüm Türler</option>
-            {tvGenres.map(genre => (
-              <option key={genre.id} value={genre.id}>{genre.name}</option>
-            ))}
-          </select>
-        )}
-      </div>
+      {activeTab !== 'watchlist' && (
+        <div className="genre-filter-row">
+          {activeTab === 'movies' ? (
+            <select
+              className="genre-dropdown"
+              value={selectedMovieGenre}
+              onChange={e => {
+                setSelectedMovieGenre(e.target.value)
+                setMoviePage(1)
+              }}
+            >
+              <option value="">Tüm Türler</option>
+              {movieGenres.map(genre => (
+                <option key={genre.id} value={genre.id}>{genre.name}</option>
+              ))}
+            </select>
+          ) : (
+            <select
+              className="genre-dropdown"
+              value={selectedTVGenre}
+              onChange={e => {
+                setSelectedTVGenre(e.target.value)
+                setTVPage(1)
+              }}
+            >
+              <option value="">Tüm Türler</option>
+              {tvGenres.map(genre => (
+                <option key={genre.id} value={genre.id}>{genre.name}</option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
 
       {loading ? (
         <div className="loading-container">
@@ -367,10 +609,21 @@ const MovieRecommendations = () => {
         <>
           <div className="content-grid">
             {activeTab === 'movies' 
-              ? getPagedItems(filterByGenre(movies, selectedMovieGenre), moviePage).map(movie => renderItemCard(movie, 'movie'))
-              : getPagedItems(filterByGenre(tvShows, selectedTVGenre), tvPage).map(show => renderItemCard(show, 'tv'))
+              ? getPagedItems(getActiveItemsFor('movies'), moviePage).map(movie => renderItemCard(movie, 'movie'))
+              : activeTab === 'tv'
+              ? getPagedItems(getActiveItemsFor('tv'), tvPage).map(show => renderItemCard(show, 'tv'))
+              : getPagedItems(searchItems(likedItems, searchQuery), watchlistPage).map(item => renderItemCard(item, item.type))
             }
           </div>
+          
+          {activeTab === 'watchlist' && likedItems.length === 0 && (
+            <div className="empty-watchlist">
+              <div className="empty-icon">❤️</div>
+              <h3>İzlenecekler listeniz boş</h3>
+              <p>Beğendiğiniz film ve dizileri kalp butonuna tıklayarak buraya ekleyebilirsiniz.</p>
+            </div>
+          )}
+          
           <div className="pagination">
             {activeTab === 'movies' ? (
               <>
@@ -379,28 +632,42 @@ const MovieRecommendations = () => {
                   onClick={() => setMoviePage(p => Math.max(1, p - 1))}
                   disabled={moviePage === 1}
                 >Önceki</button>
-                <span className="pagination-info">{moviePage} / {Math.ceil(filterByGenre(movies, selectedMovieGenre).length / PAGE_SIZE)}</span>
+                <span className="pagination-info">{moviePage} / {Math.ceil(getActiveItemsFor('movies').length / PAGE_SIZE) || 1}</span>
                 <button 
                   className="pagination-btn" 
-                  onClick={() => setMoviePage(p => Math.min(Math.ceil(filterByGenre(movies, selectedMovieGenre).length / PAGE_SIZE), p + 1))}
-                  disabled={moviePage === Math.ceil(filterByGenre(movies, selectedMovieGenre).length / PAGE_SIZE)}
+                  onClick={() => setMoviePage(p => Math.min(Math.ceil(getActiveItemsFor('movies').length / PAGE_SIZE), p + 1))}
+                  disabled={moviePage === Math.ceil(getActiveItemsFor('movies').length / PAGE_SIZE)}
                 >Sonraki</button>
               </>
-            ) : (
+            ) : activeTab === 'tv' ? (
               <>
                 <button 
                   className="pagination-btn" 
                   onClick={() => setTVPage(p => Math.max(1, p - 1))}
                   disabled={tvPage === 1}
                 >Önceki</button>
-                <span className="pagination-info">{tvPage} / {Math.ceil(filterByGenre(tvShows, selectedTVGenre).length / PAGE_SIZE)}</span>
+                <span className="pagination-info">{tvPage} / {Math.ceil(getActiveItemsFor('tv').length / PAGE_SIZE) || 1}</span>
                 <button 
                   className="pagination-btn" 
-                  onClick={() => setTVPage(p => Math.min(Math.ceil(filterByGenre(tvShows, selectedTVGenre).length / PAGE_SIZE), p + 1))}
-                  disabled={tvPage === Math.ceil(filterByGenre(tvShows, selectedTVGenre).length / PAGE_SIZE)}
+                  onClick={() => setTVPage(p => Math.min(Math.ceil(getActiveItemsFor('tv').length / PAGE_SIZE), p + 1))}
+                  disabled={tvPage === Math.ceil(getActiveItemsFor('tv').length / PAGE_SIZE)}
                 >Sonraki</button>
               </>
-            )}
+            ) : likedItems.length > 0 ? (
+              <>
+                <button 
+                  className="pagination-btn" 
+                  onClick={() => setWatchlistPage(p => Math.max(1, p - 1))}
+                  disabled={watchlistPage === 1}
+                >Önceki</button>
+                <span className="pagination-info">{watchlistPage} / {Math.ceil(searchItems(likedItems, searchQuery).length / PAGE_SIZE) || 1}</span>
+                <button 
+                  className="pagination-btn" 
+                  onClick={() => setWatchlistPage(p => Math.min(Math.ceil(searchItems(likedItems, searchQuery).length / PAGE_SIZE), p + 1))}
+                  disabled={watchlistPage === Math.ceil(searchItems(likedItems, searchQuery).length / PAGE_SIZE)}
+                >Sonraki</button>
+              </>
+            ) : null}
           </div>
         </>
       )}
@@ -410,4 +677,4 @@ const MovieRecommendations = () => {
   )
 }
 
-export default MovieRecommendations 
+export default MovieRecommendations

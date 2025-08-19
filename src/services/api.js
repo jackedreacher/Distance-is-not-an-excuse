@@ -23,6 +23,12 @@ const getFallbackResponse = (type) => {
       return { success: true, data: [] };
     case 'surprises':
       return { success: true, data: [] };
+    case 'movieLikes':
+      return { success: true, data: [] };
+    case 'movieLike':
+      return { success: true, data: { id: Date.now(), title: 'Demo Movie', type: 'movie' } };
+    case 'delete':
+      return { success: true, message: 'Item deleted successfully' };
     default:
       return { success: true, message: 'Demo mode - no backend connected' };
   }
@@ -371,6 +377,83 @@ export const surpriseService = {
       headers: {
         'Content-Type': 'application/json'
       }
+    });
+    return response.json();
+  }
+};
+
+// Movie Likes API calls
+export const movieLikesService = {
+  getAll: async (filters = {}) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('movieLikes');
+    }
+    
+    const queryParams = new URLSearchParams();
+    if (filters.gender) queryParams.append('gender', filters.gender);
+    if (filters.type) queryParams.append('type', filters.type);
+    if (filters.watched !== undefined) queryParams.append('watched', filters.watched);
+    
+    const url = `${API_BASE_URL}/movie-likes${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.json();
+  },
+
+  add: async (movieData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('movieLike');
+    }
+    const response = await fetch(`${API_BASE_URL}/movie-likes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(movieData)
+    });
+    return response.json();
+  },
+
+  update: async (id, movieData) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('movieLike');
+    }
+    const response = await fetch(`${API_BASE_URL}/movie-likes/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(movieData)
+    });
+    return response.json();
+  },
+
+  remove: async (id) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
+    const response = await fetch(`${API_BASE_URL}/movie-likes/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.json();
+  },
+
+  unlike: async (movieId, type) => {
+    if (!isBackendAvailable()) {
+      return getFallbackResponse('delete');
+    }
+    const response = await fetch(`${API_BASE_URL}/movie-likes/unlike`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ movieId, type })
     });
     return response.json();
   }

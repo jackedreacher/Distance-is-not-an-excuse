@@ -10,7 +10,8 @@ export const getCurrentMovies = async (max = 120) => {
     const yearMax = new Date().getFullYear();
     let allResults = [];
     let page = 1;
-    while (allResults.length < max && page <= 5) { // fetch up to 5 pages (20 per page)
+    const maxPages = Math.min(500, Math.ceil(max / 20))
+    while (allResults.length < max && page <= maxPages) { // dynamically fetch enough pages
       const response = await fetch(
         `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}` +
         `&language=tr-TR&region=TR&sort_by=vote_average.desc&vote_count.gte=50&primary_release_date.gte=${yearMin}-01-01&primary_release_date.lte=${yearMax}-12-31&page=${page}`
@@ -39,7 +40,8 @@ export const getCurrentTVShows = async (max = 120) => {
     const yearMax = new Date().getFullYear();
     let allResults = [];
     let page = 1;
-    while (allResults.length < max && page <= 5) { // fetch up to 5 pages (20 per page)
+    const maxPages = Math.min(500, Math.ceil(max / 20))
+    while (allResults.length < max && page <= maxPages) { // dynamically fetch enough pages
       const response = await fetch(
         `${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}` +
         `&language=tr-TR&sort_by=vote_average.desc&vote_count.gte=50&first_air_date.gte=${yearMin}-01-01&first_air_date.lte=${yearMax}-12-31&page=${page}`
@@ -201,7 +203,7 @@ const getMockMovies = () => [
     poster_path: null,
     vote_average: 7.6,
     release_date: "2023-12-15",
-    overview: "Auschwitz toplama kampının komutanının ailesinin yaşamını konu alan dram."
+    overview: "Auschwitz toplama kampının komutanın ailesinin yaşamını konu alan dram."
   },
   {
     id: 7,
@@ -350,6 +352,62 @@ export const fetchTVGenres = async () => {
   }
 }
 
+// Search movies using TMDB search API
+export const searchMovies = async (query, page = 1) => {
+  try {
+    if (!query || query.trim().length < 2) return []
+    
+    const response = await fetch(
+      `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&language=tr-TR&query=${encodeURIComponent(query)}&page=${page}`
+    )
+    
+    if (!response.ok) throw new Error('Failed to search movies')
+    const data = await response.json()
+    return data.results || []
+  } catch (error) {
+    console.error('Error searching movies:', error)
+    return []
+  }
+}
+
+// Search TV shows using TMDB search API
+export const searchTVShows = async (query, page = 1) => {
+  try {
+    if (!query || query.trim().length < 2) return []
+    
+    const response = await fetch(
+      `${TMDB_BASE_URL}/search/tv?api_key=${TMDB_API_KEY}&language=tr-TR&query=${encodeURIComponent(query)}&page=${page}`
+    )
+    
+    if (!response.ok) throw new Error('Failed to search TV shows')
+    const data = await response.json()
+    return data.results || []
+  } catch (error) {
+    console.error('Error searching TV shows:', error)
+    return []
+  }
+}
+
+// Search both movies and TV shows
+export const searchContent = async (query, page = 1) => {
+  try {
+    if (!query || query.trim().length < 2) return { movies: [], tvShows: [] }
+    
+    const [moviesData, tvShowsData] = await Promise.all([
+      searchMovies(query, page),
+      searchTVShows(query, page)
+    ])
+    
+    return {
+      movies: moviesData,
+      tvShows: tvShowsData
+    }
+  } catch (error) {
+    console.error('Error searching content:', error)
+    return { movies: [], tvShows: [] }
+  }
+}
+
 // Format date
 export const formatDate = (dateString) => {
   if (!dateString) return 'Tarih bilgisi yok'
@@ -379,4 +437,4 @@ export const formatRuntime = (minutes) => {
 export const getGenreNames = (genres) => {
   if (!genres || genres.length === 0) return ['Tür bilgisi yok']
   return genres.map(genre => genre.name)
-} 
+}

@@ -1,6 +1,7 @@
 import { } from 'react';
 import { usePlayer } from '../contexts/PlayerContext';
-// Removed: import YouTubePlayer from './YouTubePlayer';
+import YouTubePlayer from './YouTubePlayer';
+import CloseButton from './shared/CloseButton';
 import './MiniPlayer.css';
 import { Link } from 'react-router-dom';
 
@@ -112,13 +113,13 @@ const MiniPlayer = () => {
         </div>
 
         {/* Close Button */}
-        <button 
-          className="control-btn close" 
+        <CloseButton 
           onClick={hideMiniPlayer}
-          title="Close Player"
-        >
-          ✕
-        </button>
+          variant="default"
+          size="small"
+          className="control-btn close"
+          ariaLabel="Close Player"
+        />
       </div>
 
       {/* Expanded Controls */}

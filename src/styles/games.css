@@ -1,0 +1,204 @@
+/* ===== MINI GAMES & MOOD TRACKER STYLES ===== */
+/* Mood Tracker, Heart Click, Message Match, Word Puzzle gibi oyun ve deneyim stilleri buraya taşındı. */
+
+/* Mood Tracker */
+.mood-tracker-container { background: rgba(255,255,255,0.85); border-radius: 16px; padding: 20px; }
+.mood-tracker-header { text-align: center; margin-bottom: 12px; }
+.mood-tracker-title { margin: 0; font-size: 22px; font-weight: 700; }
+.mood-tracker-subtitle { color: #6b7280; }
+.mood-tracker-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+.mood-tab { background: #e5e7eb; border: none; border-radius: 999px; padding: 8px 12px; cursor: pointer; }
+.mood-tab.active { background: #6366f1; color: #fff; }
+.mood-log-section { display: grid; gap: 16px; }
+.mood-selection h3, .mood-gender-selection h3, .mood-message h3 { margin-bottom: 8px; }
+.mood-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.mood-option { background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; cursor: pointer; display: grid; place-items: center; gap: 6px; }
+.mood-option.selected { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
+.mood-emoji { font-size: 24px; }
+.mood-label { font-weight: 600; }
+.mood-gender-selection { }
+.gender-options { display: flex; gap: 8px; }
+.gender-option { background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.gender-option.selected { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
+.gender-emoji { font-size: 20px; }
+.gender-label { font-weight: 600; }
+.mood-textarea { width: 100%; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; resize: vertical; min-height: 80px; }
+.mood-submit-btn { background: #10b981; color: #fff; border: none; border-radius: 12px; padding: 10px 14px; cursor: pointer; font-weight: 700; }
+
+/* History */
+.mood-history-section { display: grid; gap: 16px; }
+.mood-chart { display: grid; grid-template-columns: repeat(8, minmax(0,1fr)); gap: 10px; align-items: end; height: 160px; padding: 10px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; }
+.mood-bar-container { display: grid; gap: 6px; justify-items: center; }
+.mood-bar { width: 20px; border-radius: 6px; transition: height 0.3s ease; }
+.mood-bar-label { display: flex; gap: 6px; align-items: center; }
+.mood-bar-emoji { font-size: 18px; }
+.mood-bar-count { font-weight: 600; }
+.mood-history { }
+.no-moods { color: #6b7280; text-align: center; }
+.mood-history-list { display: grid; gap: 10px; }
+.mood-history-item { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; }
+.mood-history-header { display: flex; gap: 10px; align-items: center; }
+.mood-history-emoji { font-size: 20px; }
+.mood-history-info { display: flex; gap: 8px; color: #6b7280; font-size: 14px; }
+.mood-history-message { margin-top: 6px; color: #374151; }
+
+/* ===== Existing entries ===== */
+/* Word Puzzle */
+.word-puzzle-letters { display: flex; gap: 10px; }
+.word-puzzle-btn, .word-puzzle-letter { display: inline-flex; align-items: center; justify-content: center; }
+
+/* CountdownTimer */
+.timer-container {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+}
+
+/* HUD scan animasyonu – kart içinde kullanılacak */
+@keyframes hud-scan {
+  0% { transform: translateY(-120%); }
+  100% { transform: translateY(220%); }
+}
+
+
+/* HeartClickGame */
+.heart-game-container { background: rgba(255,255,255,0.9); border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.heart-game-title { font-size: 20px; margin-bottom: 6px; }
+.heart-game-desc { color: #555; margin-bottom: 12px; }
+.heart-game-timer { font-weight: 600; margin-bottom: 12px; }
+.heart-game-area { position: relative; height: 220px; border-radius: 12px; background: rgba(255,182,193,0.25); overflow: hidden; border: 1px dashed rgba(255,105,180,0.5); }
+.heart-game-heart { position: absolute; cursor: pointer; font-size: 24px; transition: transform 0.15s ease; }
+.heart-game-heart:active { transform: scale(0.9); }
+.heart-game-result { margin-top: 12px; font-weight: 600; }
+.heart-game-result.success { color: #16a34a; }
+.heart-game-result.fail { color: #dc2626; }
+
+/* MessageMatchGame */
+.message-match-container { background: rgba(255,255,255,0.9); border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.message-match-title { font-size: 20px; margin-bottom: 4px; }
+.message-match-desc, .message-match-tries { color: #555; margin-bottom: 8px; }
+.message-match-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.message-card-flip { perspective: 1000px; }
+.message-card-inner { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.4s ease; }
+.message-card-front, .message-card-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 12px; }
+.message-card-front { background: #f3f4f6; border: 1px solid #e5e7eb; }
+.message-card-back { background: #fee2e2; border: 1px solid #fecaca; transform: rotateY(180deg); }
+.message-card-img { font-size: 28px; }
+.message-match-result { margin-top: 12px; font-weight: 600; }
+.message-match-result.success { color: #16a34a; }
+.message-match-result.fail { color: #dc2626; }
+
+/* WordPuzzleGame */
+.word-puzzle-container { background: rgba(255,255,255,0.9); border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.word-puzzle-title { font-size: 20px; margin-bottom: 6px; }
+.word-puzzle-desc, .word-puzzle-hint, .word-puzzle-tries { color: #555; margin-bottom: 8px; }
+.word-puzzle-input { display: flex; gap: 8px; justify-content: center; margin: 10px 0; }
+.word-puzzle-letter { width: 36px; height: 36px; border-radius: 8px; background: #f3f4f6; border: 1px solid #e5e7eb; font-weight: 700; }
+.word-puzzle-letter.filled { background: #d1fae5; border-color: #10b981; }
+.word-puzzle-letter.empty { background: #fee2e2; border-color: #ef4444; }
+.word-puzzle-btn { min-width: 36px; height: 36px; border-radius: 8px; background: #6366f1; color: #fff; border: none; cursor: pointer; padding: 0 10px; }
+.word-puzzle-undo-btn { margin-top: 8px; background: #e5e7eb; border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.word-puzzle-result { margin-top: 10px; font-weight: 600; }
+.word-puzzle-result.success { color: #16a34a; }
+.word-puzzle-result.fail { color: #dc2626; }
+
+/* MesafeOyunu */
+.mesafe-oyunu-container { background: rgba(255,255,255,0.9); border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.mesafe-title { font-size: 20px; margin-bottom: 6px; }
+.mesafe-desc { color: #555; margin-bottom: 12px; }
+.mesafe-display { display: flex; justify-content: center; align-items: baseline; gap: 8px; margin: 10px 0; }
+.mesafe-label { color: #6b7280; font-weight: 500; }
+.mesafe-value { font-size: 24px; font-weight: 700; }
+.mini-game-btn { background: #10b981; color: #fff; border: none; padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+.celebration-message { margin-top: 10px; font-weight: 700; color: #e11d48; }
+
+/* CountdownTimer - detailed layout */
+.timer-card {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  background: rgba(33, 7, 45, 0.45);
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: inset 0 0 24px rgba(167, 139, 250, 0.09), 0 14px 28px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Purple scan line inside the card */
+.timer-card::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: -30%; height: 28%;
+  background: linear-gradient(to bottom, rgba(167,139,250,0) 0%, rgba(167,139,250,0.18) 50%, rgba(167,139,250,0) 100%);
+  filter: blur(1px);
+  animation: hud-scan 7s linear infinite;
+  pointer-events: none;
+}
+
+.time-display { display: flex; gap: 18px; justify-content: center; align-items: stretch; }
+
+.time-unit {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  min-width: 96px;
+  padding: 16px 12px;
+  background: rgba(49, 18, 68, 0.55);
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.12) inset, 0 8px 18px rgba(0, 0, 0, 0.25);
+}
+
+.time-unit::before { content: ''; position: absolute; top: 0; left: 12px; right: 12px; height: 2px; background: linear-gradient(90deg, rgba(167,139,250,0) 0%, rgba(167,139,250,0.55) 50%, rgba(167,139,250,0) 100%); }
+.time-unit + .time-unit { position: relative; }
+.time-unit + .time-unit::before { content: ''; position: absolute; left: -9px; top: 12px; bottom: 12px; width: 1px; background: linear-gradient(180deg, rgba(167,139,250,0.05) 0%, rgba(167,139,250,0.4) 50%, rgba(167,139,250,0.05) 100%); }
+
+.time-unit .number {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 50px;
+  font-weight: 800;
+  line-height: 1;
+  color: #c4b5fd;
+  text-shadow: 0 0 6px rgba(167,139,250,0.85), 0 0 18px rgba(167,139,250,0.55), 0 0 36px rgba(167,139,250,0.3);
+  animation: neon-pulse-purple 2.6s ease-in-out infinite alternate;
+}
+
+.time-unit .label { font-size: 12px; color: rgba(228, 228, 231, 0.9); text-transform: uppercase; letter-spacing: 0.18em; }
+
+.timer-container .message { margin-top: 10px; color: rgba(236, 236, 255, 0.92); font-weight: 600; letter-spacing: 0.08em; }
+
+@keyframes neon-pulse-purple {
+  0% { text-shadow: 0 0 4px rgba(167,139,250,0.65), 0 0 10px rgba(167,139,250,0.35), 0 0 18px rgba(167,139,250,0.15); filter: drop-shadow(0 0 0 rgba(167,139,250,0)); }
+  100% { text-shadow: 0 0 8px rgba(167,139,250,1), 0 0 22px rgba(167,139,250,0.75), 0 0 42px rgba(167,139,250,0.45); filter: drop-shadow(0 0 6px rgba(167,139,250,0.25)); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timer-container { padding: 12px; }
+  .time-display { gap: 12px; }
+  .time-unit { min-width: 82px; padding: 14px 10px; }
+  .time-unit .number { font-size: 42px; }
+}
+@media (max-width: 480px) {
+  .timer-container { padding: 10px; }
+  .time-display { gap: 10px; flex-wrap: wrap; }
+  .time-unit { min-width: calc(50% - 8px); padding: 12px 10px; }
+  .time-unit .number { font-size: 36px; }
+  .time-unit .label { font-size: 11px; }
+}
+
+/* MesafeOyunu - extra */
+.celebration-anim { animation: pop 0.5s ease; }
+@keyframes pop { 0% { transform: scale(0.9); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* Buttons hover */
+.mini-game-btn:hover, .word-puzzle-btn:hover, .youtube-search-btn:hover, .search-submit-btn:hover, .song-submit-btn:hover, .surprise-add-btn:hover { filter: brightness(1.05); }

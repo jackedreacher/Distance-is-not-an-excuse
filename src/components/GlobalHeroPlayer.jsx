@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { usePlayer } from '../contexts/PlayerContext';
 import YouTubePlayer from './YouTubePlayer';
+import CloseButton from './shared/CloseButton';
 import './GlobalHeroPlayer.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -53,7 +54,13 @@ const GlobalHeroPlayer = ({ onClose }) => {
   if (showEmpty) {
     return (
       <div className="global-hero-player">
-        <button className="gh-close-btn" aria-label="Kapat" onClick={onClose}>×</button>
+        <CloseButton 
+          onClick={onClose}
+          variant="embedded"
+          size="medium"
+          className="gh-close-btn"
+          ariaLabel="Kapat"
+        />
         <div className="empty-state">
           <button
             className="gh-btn"
@@ -80,7 +87,13 @@ const GlobalHeroPlayer = ({ onClose }) => {
 
       <div className="global-hero-player">
         {/* Close button inside player */}
-        <button className="gh-close-btn" aria-label="Kapat" onClick={onClose}>×</button>
+        <CloseButton 
+          onClick={onClose}
+          variant="embedded"
+          size="medium"
+          className="gh-close-btn"
+          ariaLabel="Kapat"
+        />
 
         {/* Title & Subtitle */}
         <h2 className="gh-title gh-title-spaced">{displayTitle}</h2>

@@ -1,0 +1,160 @@
+/* ---- Bots Page Styles ---- */
+.bots-page .page-header { margin-bottom: 20px; }
+
+.bots-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(173, 216, 230, 0.6);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+  margin-bottom: 16px;
+}
+
+.pill-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+}
+.pill-btn.green { background: linear-gradient(135deg,#34d399,#10b981); color: #10372b; }
+.pill-btn.red { background: linear-gradient(135deg,#fca5a5,#ef4444); color: #4a0f14; }
+.pill-btn.active { outline: 2px solid rgba(0,0,0,0.15); }
+.pill-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
+.bots-content { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+@media (max-width: 992px) { .bots-content { grid-template-columns: 1fr; } }
+
+.panel {
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(0,0,0,0.06);
+  min-height: 160px;
+}
+/* Yüksek panelleri masaüstünde büyüt, cihaz genişliğine göre ölçekle */
+.panel.tall { height: 520px; display: flex; flex-direction: column; }
+@media (max-width: 1200px) { .panel.tall { height: 480px; } }
+@media (max-width: 992px) { .panel.tall { height: 440px; } }
+@media (max-width: 768px) { .panel.tall { height: 380px; } }
+@media (max-width: 560px) { .panel.tall { height: 360px; } }
+.panel.success { background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(52,211,153,0.25)); }
+.panel.danger { background: linear-gradient(135deg, rgba(239,68,68,0.25), rgba(252,165,165,0.25)); }
+
+.panel-title { font-weight: 800; color: #111827; margin-bottom: 10px; }
+.panel-body.placeholder { color: #6b7280; font-style: italic; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+@media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
+
+.field label { font-weight: 700; color: #374151; font-size: .9rem; }
+.field input[type="text"], .field input[type="date"], .field input[type="time"], .field select, .field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.9);
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+}
+.switch-field { align-items: center; justify-content: center; }
+.switch-field input { transform: scale(1.2); }
+
+.actions { display: flex; gap: 10px; margin-top: 12px; }
+.action { border: none; border-radius: 10px; padding: 10px 14px; font-weight: 700; cursor: pointer; background: #e5e7eb; }
+.action.primary { background: #111827; color: #fff; }
+.action:hover { filter: brightness(1.05); }
+
+
+/* Drag & Drop feedback */
+.panel.drop-allowed { outline: 2px dashed #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2) inset; }
+.panel.drop-blocked { outline: 2px dashed #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.2) inset; filter: saturate(0.8); }
+
+.chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+.chip.green { background: #d1fae5; color: #065f46; }
+.chip.red { background: #fee2e2; color: #7f1d1d; }
+
+/* Panel body base size for full-cover cards */
+.panel .panel-body { min-height: 220px; }
+/* Make tall panels fixed-height with scrollable content */
+.panel.tall .panel-body { flex: 1; overflow: auto; min-height: unset; }
+
+/* Full-cover bot card inside panels */
+.bot-card { position: relative; width: 100%; height: 100%; min-height: unset; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; letter-spacing: .3px; text-transform: none; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); }
+.bot-card.green { background: linear-gradient(135deg,#34d399,#10b981); color: #073c2d; }
+.bot-card.red { background: linear-gradient(135deg,#fca5a5,#ef4444); color: #4a0f14; }
+.bot-card .bot-card-label { padding: 0 40px; text-align: center; }
+.bot-card .bot-card-remove { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 999px; border: none; background: rgba(255,255,255,0.9); color: #111; font-weight: 900; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.12); }
+.bot-card .bot-card-remove:hover { filter: brightness(1.05); }
+
+/* Page layout tweaks for tray metaphor */
+.bots-page .page-header { display: none; }
+.bots-toolbar { margin-top: 4px; margin-bottom: 10px; }
+.bots-content { gap: 18px; }
+/* Duplicate tall rule overridden with responsive sizes above */
+.panel { padding: 10px; }
+.panel.tall { height: 520px; display: flex; flex-direction: column; }
+@media (max-width: 1200px) { .panel.tall { height: 480px; } }
+@media (max-width: 992px) { .panel.tall { height: 440px; } }
+@media (max-width: 768px) { .panel.tall { height: 380px; } }
+@media (max-width: 560px) { .panel.tall { height: 360px; } }
+
+/* Empty tray state */
+.panel.empty .panel-body { position: relative; border-radius: 12px; background: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; }
+.panel.empty.success .panel-body { background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(52,211,153,0.18)); }
+.panel.empty.danger .panel-body { background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(252,165,165,0.18)); }
+.panel.empty .panel-body::after { content: ""; position: absolute; inset: 8px; border: 2px dashed rgba(0,0,0,0.1); border-radius: 12px; }
+
+/* Embedded MusicPlayer in bot tray */
+.bot-embed { position: relative; width: 100%; height: 100%; }
+.bot-embed-remove { position: absolute; top: 10px; right: 10px; z-index: 5; width: 36px; height: 36px; border-radius: 999px; border: none; background: rgba(255,255,255,0.95); color: #111; font-weight: 900; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+.bot-embed-remove:hover { filter: brightness(1.05); }
+
+/* MusicPlayer embedded tweaks: daraltılmış header ve iç boşluklar */
+.spotify-player.embedded .spotify-header { display: none; }
+.spotify-player.embedded { background: transparent; box-shadow: none; border: none; padding: 0; height: 100%; display: flex; flex-direction: column; }
+.spotify-player.embedded .spotify-nav { margin-top: 0; }
+.spotify-player.embedded .spotify-main { padding: 0; overflow: auto; }
+
+/* Embedded MovieRecommendations in bot tray */
+.movie-recommendations.embedded { margin: 0; height: 100%; display: flex; flex-direction: column; }
+.movie-recommendations.embedded .recommendations-header { display: none; }
+.movie-recommendations.embedded .tabs { margin: 8px 0; }
+.movie-recommendations.embedded .search-container { margin: 0 0 8px 0; }
+.movie-recommendations.embedded .content-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.movie-recommendations.embedded .content-poster { height: 260px; }
+.movie-recommendations.embedded .content-info { padding: 0.9rem; }
+.movie-recommendations.embedded .content-grid { flex: 1; overflow: auto; min-height: 0; margin-bottom: 0; }
+/* Sekme ve arama/mode butonlarını kompaktlaştır */
+.movie-recommendations.embedded .tab { padding: 0.5rem 1rem; font-size: 0.95rem; }
+.movie-recommendations.embedded .mode-btn { padding: 6px 10px; border-radius: 10px; font-size: 0.9rem; }
+.movie-recommendations.embedded .search-input { height: 38px; font-size: 0.95rem; padding: 0 12px; }
+
+@media (max-width: 992px) {
+  .movie-recommendations.embedded .content-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .movie-recommendations.embedded .content-poster { height: 220px; }
+}
+
+@media (max-width: 768px) {
+  .movie-recommendations.embedded .content-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .movie-recommendations.embedded .content-poster { height: 200px; }
+}
+
+@media (max-width: 480px) {
+  .movie-recommendations.embedded .content-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .movie-recommendations.embedded .content-poster { height: 160px; }
+}
+
+/* Embedded Video Player in bot tray */
+.video-player.embedded { display: flex; flex-direction: column; gap: 8px; height: 100%; }
+.video-player .video-controls { display: flex; gap: 8px; }
+.video-player .video-input { flex: 1; height: 38px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); padding: 0 12px; font-size: 0.95rem; }
+.video-player .video-canvas { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+.video-player .video-canvas video { width: 100%; height: 100%; object-fit: contain; background: #000; border-radius: 10px; }

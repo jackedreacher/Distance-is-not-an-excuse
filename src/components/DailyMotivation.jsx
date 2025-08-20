@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getMotivationForDay } from '../utils/motivationUtils'
+import '../styles/motivation.css' // Import the new CSS file
 
 const DailyMotivation = () => {
   const [motivation, setMotivation] = useState(null)
@@ -55,4 +56,4 @@ const DailyMotivation = () => {
   )
 }
 
-export default DailyMotivation 
+export default DailyMotivation

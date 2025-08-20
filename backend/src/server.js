@@ -22,6 +22,7 @@ const surpriseRoutes = require('./routes/surprises');
 const taskRoutes = require('./routes/tasks');
 const eventRoutes = require('./routes/events');
 const movieLikesRoutes = require('./routes/movieLikes');
+const videoProxyRoutes = require('./routes/videoProxy');
 
 // Initialize app
 const app = express();
@@ -95,6 +96,7 @@ app.use('/api/surprises', surpriseRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/movie-likes', movieLikesRoutes);
+app.use('/api/video', videoProxyRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -107,6 +109,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Error handling middleware
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
   console.error('Error stack:', err.stack);
   console.error('Error message:', err.message);

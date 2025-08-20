@@ -1,0 +1,11 @@
+/* ===== Responsive Overrides ===== */
+@media (max-width: 768px) {
+  .desktop-nav-container { grid-template-columns: 1fr auto 1fr; padding: 8px 12px; }
+  .nav-logo .brand { display: none; }
+  .mega-menu-button { font-size: 0.95rem; padding: 8px 12px; }
+  .wishlist-container { padding: 20px; }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .desktop-nav-container { grid-template-columns: 1fr auto 1fr; }
+}

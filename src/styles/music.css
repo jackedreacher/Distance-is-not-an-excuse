@@ -1,0 +1,120 @@
+/* ===== MUSIC PLAYLIST (SPOTIFY-LIKE) STYLES ===== */
+/* Extracted key styles used by MusicPlayer and SharedMusicPlayer UI elements that were previously in App.css */
+
+.spotify-player { background: #121212; color: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.spotify-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.spotify-nav { display: flex; gap: 8px; margin-top: 8px; }
+/* MusicPlayer - nav button explicit class */
+.spotify-nav-btn { background: #1f1f1f; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; padding: 8px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.spotify-nav-btn.active { background: #1db954; border-color: #1db954; color: #000; }
+
+/* MusicPlayer - nav icon */
+.nav-icon { width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* MusicPlayer - embedded modifier */
+.spotify-player.embedded { padding: 8px; border-radius: 12px; }
+
+/* MusicPlayer - url input (for manual URL add) */
+.url-input { flex: 1; background: #1f1f1f; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px; }
+.player-controls-section { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+.playlist-section { margin-top: 16px; }
+
+/* Header texts */
+.spotify-title { font-size: 24px; font-weight: 700; }
+.spotify-subtitle { color: #9ca3af; }
+
+/* Add Song Form */
+.spotify-add-section { background: #0f0f0f; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px; margin-top: 10px; }
+.add-form-container { display: grid; gap: 10px; }
+.add-form-title { font-size: 18px; font-weight: 600; }
+.form-group { display: grid; gap: 6px; }
+.form-label { color: #d1d5db; font-size: 14px; }
+.form-input, .form-textarea { background: #1f1f1f; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px; }
+.form-textarea { min-height: 80px; resize: vertical; }
+.url-input-group { display: flex; gap: 8px; align-items: center; }
+.url-input { flex: 1; }
+.youtube-search-btn { background: #ef4444; color: #fff; border: none; border-radius: 8px; padding: 10px 12px; cursor: pointer; }
+
+/* YouTube Search */
+.youtube-search-panel { background: #0b0b0b; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px; margin-top: 10px; }
+.search-form { display: flex; gap: 8px; }
+.search-input { flex: 1; background: #111827; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px; }
+.search-submit-btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 10px 12px; cursor: pointer; }
+.search-results { margin-top: 10px; }
+.results-list { display: grid; gap: 8px; }
+.result-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 10px; align-items: center; padding: 8px; border-radius: 8px; background: #111; }
+.result-thumbnail { width: 72px; height: 40px; background: #222; border-radius: 6px; overflow: hidden; }
+.result-info { display: grid; gap: 4px; }
+.result-title { font-weight: 600; }
+.result-artist { color: #9ca3af; font-size: 14px; }
+
+/* User Selector & Submit */
+.user-selector { display: flex; gap: 8px; }
+.user-avatar { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; background: #1f1f1f; border-radius: 999px; cursor: pointer; border: 1px solid transparent; }
+.user-avatar.active { border-color: #1db954; }
+.spotify-add-btn { display: inline-flex; align-items: center; gap: 8px; background: #1db954; color: #000; border: none; border-radius: 999px; padding: 10px 16px; cursor: pointer; font-weight: 700; }
+.btn-icon { font-size: 16px; }
+
+/* Main Layout */
+.spotify-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 12px; }
+.now-playing { background: #0f0f0f; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px; }
+.now-playing-content { display: grid; grid-template-columns: 140px 1fr; gap: 12px; align-items: center; }
+.album-art-section { }
+.album-art-container { position: relative; width: 140px; height: 140px; border-radius: 12px; background: #111; overflow: hidden; }
+.play-overlay { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.2s ease; }
+.album-art-container:hover .play-overlay { opacity: 1; }
+.play-overlay-btn { background: #1db954; color: #000; border: none; border-radius: 999px; padding: 10px 14px; cursor: pointer; }
+.song-info-section { }
+.song-meta { display: grid; gap: 4px; }
+.current-title { font-size: 18px; font-weight: 700; }
+.current-artist { color: #9ca3af; }
+.current-story { color: #d1d5db; font-style: italic; }
+
+/* Player Controls */
+.main-controls { display: flex; align-items: center; gap: 8px; }
+.control-btn { background: #1f1f1f; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
+.play-btn { background: #1db954; color: #000; font-weight: 700; }
+.progress-section { display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; gap: 8px; }
+.volume-section { display: flex; align-items: center; gap: 8px; }
+.volume-slider { width: 120px; }
+.test-audio-btn { background: #111827; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
+
+/* Songs List */
+.songs-section { background: #0f0f0f; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px; }
+.songs-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.songs-title { font-size: 18px; font-weight: 700; }
+.songs-count { color: #9ca3af; }
+.empty-state { display: grid; place-items: center; padding: 20px; color: #9ca3af; }
+.empty-icon { font-size: 32px; margin-bottom: 6px; }
+.empty-action-btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+
+.songs-list { border-top: 1px solid rgba(255,255,255,0.06); margin-top: 10px; }
+.songs-list-header, .songs-list-body { display: grid; grid-template-columns: 40px 1.5fr 1fr 1fr 140px; gap: 8px; align-items: center; }
+.songs-list-header { color: #9ca3af; padding: 8px 0; }
+.header-col { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+.songs-list-body > div { padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.06); display: contents; }
+.song-col { }
+.song-title-col { display: grid; gap: 4px; }
+.song-title { font-weight: 600; }
+.song-story { color: #9ca3af; font-size: 14px; }
+.song-number { position: relative; }
+.playing-indicator { position: absolute; inset: 0; display: flex; align-items: center; gap: 2px; opacity: 0.7; }
+.playing-indicator .bar { width: 2px; height: 10px; background: #1db954; animation: bounce 0.8s infinite ease-in-out alternate; }
+.playing-indicator .bar:nth-child(2) { animation-delay: 0.2s; }
+.playing-indicator .bar:nth-child(3) { animation-delay: 0.4s; }
+.user-badge { display: inline-flex; align-items: center; gap: 6px; background: #1f1f1f; border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; padding: 4px 8px; }
+.action-btn { background: #1f1f1f; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.action-btn.edit-btn { border-color: #2563eb; }
+.action-btn.delete-btn { border-color: #ef4444; }
+
+@keyframes bounce { from { transform: scaleY(0.5); } to { transform: scaleY(1.2); } }
+.song-artist { color: #9ca3af; font-weight: 500; }
+.album-art { width: 100%; height: 100%; object-fit: cover; display: block; }
+.animated-avatar { will-change: transform; animation: avatarPulse 4s ease-in-out infinite; }
+@keyframes avatarPulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+.song-row.active .song-title { color: #1db954; }
+.user-btn { display: inline-flex; align-items: center; gap: 8px; background: #1f1f1f; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; padding: 8px 12px; cursor: pointer; transition: border-color .15s ease, background-color .15s ease; }
+.user-btn:hover { background: #232323; }
+.user-btn.selected { border-color: #1db954; background: rgba(29,185,84,0.12); color: #fff; }
+.track-number { color: #9ca3af; }
+.result-item:hover { background: #161616; }

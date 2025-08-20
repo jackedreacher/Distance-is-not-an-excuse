@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
-import './App.css'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+// import './App.css'
+import './styles/variables.css'
+import './styles/base.css'
+import './styles/navigation.css'
+import './styles/movies.css'
+import './styles/wishlist.css'
+import './styles/music.css'
+import './styles/games.css'
+import './styles/player.css'
+import './styles/romantic.css'
+import './styles/responsive.css'
 
 // Import utility functions
 import { calculateTimeDifference } from './utils/timeUtils'
@@ -8,7 +18,7 @@ import { calculateTimeDifference } from './utils/timeUtils'
 // Import components
 import CountdownTimer from './components/CountdownTimer'
 import GiftBox from './components/GiftBox'
-import Navigation from './components/Navigation'
+ import Navigation from './components/Navigation'
 import MiniPlayer from './components/MiniPlayer'
 
 // Import pages
@@ -21,6 +31,7 @@ import MoodTrackerPage from './pages/MoodTrackerPage'
 import WishlistPage from './pages/WishlistPage'
 import MusicPlaylistPage from './pages/MusicPlaylistPage'
 import SurpriseNotificationsPage from './pages/SurpriseNotificationsPage'
+import BotsPage from './pages/BotsPage'
 
 // Import Contexts
 import { SocketProvider } from './contexts/SocketContext.jsx'
@@ -34,6 +45,8 @@ function App() {
   const [secondsApart, setSecondsApart] = useState(0)
   // Hero Player Visibility State
   const [showHeroPlayer, setShowHeroPlayer] = useState(false)
+  // Toggle button visibility state
+  const [isToggleVisible, setIsToggleVisible] = useState(true)
   // Swipe state for hero drawer
   const [heroTouchStartX, setHeroTouchStartX] = useState(null)
   const [heroSwipeHandled, setHeroSwipeHandled] = useState(false)
@@ -47,6 +60,7 @@ function App() {
 
   const { currentSong, currentVideoId } = usePlayer()
   const navigate = useNavigate()
+  const location = useLocation()
 
   // Pull to refresh functionality
   const handleTouchStart = (e) => {
@@ -93,6 +107,8 @@ function App() {
     setHeroSwipeHandled(false)
   }
 
+
+
   // When clicking the hero player toggle, if there is no current song/video yet, go to playlist
   const handleHeroToggleClick = () => {
     if (!showHeroPlayer && !currentSong && !currentVideoId) {
@@ -117,6 +133,8 @@ function App() {
     return () => clearInterval(interval)
   }, [])
 
+
+
   // Close drawer on ESC key
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -128,6 +146,13 @@ function App() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [showHeroPlayer])
 
+  // Close hero drawer on route change to avoid backdrop blocking clicks
+  useEffect(() => {
+    if (showHeroPlayer) {
+      setShowHeroPlayer(false)
+    }
+  }, [location.pathname])
+
   return (
       <SocketProvider>
           <div
@@ -136,19 +161,35 @@ function App() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Navigation */}
-            <Navigation />
-
-            {/* Hero Player Toggle Button (only when closed) */}
+            {/* Navigation - geçici olarak devre dışı */}
+            <Navigation /> 
+            {/* Hero Player Toggle Button */}
             {!showHeroPlayer && (
-              <button
-                type="button"
-                className={`hero-toggle-btn ${showHeroPlayer ? 'open' : ''}`}
-                aria-label={showHeroPlayer ? 'Müzik çalarını gizle' : 'Müzik çalarını aç'}
-                onClick={handleHeroToggleClick}
+              <div 
+                className="hero-toggle-area"
+                onMouseEnter={() => setIsToggleVisible(true)}
+                onTouchStart={() => setIsToggleVisible(true)}
               >
-                {showHeroPlayer ? '− Çaları Gizle' : '🎵 Çaları Aç'}
-              </button>
+                {isToggleVisible ? (
+                  <button 
+                    type="button"
+                    className="hero-toggle-btn visible"
+                    aria-label="Müzik çalarını aç"
+                    onClick={handleHeroToggleClick}
+                    onMouseLeave={() => setIsToggleVisible(false)}
+                  >
+                    🎵 Çaları Aç
+                  </button>
+                ) : (
+                   <div 
+                     className="hero-toggle-btn hidden-arrow"
+                     aria-label="Müzik çalarını göster"
+                     onClick={() => setIsToggleVisible(true)}
+                   >
+                     ◀
+                   </div>
+                 )}
+              </div>
             )}
 
             {/* Backdrop for Right-side Drawer */}
@@ -232,6 +273,7 @@ function App() {
                 <Route path="/wishlist" element={<WishlistPage />} />
                 <Route path="/music-playlist" element={<MusicPlaylistPage />} />
                 <Route path="/surprise-notifications" element={<SurpriseNotificationsPage />} />
+                <Route path="/bots" element={<BotsPage />} />
 
               </Routes>
             </div>

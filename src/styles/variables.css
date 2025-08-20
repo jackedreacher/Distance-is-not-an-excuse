@@ -1,0 +1,22 @@
+/* CSS Variables and Color Palette */
+
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+/* ===== PHASE 2: POMEGRANATE STYLE VARIABLES & MEGA MENU ===== */
+:root {
+  /* Soft Pink/Cream/Wine Color Palette */
+  --pomegranate-cream: #f5f5dc;
+  --pomegranate-blush: #ffc0cb;
+  --pomegranate-rose: #ec4899;
+  --pomegranate-wine: #7f1d1d;
+  --pomegranate-neutral: #f8fafc;
+
+  /* Text Colors */
+  --pomegranate-text-primary: #1f2937;
+  --pomegranate-text-secondary: #6b7280;
+
+  /* Shadows */
+  --pomegranate-shadow-soft: 0 4px 6px rgba(236, 72, 153, 0.1);
+  --pomegranate-shadow-medium: 0 10px 15px rgba(236, 72, 153, 0.15);
+}

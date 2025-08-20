@@ -13,11 +13,13 @@ import {
   searchContent
 } from '../utils/movieUtils'
 import { movieLikesService } from '../services/api'
+import CloseButton from './shared/CloseButton'
+  
 
 const PAGE_SIZE = 6
 const MAX_ITEMS = 1000 // Daha fazla içerik (1000 film ve 1000 dizi)
 
-const MovieRecommendations = () => {
+const MovieRecommendations = ({ embedded = false }) => {
   const [movies, setMovies] = useState([])
   const [tvShows, setTVShows] = useState([])
   const [loading, setLoading] = useState(true)
@@ -288,12 +290,26 @@ const MovieRecommendations = () => {
   }
 
   const closeModal = () => {
+    if (!selectedItem || isModalClosing) return
     setIsModalClosing(true)
     setTimeout(() => {
       setSelectedItem(null)
       setIsModalClosing(false)
     }, 300)
   }
+
+  // ESC key closes modal when open
+  useEffect(() => {
+    if (!selectedItem) return
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        e.preventDefault()
+        closeModal()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [selectedItem, isModalClosing])
 
   const renderItemCard = (item, type) => (
     <div 
@@ -367,7 +383,12 @@ const MovieRecommendations = () => {
     return (
       <div className="modal-overlay" onClick={closeModal}>
         <div ref={modalRef} className={`modal-content ${isModalClosing ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()}>
-          <button className="modal-close" onClick={closeModal}>×</button>
+          <CloseButton 
+            onClick={closeModal}
+            variant="modal"
+            size="medium"
+            className="modal-close"
+          />
           
           <div className="modal-header">
             {item.backdrop_path && (
@@ -464,7 +485,7 @@ const MovieRecommendations = () => {
   }
 
   return (
-    <div className="movie-recommendations">
+    <div className={`movie-recommendations${embedded ? ' embedded' : ''}`}>
       <div className="recommendations-header">
        
         {isUsingMockData ? (

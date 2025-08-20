@@ -1,3 +1,5 @@
+import '../styles/romantic.css';
+
 const LoveMessages = () => {
   return (
     <div className="love-messages">
@@ -19,4 +21,4 @@ const LoveMessages = () => {
   )
 }
 
-export default LoveMessages 
+export default LoveMessages

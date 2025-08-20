@@ -5,7 +5,7 @@ import DraggableProgressBar from './DraggableProgressBar'
 import { usePlayer } from '../contexts/PlayerContext'
 import EmbeddedMiniPlayer from './EmbeddedMiniPlayer'
 
-const MusicPlayer = () => {
+const MusicPlayer = ({ embedded = false }) => {
   const [songs, setSongs] = useState([])
   const [newSong, setNewSong] = useState({
     title: '',
@@ -279,12 +279,14 @@ const MusicPlayer = () => {
   }
 
   return (
-    <div className="spotify-player">
+    <div className={`spotify-player ${embedded ? 'embedded' : ''}`}>
       {/* Header */}
-      <div className="spotify-header">
-        <h1 className="spotify-title">💕 Şarkılarımız</h1>
-        <p className="spotify-subtitle">Birlikte dinlediğimiz şarkıları ve hikayelerini saklayalım</p>
-      </div>
+      {!embedded && (
+        <div className="spotify-header">
+          <h1 className="spotify-title">💕 Şarkılarımız</h1>
+          <p className="spotify-subtitle">Birlikte dinlediğimiz şarkıları ve hikayelerini saklayalım</p>
+        </div>
+      )}
 
       {/* Navigation Tabs */}
       <div className="spotify-nav">

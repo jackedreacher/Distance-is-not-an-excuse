@@ -1,0 +1,109 @@
+/* Base close button styles */
+.close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  /* Removed position and z-index to let context-specific classes control placement and stacking */
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.close-btn:active {
+  transform: scale(0.95);
+}
+
+.close-btn-icon {
+  width: 100%;
+  height: 100%;
+  filter: invert(1);
+  transition: filter 0.2s ease;
+}
+
+/* Size variants */
+.close-btn-small {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+}
+
+.close-btn-medium {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+}
+
+.close-btn-large {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+}
+
+/* Style variants */
+.close-btn-default {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.close-btn-default:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.close-btn-modal {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.close-btn-modal:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.close-btn-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.close-btn-overlay:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.close-btn-embedded {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.close-btn-embedded:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.close-btn-embedded .close-btn-icon {
+  filter: invert(1);
+}
+
+/* Focus styles for accessibility */
+.close-btn:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .close-btn-default {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .close-btn-default:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}

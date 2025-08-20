@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { surpriseService } from '../services/api'
+import CloseButton from './shared/CloseButton'
 
 const SurpriseNotifications = ({ onNotificationShow, onNotificationHide }) => {
   const [surprises, setSurprises] = useState([])
@@ -322,15 +323,16 @@ const SurpriseNotifications = ({ onNotificationShow, onNotificationHide }) => {
       {showNotification && (
         <div className="surprise-notification-overlay">
           <div className="surprise-notification-content">
-            <button 
-              className="surprise-notification-close"
+            <CloseButton 
               onClick={() => {
                 setShowNotification(null)
                 if (onNotificationHide) onNotificationHide()
               }}
-            >
-              ×
-            </button>
+              variant="overlay"
+              size="small"
+              className="surprise-notification-close"
+              ariaLabel="Bildirimi kapat"
+            />
             
             <div className="surprise-notification-header">
               {(() => {

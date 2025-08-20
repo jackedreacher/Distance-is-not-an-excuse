@@ -1,0 +1,118 @@
+/* DailyMotivation Component Styles */
+.motivation-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Tam ekran yüksekliği */
+  padding: 20px;
+  background: linear-gradient(135deg, #f3ec78, #af4261);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  border-radius: 24px; /* Köşeleri yuvarla */
+  box-sizing: border-box;
+}
+
+.motivation-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.motivation-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.motivation-header {
+  margin-bottom: 20px;
+}
+
+.motivation-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.motivation-subtitle {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+}
+
+.quote-section {
+  margin: 30px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+}
+
+.quote-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.quote-text {
+  font-size: 1.2rem;
+  font-style: italic;
+  color: #34495e;
+  margin: 0;
+}
+
+.quote-author {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #95a5a6;
+}
+
+.motivation-section {
+  margin-top: 20px;
+}
+
+.motivation-icon {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.motivation-message {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #34495e;
+}
+
+.motivation-footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #7f8c8d;
+}
+
+.sparkle {
+  font-size: 1.2rem;
+  color: #f1c40f;
+  animation: sparkle-spin 2s linear infinite; /* Animasyonu değiştir ve süresini ayarla */
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+/* Yeni dönme animasyonu */
+@keyframes sparkle-spin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1.2);
+  }
+}

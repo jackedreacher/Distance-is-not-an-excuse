@@ -28,16 +28,29 @@ const videoProxyRoutes = require('./routes/videoProxy');
 const app = express();
 const server = createServer(app);
 
-// Socket.IO yapılandırması
+// Allowlist origins (ENV can be comma-separated)
+const DEFAULT_ORIGINS = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5174',
+  'https://distance-is-not-an-excuse-e1efyjaae-jackedreachers-projects.vercel.app',
+  'https://distance-is-not-an-excuse-j1hpw67i0-jackedreachers-projects.vercel.app'
+];
+const envOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map((o) => o.trim()).filter(Boolean)
+  : [];
+const allowedOrigins = envOrigins.length ? envOrigins : DEFAULT_ORIGINS;
+const corsOrigin = (origin, callback) => {
+  if (!origin) return callback(null, true); // non-browser or same-origin
+  if (allowedOrigins.includes(origin)) return callback(null, true);
+  return callback(new Error('Not allowed by CORS'), false);
+};
+
+// Socket.IO configuration (reflects request origin when allowed)
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || [
-      'http://localhost:5173', 
-      'http://127.0.0.1:5173', 
-      'http://localhost:5174',
-      'https://distance-is-not-an-excuse-e1efyjaae-jackedreachers-projects.vercel.app',
-      'https://distance-is-not-an-excuse-j1hpw67i0-jackedreachers-projects.vercel.app'
-    ],
+    origin: corsOrigin,
     credentials: true
   }
 });
@@ -66,13 +79,7 @@ io.on('connection', (socket) => {
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors({
-  origin: process.env.FRONTEND_URL || [
-    'http://localhost:5173', 
-    'http://127.0.0.1:5173', 
-    'http://localhost:5174',
-    'https://distance-is-not-an-excuse-e1efyjaae-jackedreachers-projects.vercel.app',
-    'https://distance-is-not-an-excuse-j1hpw67i0-jackedreachers-projects.vercel.app'
-  ],
+  origin: corsOrigin,
   credentials: true
 })); // Enable CORS with specific origins
 app.use(morgan('combined')); // Logging

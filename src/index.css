@@ -1,6 +1,15 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* Custom Global Font */
+@font-face {
+  font-family: 'Cristik';
+  src: url('./assets/fonts/new_browserlink.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.5;
@@ -15,6 +24,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+/* Enforce Cristik font globally */
+html, body, #root, *, *::before, *::after {
+  font-family: 'Cristik', sans-serif !important;
 }
 
 * {

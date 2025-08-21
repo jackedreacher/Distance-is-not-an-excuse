@@ -1,0 +1,100 @@
+/* Pixelact-like retro pixel styles */
+:root {
+  --pixel-bg: #1b1b1b;
+  --pixel-surface: #222; 
+  --pixel-border: #5eead4; /* teal border */
+  --pixel-border-dark: #115e59;
+  --pixel-accent: #f0abfc; /* pink */
+  --pixel-accent-dark: #a21caf; 
+  --pixel-text: #f8fafc;
+  --pixel-muted: #94a3b8;
+}
+
+.pixel-card {
+  background: var(--pixel-surface);
+  color: var(--pixel-text);
+  padding: 16px;
+  border-radius: 0;
+  position: relative;
+  box-shadow:
+    0 0 0 2px var(--pixel-border),
+    4px 4px 0 0 var(--pixel-border-dark);
+}
+
+.pixel-card + .pixel-card { margin-top: 16px; }
+
+.pixel-card-header {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.pixel-card-desc { 
+  color: var(--pixel-muted); 
+  font-size: 0.95rem; 
+  margin-bottom: 12px;
+}
+
+.pixel-card-footer { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.pixel-button {
+  appearance: none;
+  border: none;
+  background: var(--pixel-accent);
+  color: #1f2937;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 0;
+  position: relative;
+  image-rendering: pixelated;
+  box-shadow:
+    0 0 0 2px var(--pixel-accent-dark),
+    4px 4px 0 0 var(--pixel-accent-dark);
+  transition: transform 0.05s ease-in-out;
+}
+
+/* Size variants */
+.pixel-btn-sm {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+.pixel-btn-lg {
+  padding: 12px 18px;
+  font-size: 1.05rem;
+}
+
+.pixel-btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-button:hover { transform: translate(-1px, -1px); }
+.pixel-button:active { transform: translate(1px, 1px); }
+
+.pixel-button.outline {
+  background: transparent;
+  color: var(--pixel-text);
+  box-shadow:
+    0 0 0 2px var(--pixel-border),
+    4px 4px 0 0 var(--pixel-border-dark);
+}
+
+.pixel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.pixel-section { margin-top: 24px; }
+
+/* Optional retro pixel font rendering */
+.pixel-retro { image-rendering: pixelated; }

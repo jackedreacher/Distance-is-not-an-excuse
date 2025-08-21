@@ -11,6 +11,7 @@ import './styles/games.css'
 import './styles/player.css'
 import './styles/romantic.css'
 import './styles/responsive.css'
+import './styles/pixel.css'
 
 // Import utility functions
 import { calculateTimeDifference } from './utils/timeUtils'
@@ -20,6 +21,11 @@ import CountdownTimer from './components/CountdownTimer'
 import GiftBox from './components/GiftBox'
  import Navigation from './components/Navigation'
 import MiniPlayer from './components/MiniPlayer'
+// Removed custom Pixel components
+// import PixelCard from './components/PixelCard'
+// import PixelButton from './components/PixelButton'
+import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
 
 // Import pages
 import WeatherPage from './pages/WeatherPage'
@@ -247,7 +253,6 @@ function App() {
                       <h1 className="title">💕 Birbirimize Geri Sayım 💕</h1>
                       <p className="subtitle">Her an bizi birbirimize daha da yaklaştırıyor...</p>
                     </header>
-                    
                     {/* Countdown Timer */}
                     <CountdownTimer
                       daysApart={daysApart}
@@ -255,11 +260,55 @@ function App() {
                       minutesApart={minutesApart}
                       secondsApart={secondsApart}
                     />
-                    
-                    <footer className="footer">
-                      <p>Hayatımın aşkı için 💖 ile yapıldı</p>
-                      <p>13 Temmuz 2026'ya geri sayım - mükemmel buluşmamız</p>
-                    </footer>
+
+                    {/* Pixelact UI (shadcn-style): Feature Cards */}
+                    <section className="pixel-section">
+                      <div className="pixel-grid">
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Dilek Listesi</CardTitle>
+                            <CardDescription>Birlikte yapmak istediklerimizi toplayalım.</CardDescription>
+                          </CardHeader>
+                          <CardFooter>
+                            <Button onClick={() => navigate('/wishlist')}>Aç</Button>
+                            <Button variant="outline" onClick={() => navigate('/wishlist')}>Detay</Button>
+                          </CardFooter>
+                        </Card>
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Film Önerileri</CardTitle>
+                            <CardDescription>Bu akşam ne izleyelim? Pixel tadında seçelim.</CardDescription>
+                          </CardHeader>
+                          <CardFooter>
+                            <Button onClick={() => navigate('/movies')}>Keşfet</Button>
+                            <Button variant="outline" onClick={() => navigate('/movies')}>Liste</Button>
+                          </CardFooter>
+                        </Card>
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Müzik Listesi</CardTitle>
+                            <CardDescription>Beraber dinleyelim, ruhumuz eşlik etsin.</CardDescription>
+                          </CardHeader>
+                          <CardFooter>
+                            <Button onClick={() => navigate('/music-playlist')}>Oynat</Button>
+                            <Button variant="outline" onClick={() => navigate('/music-playlist')}>Parçalar</Button>
+                          </CardFooter>
+                        </Card>
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Ruh Hali Takibi</CardTitle>
+                            <CardDescription>Bugün nasılsın? Birbirimizi daha iyi anlayalım.</CardDescription>
+                          </CardHeader>
+                          <CardFooter>
+                            <Button onClick={() => navigate('/mood-tracker')}>Başla</Button>
+                            <Button variant="outline" onClick={() => navigate('/mood-tracker')}>Geçmiş</Button>
+                          </CardFooter>
+                        </Card>
+                      </div>
+                    </section>
                   </div>
                 } />
                 

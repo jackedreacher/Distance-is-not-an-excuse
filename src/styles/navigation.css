@@ -1,11 +1,116 @@
 /* Navigation (Top Bar) and Mega Menu */
 
+/* Mobile Navigation Toggle Button */
+.mobile-nav-toggle {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1700;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--pomegranate-shadow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  pointer-events: auto;
+}
+
+.mobile-nav-toggle:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.05);
+}
+
+.mobile-nav-toggle.active {
+  background: rgba(236, 72, 153, 0.1);
+}
+
+.toggle-icon {
+  font-size: 20px;
+  color: var(--pomegranate-wine);
+  transition: transform 0.3s ease;
+}
+
+.mobile-nav-toggle.active .toggle-icon {
+  transform: rotate(90deg);
+}
+
+/* Mobile Navigation Slide Animation */
+@media (max-width: 768px) {
+  .desktop-navigation {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 280px !important;
+    height: 100vh !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(15px) !important;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1) !important;
+    z-index: 1600 !important;
+    transition: transform 0.3s ease !important;
+    transform: translateX(-100%) !important;
+    overflow-y: auto !important;
+  }
+  
+  .desktop-navigation.mobile-open {
+    transform: translateX(0) !important;
+  }
+  
+  .desktop-navigation.mobile-closed {
+    transform: translateX(-100%) !important;
+  }
+  
+  .desktop-nav-container {
+    padding: 80px 20px 20px !important;
+    height: 100% !important;
+    justify-content: flex-start !important;
+  }
+  
+  .nav-center-group {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 20px !important;
+    padding: 20px !important;
+  }
+  
+  .mobile-nav-close {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+  }
+}
+
+/* Mobile Navigation Overlay */
+.mobile-nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  z-index: 1500;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+
+/* Ensure navbar wrappers don't block clicks; only interactive elements receive events */
+.desktop-navigation { pointer-events: none; }
+.desktop-nav-container { pointer-events: none; }
+.nav-center-group, .mega-menu-button, .nav-logo, .nav-logo img { pointer-events: auto; }
+
 /* ENHANCED DESKTOP NAVIGATION WITH LOGO & CTA */
 .desktop-navigation {
   position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 24px;
+  left: 24px;
+  transform: none;
   width: auto;
   z-index: 1500;
   background: transparent; /* navbar saydam */
@@ -28,67 +133,156 @@
 .nav-center-group {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  gap: 8px; /* önce: 20px — menü ile logo daha yakın */
   pointer-events: auto;
   background: rgba(255,255,255,0.1);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  padding: 8px 16px;
+  padding: -40px -40px;
+  padding-bottom: -13px;
   box-shadow: var(--pomegranate-shadow-soft);
+  vertical-align: middle;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+/* Marka bloğu */
+.brand-logo-stack {
+  position: relative;
+  display: inline-grid;
+  --brand-col1: 64px; /* önce: 100px — logo boyutuna eşitlenir */
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+  grid-template-columns: var(--brand-col1) var(--brand-col2);
+  grid-auto-rows: auto;
+  align-items: center;
+  pointer-events: auto;
+  padding: 0;
+  margin: 0;
+  line-height: 0;
+  overflow: visible;
+  --plush-width: 220px;
+  --plush-overlap: -12px;
+  --plush-raise: -8px;
+}
+
+.nav-logo { grid-column: 1; grid-row: 1; }
+
+/* Yazıyı akıştan çıkarıp logonun altına/üstüne bindir: alan kaplamasını azalt */
+.brand-plush-name {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + var(--plush-overlap));
+  transform: translateX(-50%) translateY(var(--plush-raise));
+  width: var(--plush-width);
+  height: auto;
+  display: block;
+  padding-top: 60px;
+  padding-right: 10px;
+  margin: -90px;
+  line-height: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
 }
 
 .mega-menu-button.expandable.gradient {
+  /* Minimal + animated-gradient framed button */
+  --collapsed: 48px;       /* kapalı kare boyutu */
+  --expanded: 132px;       /* hover/aktif genişlik */
+  --radius: 14px;          /* köşe yarıçapı */
+
   position: relative;
-  width: 44px;
-  padding: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* kapalıyken ikon ortada */
+  gap: 8px;
+
+  min-width: var(--collapsed);
+  width: var(--collapsed);
+  height: var(--collapsed);
   overflow: hidden;
+
   background: rgba(255,255,255,0.85);
   backdrop-filter: blur(8px);
-  border: 2px solid transparent;
-  border-radius: 14px;
-  transition: width .25s ease, background .2s ease;
+  border: 2px solid transparent; /* kenar çizgisi gradient katmanında */
+  border-radius: var(--radius);
   box-shadow: var(--pomegranate-shadow-soft);
+
+  transform: translateX(-3px); /* brand ile arayı görsel olarak sıkılaştır */
+  transition: width .28s ease, background .20s ease, transform .20s ease;
+  will-change: width;
 }
+
 .mega-menu-button.expandable.gradient::before {
+  /* Animated gradient frame */
   content: '';
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #ec4899, #8b5cf6, #06b6d4, #ec4899);
+  top: -2px; left: -2px; right: -2px; bottom: -2px; /* 2px frame */
+  background: linear-gradient(45deg, #ff4fa3, #d946ef, #a855f7, #ff4fa3);
   background-size: 300% 300%;
-  border-radius: 16px;
+  border-radius: calc(var(--radius) + 2px);
   z-index: -1;
   animation: gradientShift 3s ease infinite;
 }
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+
+/* İçerik davranışı */
+.mega-menu-button.expandable.gradient .icon {
+  font-size: 16px;
+  line-height: 1;
+  margin-left: 4px;
+  transition: transform .25s ease, opacity .2s ease;
 }
+
 .mega-menu-button.expandable.gradient .txt {
   opacity: 0;
-  width: 0;
+  max-width: 0; /* metni gizle */
   margin-left: 0;
-  transition: opacity .2s ease, width .2s ease, margin .2s ease;
+  overflow: hidden;
   white-space: nowrap;
+  transition: opacity .20s ease .05s, max-width .28s ease, margin .20s ease;
 }
+
+/* Hover/aktif hâlinde genişlet ve etiketi göster */
 .mega-menu-button.expandable.gradient:hover,
 .mega-menu-button.expandable.gradient.active {
-  width: 130px;
-  background: rgba(255,255,255,0.92);
+  width: var(--expanded);
 }
+
 .mega-menu-button.expandable.gradient:hover .txt,
 .mega-menu-button.expandable.gradient.active .txt {
   opacity: 1;
-  width: auto;
-  margin-left: 8px;
+  max-width: 96px;
+  margin-left: 6px; /* ikon ile yazı arası */
+}
+
+/* Küçük mikro animasyon: hover'da ikon hafif sağa kayar */
+.mega-menu-button.expandable.gradient:hover .icon,
+.mega-menu-button.expandable.gradient.active .icon {
+  transform: translateX(2px);
+}
+
+/* Erişilebilir odak görünümü */
+.mega-menu-button.expandable.gradient:focus-visible {
+  outline: 2px solid rgba(255,255,255,.9);
+  outline-offset: 2px;
+}
+
+/* Hareketi azalt tercihine saygı göster */
+@media (prefers-reduced-motion: reduce) {
+  .mega-menu-button.expandable.gradient,
+  .mega-menu-button.expandable.gradient .txt,
+  .mega-menu-button.expandable.gradient .icon {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 /* Brand alanını gridin ortasına yerleştir */
 .nav-brand {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  margin-top: 15px; 
   gap: 12px;
   text-decoration: none;
 }
@@ -103,7 +297,9 @@
   /* Customizable knobs: adjust these values to move the writing */
   --plush-width: 150px;          /* Yazının genişliği */
   --plush-overlap: -50px;        /* Negatif değerle logoya yaklaşır/üstüne biner (margin-top) */
-  --plush-raise: -1 6px;           /* Negatif değerle yukarı taşır (translateY) */
+  --plush-raise: -30px;     
+        /* sağdan soldan margin */
+        
 }
 
 /* Handwritten plush svg positioned under logo with slight overlap; uses variables above */
@@ -117,9 +313,1028 @@
 }
 
 .nav-logo img {
-  width: 100px;
-  height: 100px;
+  width: 48px; /* önce: 100px */
+  height: 48px; /* önce: 100px */
+  border-radius: 12px; /* önce: 8px */
+}
+
+.nav-brand-text {
+  display: none;
+}
+
+
+/* Mega menu trigger button */
+.mega-menu-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  color: var(--pomegranate-text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.mega-menu-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+.mega-menu-button.active {
+  border-color: var(--pomegranate-rose);
+  box-shadow: var(--pomegranate-shadow-medium);
+}
+
+/* ===== MEGA MENU OVERLAY ===== */
+.mega-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1499;
+}
+.mega-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mega-menu-panel {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(1100px, 92vw);
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 20px;
+  opacity: 0;
+  transition: 0.2s ease;
+  z-index: 1501;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+.mega-menu-overlay.open .mega-menu-panel {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mega-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mega-menu-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mega-menu-logo-img {
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
+  object-fit: cover;
+}
+.mega-menu-title {
+  margin: 0;
+  color: var(--pomegranate-wine);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.mega-menu-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  background: white;
+  color: var(--pomegranate-wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+.mega-menu-close:hover {
+  background: var(--pomegranate-rose);
+  color: white;
+  transform: rotate(90deg);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.mega-menu-section {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(236, 72, 153, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.mega-menu-section:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pomegranate-shadow-medium);
+  border-color: var(--pomegranate-blush);
+}
+.mega-menu-section-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--pomegranate-blush),
+    var(--pomegranate-rose)
+  );
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+.mega-menu-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pomegranate-wine);
+  margin: 0 0 8px 0;
+}
+.mega-menu-section-desc {
+  color: var(--pomegranate-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.mega-menu-section-items {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0 0;
+}
+.mega-menu-section-item {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(236, 72, 153, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #111827; /* Yazı rengini koyu gri/siyah yap */
+}
+.mega-menu-section-item:hover {
+  color: var(--pomegranate-rose);
+  padding-left: 8px;
+}
+.mega-menu-section-item:last-child {
+  border-bottom: none;
+}
+
+/* Hide original nav-title when mega menu is active */
+.nav-title {
+  display: none;
+}
+
+/* ===== MOBILE NAVIGATION (BOTTOM BAR) ===== */
+.mobile-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 8px 12px;
+}
+
+.mobile-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Mobile nav item buttons */
+.mobile-navigation .nav-item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--pomegranate-text-secondary);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.mobile-navigation .nav-item.active {
+  color: var(--pomegranate-wine);
+  background: rgba(236, 72, 153, 0.08);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mobile-navigation .nav-label:first-child {
+  font-size: 1.2rem; /* icon */
+  line-height: 1;
+}
+
+.mobile-navigation .nav-label:last-child {
+  font-size: 0.75rem; /* text */
+}
+
+/* Force desktop nav visible and pinned on small screens; hide mobile nav */
+@media (max-width: 768px) {
+  .desktop-navigation {
+    display: block !important;
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    transform: none;
+    z-index: 1300;
+  }
+  .mobile-navigation {
+    display: none !important;
+  }
+}
+
+.site-name {
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  color: #ff69b4; /* Hot pink */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* SCENARIO 1: Right of the logo (default) */
+.scenario-1 {
+  margin-left: 10px;
+}
+
+/* SCENARIO 2: Below the logo */
+
+/* Ensure desktop nav stays visible and inside viewport on medium widths */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .desktop-navigation { left: 16px; transform: none; }
+}
+
+/* Mobile nav redesign to mirror glass navbar */
+@media (max-width: 768px) {
+  .mobile-navigation { background: transparent; border-top: none; padding: 12px; }
+  .mobile-nav-container {
+    max-width: none;
+    width: max-content;
+    margin: 0 auto calc(12px + env(safe-area-inset-bottom));
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(236,72,153,0.25);
+    border-radius: 22px;
+    padding: 10px 12px;
+    gap: 12px;
+    box-shadow: var(--pomegranate-shadow-soft);
+  }
+  .mobile-navigation .nav-item {
+    background: transparent;
+    color: var(--pomegranate-text-primary);
+    padding: 8px 10px;
+    border-radius: 12px;
+  }
+  .mobile-navigation .nav-item.active {
+    background: rgba(236,72,153,0.10);
+    color: var(--pomegranate-wine);
+    box-shadow: var(--pomegranate-shadow-soft);
+  }
+}
+.scenario-2 {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* === NAVBAR REDESIGN FOR 3.5X LOGO (V2) === */
+/* Bu blok en altta yer alır ve önceki tanımları override eder */
+/* Place nav just to the left edge of the centered .page-container
+   .page-container uses width: min(980px, 90vw), so its left margin equals (100vw - min(980px, 90vw)) / 2
+   Shift slightly outward by 8px for visual spacing */
+/* Keep navbar outside any content overlays (mega menu: min(1100px, 92vw)) */
+.desktop-navigation { left: 24px; top: 24px; transform: none; z-index: 1300; }
+.desktop-nav-container { justify-content: flex-start; }
+
+.nav-center-group {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Dikey boşluğu azalt (önce 12px) */
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 18px 40px 22px; /* Yatay boşluğu artır (önce 18px) */
+  min-width: 170px; /* Arka planın her zaman geniş kalmasını sağla */
+}
+
+.nav-brand { margin-top: 0; }
+
+.brand-logo-stack { overflow: visible; }
+
+/* 48px tabanlı görseli 3.5x büyütmeye uygun boşluk bırak */
+.nav-logo {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  margin: 40px 0; /* Dikey boşluğu azalt (önce 60px) */
+}
+
+.nav-logo img {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  transform-origin: center;
+}
+
+/* Düğmenin yatay kaymasını kaldır, sütun düzenine uyumlu olsun */
+.nav-center-group .mega-menu-button.expandable.gradient {
+  transform: none;
+}
+.scenario-2 {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* SCENARIO 3: As a button next to the logo */
+.scenario-3 {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #ff69b4;
+  color: white;
+  cursor: pointer;
+}
+
+/* SCENARIO 4: On the far right of the navbar */
+.scenario-4 {
+  position: absolute;
+  right: 20px;
+}
+
+/* SCENARIO 5: As an overlay on the logo */
+.scenario-5 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.brand-logo-stack {
+  /* Kolon genişliklerini eski değerlere döndür (pozisyon aynı kalsın) */
+  --brand-col1: 48px; /* önce: 100px */
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+  grid-template-columns: var(--brand-col1) var(--brand-col2);
+  padding: 0; /* NEGATIF padding kaldırıldı */
+}
+
+/* Olabilecek diğer tekrar tanımı (dosyanın altlarında) uyum için güncelle */
+.brand-logo-stack {
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+}
+
+/* Eski el yazısı overlay’i tamamen kapat */
+.brand-plush-name { display: none !important; }
+.nav-logo img {
+  width: 48px; /* önce: 100px */
+  height: 48px; /* önce: 100px */
+  border-radius: 12px; /* önce: 8px */
+}
+
+.nav-brand-text {
+  display: none;
+}
+
+
+/* Mega menu trigger button */
+.mega-menu-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  color: var(--pomegranate-text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.mega-menu-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+.mega-menu-button.active {
+  border-color: var(--pomegranate-rose);
+  box-shadow: var(--pomegranate-shadow-medium);
+}
+
+/* ===== MEGA MENU OVERLAY ===== */
+.mega-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1499;
+}
+.mega-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mega-menu-panel {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(1100px, 92vw);
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 20px;
+  opacity: 0;
+  transition: 0.2s ease;
+  z-index: 1501;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+.mega-menu-overlay.open .mega-menu-panel {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mega-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mega-menu-title {
+  margin: 0;
+  color: var(--pomegranate-wine);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.mega-menu-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  background: white;
+  color: var(--pomegranate-wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+.mega-menu-close:hover {
+  background: var(--pomegranate-rose);
+  color: white;
+  transform: rotate(90deg);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.mega-menu-section {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(236, 72, 153, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.mega-menu-section:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pomegranate-shadow-medium);
+  border-color: var(--pomegranate-blush);
+}
+.mega-menu-section-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--pomegranate-blush),
+    var(--pomegranate-rose)
+  );
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+.mega-menu-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pomegranate-wine);
+  margin: 0 0 8px 0;
+}
+.mega-menu-section-desc {
+  color: var(--pomegranate-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.mega-menu-section-items {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0 0;
+}
+.mega-menu-section-item {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(236, 72, 153, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #111827; /* Yazı rengini koyu gri/siyah yap */
+}
+.mega-menu-section-item:hover {
+  color: var(--pomegranate-rose);
+  padding-left: 8px;
+}
+.mega-menu-section-item:last-child {
+  border-bottom: none;
+}
+
+/* Hide original nav-title when mega menu is active */
+.nav-title {
+  display: none;
+}
+
+/* ===== MOBILE NAVIGATION (BOTTOM BAR) ===== */
+.mobile-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 8px 12px;
+}
+
+.mobile-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Mobile nav item buttons */
+.mobile-navigation .nav-item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--pomegranate-text-secondary);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.mobile-navigation .nav-item.active {
+  color: var(--pomegranate-wine);
+  background: rgba(236, 72, 153, 0.08);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mobile-navigation .nav-label:first-child {
+  font-size: 1.2rem; /* icon */
+  line-height: 1;
+}
+
+.mobile-navigation .nav-label:last-child {
+  font-size: 0.75rem; /* text */
+}
+
+/* Küçük ekranlarda üstteki desktop navbar gizlensin */
+@media (max-width: 768px) {
+  .desktop-navigation {
+    display: block !important;
+  }
+}
+
+.site-name {
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  color: #ff69b4; /* Hot pink */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* SCENARIO 1: Right of the logo (default) */
+.scenario-1 {
+  margin-left: 10px;
+}
+
+/* SCENARIO 2: Below the logo */
+.scenario-2 {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* SCENARIO 3: As a button next to the logo */
+.scenario-3 {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #ff69b4;
+  color: white;
+  cursor: pointer;
+}
+
+/* SCENARIO 4: On the far right of the navbar */
+.scenario-4 {
+  position: absolute;
+  right: 20px;
+}
+
+/* SCENARIO 5: As an overlay on the logo */
+.scenario-5 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.brand-logo-stack {
+  /* Kolon genişliklerini eski değerlere döndür (pozisyon aynı kalsın) */
+  --brand-col1: 48px; /* önce: 100px */
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+  grid-template-columns: var(--brand-col1) var(--brand-col2);
+  padding: 0; /* NEGATIF padding kaldırıldı */
+}
+
+/* Olabilecek diğer tekrar tanımı (dosyanın altlarında) uyum için güncelle */
+.brand-logo-stack {
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+}
+
+/* Eski el yazısı overlay’i tamamen kapat */
+.brand-plush-name { display: none !important; }
+.nav-logo img {
+  width: 48px; /* önce: 100px */
+  height: 48px; /* önce: 100px */
+  border-radius: 12px; /* önce: 8px */
+}
+
+.nav-brand-text {
+  display: none;
+}
+
+
+/* Mega menu trigger button */
+.mega-menu-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  color: var(--pomegranate-text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.mega-menu-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+.mega-menu-button.active {
+  border-color: var(--pomegranate-rose);
+  box-shadow: var(--pomegranate-shadow-medium);
+}
+
+/* ===== MEGA MENU OVERLAY ===== */
+.mega-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1499;
+}
+.mega-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mega-menu-panel {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(1100px, 92vw);
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 20px;
+  opacity: 0;
+  transition: 0.2s ease;
+  z-index: 1501;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+.mega-menu-overlay.open .mega-menu-panel {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mega-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mega-menu-title {
+  margin: 0;
+  color: var(--pomegranate-wine);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.mega-menu-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  background: white;
+  color: var(--pomegranate-wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+.mega-menu-close:hover {
+  background: var(--pomegranate-rose);
+  color: white;
+  transform: rotate(90deg);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.mega-menu-section {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(236, 72, 153, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.mega-menu-section:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pomegranate-shadow-medium);
+  border-color: var(--pomegranate-blush);
+}
+.mega-menu-section-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--pomegranate-blush),
+    var(--pomegranate-rose)
+  );
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+.mega-menu-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pomegranate-wine);
+  margin: 0 0 8px 0;
+}
+.mega-menu-section-desc {
+  color: var(--pomegranate-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.mega-menu-section-items {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0 0;
+}
+.mega-menu-section-item {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(236, 72, 153, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #111827; /* Yazı rengini koyu gri/siyah yap */
+}
+.mega-menu-section-item:hover {
+  color: var(--pomegranate-rose);
+  padding-left: 8px;
+}
+.mega-menu-section-item:last-child {
+  border-bottom: none;
+}
+
+/* Hide original nav-title when mega menu is active */
+.nav-title {
+  display: none;
+}
+
+/* ===== MOBILE NAVIGATION (BOTTOM BAR) ===== */
+.mobile-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 8px 12px;
+}
+
+.mobile-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Mobile nav item buttons */
+.mobile-navigation .nav-item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--pomegranate-text-secondary);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.mobile-navigation .nav-item.active {
+  color: var(--pomegranate-wine);
+  background: rgba(236, 72, 153, 0.08);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mobile-navigation .nav-label:first-child {
+  font-size: 1.2rem; /* icon */
+  line-height: 1;
+}
+
+.mobile-navigation .nav-label:last-child {
+  font-size: 0.75rem; /* text */
+}
+
+/* Küçük ekranda desktop navbar gizlenmesin; ekranda sabit kalsın */
+@media (max-width: 768px) {
+  .desktop-navigation {
+    display: block !important;
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    transform: none;
+    z-index: 1300;
+  }
+  .mobile-navigation { display: none !important; }
+}
+
+.site-name {
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  color: #ff69b4; /* Hot pink */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* SCENARIO 1: Right of the logo (default) */
+.scenario-1 {
+  margin-left: 10px;
+}
+
+/* SCENARIO 2: Below the logo */
+.scenario-2 {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* SCENARIO 3: As a button next to the logo */
+.scenario-3 {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #ff69b4;
+  color: white;
+  cursor: pointer;
+}
+
+/* SCENARIO 4: On the far right of the navbar */
+.scenario-4 {
+  position: absolute;
+  right: 20px;
+}
+
+/* SCENARIO 5: As an overlay on the logo */
+.scenario-5 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.brand-logo-stack {
+  /* Kolon genişliklerini eski değerlere döndür (pozisyon aynı kalsın) */
+  --brand-col1: 48px; /* önce: 100px */
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+  grid-template-columns: var(--brand-col1) var(--brand-col2);
+  padding: 0; /* NEGATIF padding kaldırıldı */
+}
+
+/* Olabilecek diğer tekrar tanımı (dosyanın altlarında) uyum için güncelle */
+.brand-logo-stack {
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+}
+
+/* Eski el yazısı overlay’i tamamen kapat */
+.brand-plush-name { display: none !important; }
+.nav-logo img {
+  width: 48px; /* önce: 100px */
+  height: 48px; /* önce: 100px */
+  border-radius: 12px; /* önce: 8px */
 }
 
 .nav-brand-text {
@@ -402,3 +1617,573 @@
   padding: 5px;
   border-radius: 5px;
 }
+
+.brand-logo-stack {
+  /* Kolon genişliklerini eski değerlere döndür (pozisyon aynı kalsın) */
+  --brand-col1: 48px; /* önce: 100px */
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+  grid-template-columns: var(--brand-col1) var(--brand-col2);
+  padding: 0; /* NEGATIF padding kaldırıldı */
+}
+
+/* Olabilecek diğer tekrar tanımı (dosyanın altlarında) uyum için güncelle */
+.brand-logo-stack {
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+}
+
+/* Eski el yazısı overlay’i tamamen kapat */
+.brand-plush-name { display: none !important; }
+.nav-logo img {
+  width: 48px; /* önce: 100px */
+  height: 48px; /* önce: 100px */
+  border-radius: 12px; /* önce: 8px */
+}
+
+.nav-brand-text {
+  display: none;
+}
+
+
+/* Mega menu trigger button */
+.mega-menu-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  color: var(--pomegranate-text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.mega-menu-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+.mega-menu-button.active {
+  border-color: var(--pomegranate-rose);
+  box-shadow: var(--pomegranate-shadow-medium);
+}
+
+/* ===== MEGA MENU OVERLAY ===== */
+.mega-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1499;
+}
+.mega-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mega-menu-panel {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(1100px, 92vw);
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 20px;
+  opacity: 0;
+  transition: 0.2s ease;
+  z-index: 1501;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+.mega-menu-overlay.open .mega-menu-panel {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mega-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mega-menu-title {
+  margin: 0;
+  color: var(--pomegranate-wine);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.mega-menu-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  background: white;
+  color: var(--pomegranate-wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+.mega-menu-close:hover {
+  background: var(--pomegranate-rose);
+  color: white;
+  transform: rotate(90deg);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.mega-menu-section {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(236, 72, 153, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.mega-menu-section:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pomegranate-shadow-medium);
+  border-color: var(--pomegranate-blush);
+}
+.mega-menu-section-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--pomegranate-blush),
+    var(--pomegranate-rose)
+  );
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+.mega-menu-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pomegranate-wine);
+  margin: 0 0 8px 0;
+}
+.mega-menu-section-desc {
+  color: var(--pomegranate-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.mega-menu-section-items {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0 0;
+}
+.mega-menu-section-item {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(236, 72, 153, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #111827; /* Yazı rengini koyu gri/siyah yap */
+}
+.mega-menu-section-item:hover {
+  color: var(--pomegranate-rose);
+  padding-left: 8px;
+}
+.mega-menu-section-item:last-child {
+  border-bottom: none;
+}
+
+/* Hide original nav-title when mega menu is active */
+.nav-title {
+  display: none;
+}
+
+/* ===== MOBILE NAVIGATION (BOTTOM BAR) ===== */
+.mobile-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 8px 12px;
+}
+
+.mobile-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Mobile nav item buttons */
+.mobile-navigation .nav-item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--pomegranate-text-secondary);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.mobile-navigation .nav-item.active {
+  color: var(--pomegranate-wine);
+  background: rgba(236, 72, 153, 0.08);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mobile-navigation .nav-label:first-child {
+  font-size: 1.2rem; /* icon */
+  line-height: 1;
+}
+
+.mobile-navigation .nav-label:last-child {
+  font-size: 0.75rem; /* text */
+}
+
+/* Küçük ekranlarda üstteki desktop navbar gizlensin */
+@media (max-width: 768px) {
+  .desktop-navigation {
+    display: none;
+  }
+}
+
+.site-name {
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  color: #ff69b4; /* Hot pink */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* SCENARIO 1: Right of the logo (default) */
+.scenario-1 {
+  margin-left: 10px;
+}
+
+/* SCENARIO 2: Below the logo */
+.scenario-2 {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* SCENARIO 3: As a button next to the logo */
+.scenario-3 {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #ff69b4;
+  color: white;
+  cursor: pointer;
+}
+
+/* SCENARIO 4: On the far right of the navbar */
+.scenario-4 {
+  position: absolute;
+  right: 20px;
+}
+
+/* SCENARIO 5: As an overlay on the logo */
+.scenario-5 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.brand-logo-stack {
+  /* Kolon genişliklerini eski değerlere döndür (pozisyon aynı kalsın) */
+  --brand-col1: 48px; /* önce: 100px */
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+  grid-template-columns: var(--brand-col1) var(--brand-col2);
+  padding: 0; /* NEGATIF padding kaldırıldı */
+}
+
+/* Olabilecek diğer tekrar tanımı (dosyanın altlarında) uyum için güncelle */
+.brand-logo-stack {
+  --brand-col2: 0px; /* ikinci kolon kapatıldı */
+}
+
+/* Eski el yazısı overlay’i tamamen kapat */
+.brand-plush-name { display: none !important; }
+.nav-logo img {
+  width: 48px; /* önce: 100px */
+  height: 48px; /* önce: 100px */
+  border-radius: 12px; /* önce: 8px */
+}
+
+.nav-brand-text {
+  display: none;
+}
+
+
+/* Mega menu trigger button */
+.mega-menu-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  color: var(--pomegranate-text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.mega-menu-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+.mega-menu-button.active {
+  border-color: var(--pomegranate-rose);
+  box-shadow: var(--pomegranate-shadow-medium);
+}
+
+/* ===== MEGA MENU OVERLAY ===== */
+.mega-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1499;
+}
+.mega-menu-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mega-menu-panel {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(1100px, 92vw);
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 20px;
+  opacity: 0;
+  transition: 0.2s ease;
+  z-index: 1501;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+.mega-menu-overlay.open .mega-menu-panel {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mega-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mega-menu-title {
+  margin: 0;
+  color: var(--pomegranate-wine);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.mega-menu-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  background: white;
+  color: var(--pomegranate-wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+.mega-menu-close:hover {
+  background: var(--pomegranate-rose);
+  color: white;
+  transform: rotate(90deg);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.mega-menu-section {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(236, 72, 153, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.mega-menu-section:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pomegranate-shadow-medium);
+  border-color: var(--pomegranate-blush);
+}
+.mega-menu-section-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--pomegranate-blush),
+    var(--pomegranate-rose)
+  );
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+.mega-menu-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pomegranate-wine);
+  margin: 0 0 8px 0;
+}
+.mega-menu-section-desc {
+  color: var(--pomegranate-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.mega-menu-section-items {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0 0;
+}
+.mega-menu-section-item {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(236, 72, 153, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #111827; /* Yazı rengini koyu gri/siyah yap */
+}
+.mega-menu-section-item:hover {
+  color: var(--pomegranate-rose);
+  padding-left: 8px;
+}
+.mega-menu-section-item:last-child {
+  border-bottom: none;
+}
+
+/* Hide original nav-title when mega menu is active */
+.nav-title {
+  display: none;
+}
+
+/* ===== MOBILE NAVIGATION (BOTTOM BAR) ===== */
+.mobile-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(236, 72, 153, 0.2);
+  padding: 8px 12px;
+}
+
+.mobile-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Mobile nav item buttons */
+.mobile-navigation .nav-item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--pomegranate-text-secondary);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.mobile-navigation .nav-item.active {
+  color: var(--pomegranate-wine);
+  background: rgba(236, 72, 153, 0.08);
+  box-shadow: var(--pomegranate-shadow-soft);
+}
+
+.mobile-navigation .nav-label:first-child {
+  font-size: 1.2rem; /* icon */
+  line-height: 1;
+}
+
+.mobile-navigation .nav-label:last-child {
+  font-size: 0.75rem; /* text */
+}
+
+/* Küçük ekranlarda üstteki desktop navbar gizlensin */
+@media (max-width: 768px) {
+  .desktop-navigation {
+    display: none;
+  }
+}
+
+.site-name {
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  color: #ff69b4; /* Hot pink */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* SCENARIO 1: Right of the logo (default) */
+.scenario-1 {
+  margin-left: 10px;
+}
+
+/* SCENARIO 2: Below the logo

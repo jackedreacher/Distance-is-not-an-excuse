@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import logo from '../assets/Mis.gif'
+import logo from '../assets/mis.gif'
 import CloseButton from './shared/CloseButton'
 import '../styles/variables.css'
 import '../styles/navigation.css'

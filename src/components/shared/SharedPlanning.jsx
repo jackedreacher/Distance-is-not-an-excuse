@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { planningService } from '../../services/api';
 
-import { useSocket } from '../../contexts/SocketContext';
+import { useSocket } from '../../hooks/useSocket';
 import './SharedPlanning.css';
 
 const SharedPlanning = ({ channelId }) => {
@@ -27,7 +27,8 @@ const SharedPlanning = ({ channelId }) => {
       try {
         setLoading(true);
         const channelEvents = await planningService.getEventsByChannel(channelId);
-        setEvents(channelEvents);
+        const normalized = Array.isArray(channelEvents) ? channelEvents : (channelEvents?.data ?? []);
+        setEvents(normalized);
         setError(null);
       } catch (err) {
         setError('Etkinlikler yüklenemedi');

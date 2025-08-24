@@ -39,7 +39,7 @@ function CardTitle({
   return (
     <div
       data-slot="card-title"
-      className={cn("", className)}
+      className={cn("pixel-retro", className)}
       {...props} />
   );
 }

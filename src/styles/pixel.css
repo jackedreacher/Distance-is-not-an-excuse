@@ -1,19 +1,21 @@
 /* Pixelact-like retro pixel styles */
 :root {
-  --pixel-bg: #1b1b1b;
-  --pixel-surface: #222; 
-  --pixel-border: #5eead4; /* teal border */
-  --pixel-border-dark: #115e59;
-  --pixel-accent: #f0abfc; /* pink */
-  --pixel-accent-dark: #a21caf; 
-  --pixel-text: #f8fafc;
-  --pixel-muted: #94a3b8;
+  /* Palet 5: Pastel Rüyası (Yumuşak & Tatlı) */
+  --pixel-bg: #fdf4f8;            /* Çok açık pembe */
+  --pixel-surface: #ffffff;       /* Beyaz */
+  --pixel-text: #5c5470;           /* Koyu pastel mor */
+  --pixel-muted: #9e95b3;          /* Soluk lavanta */
+  --pixel-border: #fbcfe8;         /* Şeker pembesi */
+  --pixel-border-dark: #f9a8d4;    /* Daha koyu pembe */
+  --pixel-accent: #a7f3d0;         /* Nane yeşili */
+  --pixel-accent-dark: #6ee7b7;    /* Koyu nane */
+  --pixel-ecru: #fef3c7;           /* Vurgu sarısı */
 }
 
 .pixel-card {
   background: var(--pixel-surface);
   color: var(--pixel-text);
-  padding: 16px;
+  padding: 20px;
   border-radius: 0;
   position: relative;
   box-shadow:
@@ -53,7 +55,7 @@
   image-rendering: pixelated;
   box-shadow:
     0 0 0 2px var(--pixel-accent-dark),
-    4px 4px 0 0 var(--pixel-accent-dark);
+    4px 4px 0 0 var(--pixel-border-dark);
   transition: transform 0.05s ease-in-out;
 }
 
@@ -71,14 +73,18 @@
 .pixel-btn-icon {
   width: 36px;
   height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid var(--pixel-border);
 }
 
-.pixel-button:hover { transform: translate(-1px, -1px); }
-.pixel-button:active { transform: translate(1px, 1px); }
+/* Hover/Active: stronger pixel offset */
+.pixel-button:hover { transform: translate(-2px, -2px); }
+.pixel-button:active { transform: translate(2px, 2px); }
 
 .pixel-button.outline {
   background: transparent;
@@ -97,4 +103,472 @@
 .pixel-section { margin-top: 24px; }
 
 /* Optional retro pixel font rendering */
-.pixel-retro { image-rendering: pixelated; }
+.pixel-retro { image-rendering: pixelated; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 900; }
+
+
+/* Pixel intensity tweaks to better match desired pixel look */
+.pixel-card {
+  border: 2px solid var(--pixel-border);
+  box-shadow:
+    0 0 0 2px var(--pixel-border),
+    6px 6px 0 0 var(--pixel-border-dark);
+}
+
+.pixel-card-header {
+  border-bottom: 2px solid var(--pixel-border);
+  padding-bottom: 6px;
+}
+
+.pixel-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: 0.875rem; /* 14px */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1.5rem; /* py-2 px-6 */
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--pixel-border);
+  box-shadow:
+    0 0 0 2px var(--pixel-accent-dark),
+    6px 6px 0 0 var(--pixel-accent-dark);
+}
+
+.pixel-button.outline {
+  box-shadow:
+    0 0 0 2px var(--pixel-border),
+    6px 6px 0 0 var(--pixel-border-dark);
+}
+
+.pixel-button:focus-visible,
+[data-slot="badge"]:focus-visible,
+[data-slot="dialog-content"]:focus-visible,
+[data-slot="tooltip-content"]:focus-visible {
+  outline: 2px solid var(--pixel-ecru);
+  outline-offset: -2px;
+}
+
+.pixel-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Strengthen card title visuals */
+[data-slot="card-title"] {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===================== */
+/* Light theme overrides */
+/* ===================== */
+@media (prefers-color-scheme: light) {
+  body.theme-system-light {
+    --pixel-bg: #fafafa;
+    --pixel-surface: #ffffff;
+    --pixel-border: #8b5cf6; /* violet border */
+    --pixel-border-dark: #5b21b6;
+    --pixel-accent: #22d3ee; /* cyan */
+    --pixel-accent-dark: #0e7490; 
+    --pixel-text: #111827;
+    --pixel-muted: #6b7280;
+  }
+}
+
+/* ===================== */
+/* NES THEME OVERRIDES  */
+/* ===================== */
+body.theme-nes {
+  /* Palette: dark bg, red/ecru accents, white text */
+  --pixel-bg: #0e0e0e;
+  --pixel-surface: #141414;
+  --pixel-text: #ffffff;
+  --pixel-muted: #b0b0b0;
+  /* Double frame greys: inner (light) 1px, outer (dark) 2px */
+  --pixel-border: #c7c7c7;          /* inner light */
+  --pixel-border-dark: #2b2b2b;     /* outer dark */
+  /* Accents */
+  --pixel-accent: #d7263d;          /* NES red */
+  --pixel-accent-dark: #8a1121;     /* deeper red */
+  --pixel-ecru: #f2e8cf;            /* ecru accent */
+}
+
+/* Background: subtle 2x2px checker with low opacity */
+body {
+  background-color: var(--pixel-bg);
+  background-image:
+    linear-gradient(90deg, rgba(255,255,255,0.03) 50%, transparent 50%),
+    linear-gradient(0deg, rgba(255,255,255,0.03) 50%, transparent 50%);
+  background-size: 2px 2px;
+  background-position: 0 0, 1px 1px;
+  color: var(--pixel-text);
+}
+
+/* Utility: step-like motion */
+.pixel-steps {
+  transition-timing-function: steps(5, end) !important;
+}
+
+/* Utility: block link style */
+.pixel-link-block {
+  display: block;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  color: var(--pixel-text);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background-color 100ms steps(5, end), transform 100ms steps(5, end);
+}
+.pixel-link-block:hover {
+  background: rgba(255,255,255,0.06);
+}
+.pixel-link-block:active {
+  transform: translateY(2px);
+  box-shadow: none !important;
+}
+
+/* Utility: 16px pixel icon */
+.pixel-icon, .pixel-icon svg, .pixel-icon *[data-icon] {
+  width: 16px; height: 16px;
+  image-rendering: pixelated;
+  color: var(--pixel-accent);
+  fill: currentColor;
+}
+
+/* Buttons: outline by default, double frame, pressed effect */
+.pixel-button {
+  background: transparent !important;
+  color: var(--pixel-text) !important;
+  border: 2px solid var(--pixel-border) !important; /* was 1px */
+  border-radius: 0 !important;
+  letter-spacing: 0.06em; /* increased tracking */
+  padding: 10px 18px; /* increased padding */
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark), /* outer 2px dark */
+    6px 6px 0 0 var(--pixel-border-dark) !important; /* offset */
+  transition: transform 100ms steps(5, end), background-color 100ms steps(5, end), box-shadow 100ms steps(5, end) !important;
+}
+.pixel-button:hover {
+  background: rgba(255,255,255,0.06) !important;
+  transform: translate(-1px, -1px) !important; /* slight hover nudge */
+}
+.pixel-button:active {
+  transform: translateY(2px) !important; /* "pressed" */
+  box-shadow: 0 0 0 2px var(--pixel-border-dark) !important; /* remove offset */
+}
+.pixel-button:focus-visible {
+  outline: 2px solid var(--pixel-accent) !important;
+  outline-offset: -2px !important;
+}
+/* Filled accent variant when needed */
+.pixel-button.filled,
+.pixel-button[data-variant="filled"] {
+  background: var(--pixel-accent) !important;
+  color: #0c0c0c !important;
+  border-color: var(--pixel-border) !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark),
+    6px 6px 0 0 var(--pixel-border-dark) !important;
+}
+
+/* Cards: double frame and stronger offset */
+.pixel-card {
+  border: 2px solid var(--pixel-border) !important; /* was 1px */
+  border-radius: 0 !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark),
+    8px 8px 0 0 var(--pixel-border-dark) !important;
+}
+.pixel-card-header {
+  border-bottom: 1px solid var(--pixel-border) !important;
+}
+
+/* Dialog: NES frame and pressed close */
+[data-slot="dialog-content"] {
+  border: 2px solid var(--pixel-border) !important;
+  border-radius: 0 !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark),
+    8px 8px 0 0 var(--pixel-border-dark) !important;
+  padding: 20px !important; /* ensure inner spacing so text stays away from edges */
+}
+[data-slot="dialog-header"] {
+  border-bottom: 1px solid var(--pixel-border) !important;
+}
+[data-slot="dialog-close"] {
+  border: 1px solid var(--pixel-border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark),
+    6px 6px 0 0 var(--pixel-border-dark) !important;
+  transition: transform 100ms steps(5, end), box-shadow 100ms steps(5, end) !important;
+}
+[data-slot="dialog-close"]:hover { background: rgba(255,255,255,0.06) !important; }
+[data-slot="dialog-close"]:active { transform: translateY(2px) !important; box-shadow: 0 0 0 2px var(--pixel-border-dark) !important; }
+
+/* Tooltip: compact NES card */
+[data-slot="tooltip-content"] {
+  border: 2px solid var(--pixel-border) !important;
+  border-radius: 0 !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark),
+    4px 4px 0 0 var(--pixel-border-dark) !important;
+  transition: opacity 100ms steps(5, end), transform 100ms steps(5, end) !important;
+}
+.pixel-tooltip-arrow {
+  width: 8px; height: 8px;
+  background: var(--pixel-surface) !important;
+  border: 2px solid var(--pixel-border) !important;
+  transform: rotate(45deg);
+  box-shadow: 2px 2px 0 0 var(--pixel-border-dark) !important;
+}
+
+/* Badge: outline frame by default */
+[data-slot="badge"] {
+  border: 2px solid var(--pixel-border) !important;
+  border-radius: 0 !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark),
+    3px 3px 0 0 var(--pixel-border-dark) !important;
+}
+
+/* Variants via existing utility classes from component */
+/* default (bg-primary) -> force outline pixel look */
+[data-slot="badge"].bg-primary {
+  background: transparent !important;
+  color: var(--pixel-text) !important;
+  border-color: var(--pixel-border) !important;
+}
+/* secondary */
+[data-slot="badge"].bg-secondary {
+  background: var(--pixel-border) !important;
+  color: var(--pixel-text) !important;
+  border-color: var(--pixel-border-dark) !important;
+}
+/* destructive */
+[data-slot="badge"].bg-destructive {
+  background: var(--pixel-accent) !important;
+  color: var(--pixel-text) !important;
+  border-color: var(--pixel-accent-dark) !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-accent-dark),
+    3px 3px 0 0 var(--pixel-accent-dark);
+}
+
+/* Focus visibility for accessibility */
+[data-slot="badge"]:focus-visible {
+  outline: 2px solid var(--pixel-accent-dark);
+  outline-offset: -2px;
+}
+
+/* ==============================
+   Pastel Candy (Kawaii Pixel) Theme
+   - Soft pastel palette, kawaii pixel accents
+   ============================== */
+body.theme-pastel-candy {
+  /* Palette */
+  --pixel-bg: #fff7fb;            /* very light pink */
+  --pixel-surface: #fffafd;       /* soft pastel surface */
+  --pixel-text: #4b5563;          /* readable gray text */
+  --pixel-muted: #6b7280;
+  --pixel-border: #d1d5db;        /* light grey */
+  --pixel-border-dark: #ffffff;   /* white highlight */
+  --pixel-accent: #f9a8d4;        /* pastel pink */
+  --pixel-accent-dark: #f472b6;   /* deeper pink */
+  --candy-pink: #ffc0cb;
+  --candy-mint: #a7f3d0;
+  --candy-lavender: #e9d5ff;
+
+  /* Background: subtle hearts/stars pixel pattern */
+  background-color: var(--pixel-bg);
+  background-image:
+    radial-gradient(circle at 8px 8px, rgba(255,192,203,0.25) 1px, transparent 1px),
+    radial-gradient(circle at 16px 16px, rgba(167,243,208,0.25) 1px, transparent 1px),
+    radial-gradient(circle at 24px 24px, rgba(233,213,255,0.25) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Links: pastel blocks with gentle transitions */
+body.theme-pastel-candy .pixel-link-block {
+  background: var(--candy-pink);
+  color: #4b5563;
+  border: 1px solid var(--pixel-border);
+  box-shadow: 0 0 0 1px #ffffff; /* outer white highlight */
+  transition: background-color 140ms ease-out, transform 140ms ease-out;
+}
+body.theme-pastel-candy .pixel-link-block:hover { background: var(--candy-mint); }
+body.theme-pastel-candy .pixel-link-block:active {
+  background: var(--candy-lavender);
+  box-shadow: 0 0 0 1px #ffffff, inset 0 2px 0 rgba(0,0,0,0.08);
+}
+
+/* Buttons: pastel filled by default (kawaii), with double border highlight */
+body.theme-pastel-candy .pixel-button {
+  background: linear-gradient(180deg, var(--candy-pink), var(--candy-lavender)) !important;
+  color: #4b5563 !important;
+  border: 1px solid var(--pixel-border) !important;
+  border-radius: 0 !important;
+  box-shadow:
+    0 0 0 1px #ffffff, /* white outer highlight */
+    4px 4px 0 0 rgba(0,0,0,0.06) !important; /* soft offset */
+  transition: transform 140ms ease-out, filter 140ms ease-out !important;
+}
+body.theme-pastel-candy .pixel-button:hover { filter: brightness(1.04) !important; transform: translateY(-1px) !important; }
+body.theme-pastel-candy .pixel-button:active { transform: translateY(1px) !important; box-shadow: 0 0 0 1px #ffffff, inset 0 2px 0 rgba(0,0,0,0.08) !important; }
+body.theme-pastel-candy .pixel-button.outline { background: transparent !important; }
+
+/* Cards: pastel pixel cards */
+body.theme-pastel-candy .pixel-card,
+body.theme-pastel-candy .mega-menu-section {
+  background: var(--pixel-surface) !important;
+  color: var(--pixel-text) !important;
+  border: 1px solid var(--pixel-border) !important;
+  border-radius: 0 !important;
+  box-shadow:
+    0 0 0 1px #ffffff,
+    6px 6px 0 0 rgba(0,0,0,0.06) !important;
+}
+body.theme-pastel-candy .mega-menu-section:hover { transform: translateY(-2px) !important; }
+
+/* Badges: tiny pixel frames with pastel fill variants */
+body.theme-pastel-candy [data-slot="badge"] {
+  background: transparent !important;
+  color: #4b5563 !important;
+  border: 1px solid var(--pixel-border) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 0 1px #ffffff, 3px 3px 0 0 rgba(0,0,0,0.06) !important;
+}
+body.theme-pastel-candy [data-slot="badge"].bg-secondary,
+body.theme-pastel-candy [data-slot="badge"].variant-secondary {
+  background: var(--candy-mint) !important;
+}
+body.theme-pastel-candy [data-slot="badge"].bg-destructive { background: #fca5a5 !important; border-color: #fca5a5 !important; }
+
+/* Dialog & Tooltip: kawaii frames + motion 0.98 -> 1.0 */
+body.theme-pastel-candy [data-slot="dialog-content"],
+body.theme-pastel-candy [data-slot="tooltip-content"] {
+  background: var(--pixel-surface) !important;
+  color: var(--pixel-text) !important;
+  border: 1px solid var(--pixel-border) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 0 1px #ffffff, 6px 6px 0 0 rgba(0,0,0,0.06) !important;
+  transform: scale(0.98);
+  transition: opacity 140ms ease-out, transform 140ms ease-out !important;
+}
+body.theme-pastel-candy [data-slot="dialog-content"][data-state="open"],
+body.theme-pastel-candy [data-slot="tooltip-content"][data-state="open"] { transform: scale(1); }
+
+body.theme-pastel-candy .pixel-tooltip-arrow {
+  background: var(--pixel-surface) !important;
+  border: 1px solid var(--pixel-border) !important;
+  box-shadow: 2px 2px 0 0 #ffffff !important;
+}
+
+/* Mega menu title & badges */
+body.theme-pastel-candy .mega-menu-title { color: #7c3aed !important; }
+body.theme-pastel-candy .mega-menu-section-title { color: #9333ea !important; }
+body.theme-pastel-candy .mega-menu-section-desc { color: #6b7280 !important; }
+/* === Minimal overrides per user request === */
+/* 1) Tooltip: solid matte background (no transparency) */
+[data-slot="tooltip-content"] {
+  background: var(--pixel-surface) !important;
+  color: var(--pixel-text) !important;
+}
+
+/* 2) PixelCard content: add inner padding so text stays away from edges */
+.pixel-card-content {
+  padding: 16px !important;
+}
+
+/* === Consistency fixes === */
+/* Keep 2px arrow border also in Pastel Candy theme */
+body.theme-pastel-candy .pixel-tooltip-arrow {
+  border: 2px solid var(--pixel-border) !important;
+}
+
+/* Correct selector: ensure card headers always get underline/padding */
+[data-slot="card-header"] {
+  border-bottom: 2px solid var(--pixel-accent) !important;
+  padding-bottom: 8px !important;
+}
+
+/* === Pixel Visual Refinements (batch apply) === */
+
+/* Typography: fine-tune pixel-retro tracking for readability */
+.pixel-retro {
+  letter-spacing: 0.04em; /* was 0.06em */
+}
+
+h2.pixel-retro,
+.section-title.pixel-retro {
+  letter-spacing: 0.02em;
+}
+
+/* Focus ring: add breathing room */
+.pixel-button:focus-visible,
+[data-slot="badge"]:focus-visible,
+[data-slot="dialog-content"]:focus-visible,
+[data-slot="tooltip-content"]:focus-visible {
+  outline-offset: 2px;
+}
+
+/* Button interactions: step-ish timing and stronger active state */
+.pixel-button {
+  transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pixel-button:hover {
+  transform: translate(-1px, -1px);
+}
+
+.pixel-button:active {
+  transform: translate(-2px, -2px);
+  /* increase lift/shadow subtly to enhance pressed effect */
+  box-shadow: 0 0 0 2px var(--pixel-border), 4px 4px 0 0 var(--pixel-shadow, rgba(0, 0, 0, 0.15));
+}
+
+/* Icon-only buttons: slightly larger hit area */
+.pixel-btn-icon {
+  min-width: 40px; /* was 36px */
+  min-height: 40px; /* was 36px */
+}
+
+/* Card rhythm: header underline and padding standardization */
+.pixel-card [data-slot="card-header"],
+[data-slot="card"][data-slot="card-header"] {
+  border-bottom: 2px solid var(--pixel-accent);
+  padding-bottom: 12px !important; /* up from 10px */
+}
+
+.pixel-card [data-slot="card-content"] {
+  padding: 24px !important; /* up from 20px */
+}
+
+.pixel-card [data-slot="card-footer"] {
+  padding: 16px 24px !important; /* up from 14px 20px */
+}
+
+/* Tooltip ergonomics */
+[data-slot="tooltip-content"] {
+  max-width: 280px;
+  padding: 10px 12px;
+  line-height: 1.3;
+}
+body.theme-pastel-candy .pixel-tooltip-arrow {
+  background: var(--pixel-surface) !important;
+  border: 1px solid var(--pixel-border) !important;
+  box-shadow: 2px 2px 0 0 #ffffff !important;
+}
+
+/* Mega menu title & badges */
+body.theme-pastel-candy .mega-menu-title { color: #7c3aed !important; }
+body.theme-pastel-candy .mega-menu-section-title { color: #9333ea !important; }
+body.theme-pastel-candy .mega-menu-section-desc { color: #6b7280 !important; }

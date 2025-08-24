@@ -2,13 +2,13 @@
 /* Mood Tracker, Heart Click, Message Match, Word Puzzle gibi oyun ve deneyim stilleri buraya taşındı. */
 
 /* Mood Tracker */
-.mood-tracker-container { background: rgba(255,255,255,0.85); border-radius: 16px; padding: 20px; }
+.mood-tracker-container { background: var(--pixel-surface); border-radius: 16px; padding: 20px; }
 .mood-tracker-header { text-align: center; margin-bottom: 12px; }
 .mood-tracker-title { margin: 0; font-size: 22px; font-weight: 700; }
 .mood-tracker-subtitle { color: #6b7280; }
 .mood-tracker-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
 .mood-tab { background: #e5e7eb; border: none; border-radius: 999px; padding: 8px 12px; cursor: pointer; }
-.mood-tab.active { background: #6366f1; color: #fff; }
+.mood-tab.active { background: var(--pixel-accent); color: var(--pixel-text); }
 .mood-log-section { display: grid; gap: 16px; }
 .mood-selection h3, .mood-gender-selection h3, .mood-message h3 { margin-bottom: 8px; }
 .mood-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
@@ -36,7 +36,7 @@
 .mood-history { }
 .no-moods { color: #6b7280; text-align: center; }
 .mood-history-list { display: grid; gap: 10px; }
-.mood-history-item { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; }
+.mood-history-item { background: var(--pixel-surface); border: 1px solid var(--pixel-border); border-radius: 12px; padding: 10px; }
 .mood-history-header { display: flex; gap: 10px; align-items: center; }
 .mood-history-emoji { font-size: 20px; }
 .mood-history-info { display: flex; gap: 8px; color: #6b7280; font-size: 14px; }
@@ -64,6 +64,16 @@
   100% { transform: translateY(220%); }
 }
 
+/* Added: layout for icons + time */
+.time-and-icons { display: flex; align-items: center; gap: 12px; }
+.countdown-header { display: grid; place-items: center; gap: 0; margin: 40px 0 6px; }
+.countdown-icons { display: none; }
+/* countdown-icons no longer used in header */
+.countdown-icon { width: 36px; height: 36px; display: block; }
+
+/* Header title icon alignment */
+.countdown-header > .title { display: inline-flex; align-items: baseline; gap: 0; line-height: 1; }
+.countdown-header .title .countdown-icon { display: inline-block; width: auto; height: 1em; align-self: baseline; margin: 0; }
 
 /* HeartClickGame */
 .heart-game-container { background: rgba(255,255,255,0.9); border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
@@ -194,6 +204,7 @@
   .time-unit { min-width: calc(50% - 8px); padding: 12px 10px; }
   .time-unit .number { font-size: 36px; }
   .time-unit .label { font-size: 11px; }
+  .countdown-icon { width: 28px; height: 28px; }
 }
 
 /* MesafeOyunu - extra */
@@ -202,3 +213,63 @@
 
 /* Buttons hover */
 .mini-game-btn:hover, .word-puzzle-btn:hover, .youtube-search-btn:hover, .search-submit-btn:hover, .song-submit-btn:hover, .surprise-add-btn:hover { filter: brightness(1.05); }
+
+/* ===== Approach Header Animation ===== */
+/* Approach Title – stacking and reveal */
+.approach-hero { position: relative; display: grid; place-items: center; padding: 6px 0; margin-bottom: 6px; }
+.approach-hero .title-stack { position: relative; display: grid; align-items: center; justify-items: center; z-index: 2; }
+.approach-hero .title-stack .title { margin: 0; line-height: 1; position: relative; display: grid; place-items: center; }
+.approach-hero .title-stack .title .title-piece { position: static; grid-area: 1 / 1; display: inline-block; white-space: nowrap; }
+.approach-hero .title-stack .title .title-old { opacity: 1; }
+.approach-hero .title-stack .title .title-new { opacity: 0; }
+
+/* Reveal animations kicked off when container gets .reveal */
+.approach-hero.reveal .title-stack .title .title-old { animation: title-hide var(--reveal-duration, 1200ms) ease-in-out forwards; }
+.approach-hero.reveal .title-stack .title .title-new { animation: title-show var(--reveal-duration, 1200ms) ease-in-out forwards; }
+
+@keyframes title-show {
+  0% { clip-path: polygon(50% 0, 50% 0, 50% 100%, 50% 100%); opacity: 0; filter: blur(4px); }
+  60% { filter: blur(1px); }
+  100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; filter: blur(0); }
+}
+@keyframes title-hide {
+  0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; filter: blur(0); }
+  100% { clip-path: polygon(50% 0, 50% 0, 50% 100%, 50% 100%); opacity: 0; filter: blur(4px); }
+}
+
+/* Figures approach and meet exactly at center */
+.figure { position: absolute; top: 50%; z-index: 3; pointer-events: none; transform: translateY(-50%); }
+.figure.left { left: -22vw; animation: approach-left var(--approach-duration, 9000ms) ease-in-out forwards; }
+.figure.right { right: -22vw; animation: approach-right var(--approach-duration, 9000ms) ease-in-out forwards; }
+.figure-inner { transform-origin: 50% 100%; animation: waddle var(--waddle-duration, 900ms) ease-in-out infinite; }
+.figure.met .figure-inner { animation-play-state: paused; }
+.figure img { display: block; width: auto; height: 64px; image-rendering: pixelated; }
+
+@keyframes approach-left { to { left: calc(50% - var(--meet-gap, 0px)); } }
+@keyframes approach-right { to { right: calc(50% - var(--meet-gap, 0px)); } }
+
+/* After meeting, gently settle above title ends */
+.approach-hero.settled .figure { transition: top 800ms ease, left 800ms ease, right 800ms ease; top: calc(50% - 84px); }
+.approach-hero.settled .figure.settle-left { left: 28%; }
+.approach-hero.settled .figure.settle-right { right: 28%; }
+
+/* Heart pop at center after meeting */
+.center-heart { position: absolute; top: calc(50% - 96px); left: 50%; transform: translate(-50%, -50%) scale(0.5); opacity: 0; z-index: 4; pointer-events: none; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.2)); font-size: 32px; }
+.approach-hero.met .center-heart { animation: heart-pop 900ms ease forwards 120ms; }
+@keyframes heart-pop { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 60% { transform: translate(-50%, -56%) scale(1.2); opacity: 1; } 80% { transform: translate(-50%, -52%) scale(0.95); } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+/* Penguin/asker style waddle */
+@keyframes waddle {
+  0%   { transform: rotate(2.5deg) translateY(0); }
+  25%  { transform: rotate(0deg) translateY(-2px); }
+  50%  { transform: rotate(-2.5deg) translateY(0); }
+  75%  { transform: rotate(0deg) translateY(-2px); }
+  100% { transform: rotate(2.5deg) translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .figure img { height: 48px; }
+  .approach-hero.settled .figure { top: calc(50% - 72px); }
+  .center-heart { top: calc(50% - 86px); font-size: 26px; }
+  .countdown-header { margin-top: calc(88px + env(safe-area-inset-top, 0px)); }
+}

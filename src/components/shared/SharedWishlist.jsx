@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSocket } from '../../contexts/SocketContext';
+import { useSocket } from '../../hooks/useSocket';
 import './SharedWishlist.css';
 
 const SharedWishlist = ({ channelId, roomId }) => {

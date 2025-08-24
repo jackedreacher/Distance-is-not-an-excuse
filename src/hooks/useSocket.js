@@ -1,8 +1,10 @@
 
 
+import { useContext } from 'react';
+import { SocketContext } from '../contexts/SocketContext.jsx';
+
 export const useSocket = () => {
-  // eslint-disable-next-line no-undef
-  const context = context(SocketContext);
+  const context = useContext(SocketContext);
   if (!context) {
     throw new Error('useSocket must be used within a SocketProvider');
   }

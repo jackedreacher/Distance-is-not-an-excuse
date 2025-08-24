@@ -5,22 +5,25 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  // Pixel baseline, icon spacing and accessible focus
+  "inline-flex items-center justify-center rounded-none border-2 px-1.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wider w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:outline-2 focus-visible:outline-[var(--pixel-accent-dark)] transition-[color,box-shadow] overflow-hidden",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+          // Default = outline pixel frame
+          "bg-transparent text-[var(--pixel-text)] border-[var(--pixel-border)]",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+          // Filled secondary look using pixel border color to stand out
+          "bg-[var(--pixel-border)] text-[var(--pixel-text)] border-[var(--pixel-border-dark)]",
         destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-[var(--pixel-accent)] text-[var(--pixel-text)] border-[var(--pixel-accent-dark)]",
         outline:
-          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+          "bg-transparent text-[var(--pixel-text)] border-[var(--pixel-border)]",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "outline",
     },
   }
 )
@@ -41,4 +44,4 @@ function Badge({
   );
 }
 
-export { Badge, badgeVariants }
+export { Badge }

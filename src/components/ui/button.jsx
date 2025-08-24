@@ -11,10 +11,10 @@ const buttonVariants = cva(
       variant: {
         default: "",
         outline: "outline",
-        destructive: "",
-        secondary: "",
-        ghost: "",
-        link: "",
+        destructive: "outline", // keep pixel outline for destructive too
+        secondary: "outline",
+        ghost: "outline",
+        link: "outline",
       },
       size: {
         default: "",

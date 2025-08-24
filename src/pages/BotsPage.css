@@ -68,7 +68,7 @@
 
 .actions { display: flex; gap: 10px; margin-top: 12px; }
 .action { border: none; border-radius: 10px; padding: 10px 14px; font-weight: 700; cursor: pointer; background: #e5e7eb; }
-.action.primary { background: #111827; color: #fff; }
+.action.primary { background: var(--pixel-accent); color: var(--pixel-text); }
 .action:hover { filter: brightness(1.05); }
 
 

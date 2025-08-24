@@ -224,7 +224,7 @@ const BotsPage = () => {
                     controls 
                     playsInline 
                     src={`${API_BASE_URL}/video/stream?url=${encodeURIComponent(value)}`}
-                    style={{ borderRadius: '10px' }}
+                    style={{ borderRadius: '10px', background: 'var(--pixel-surface)' }}
                   />
                 ) : (
                   <iframe

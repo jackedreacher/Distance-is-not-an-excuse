@@ -1,7 +1,7 @@
 /* ===== PLAYER (GLOBAL HERO + YOUTUBE) STYLES ===== */
 /* GlobalHeroPlayer ve YouTubePlayer ile ilgili temel görsel kurallar */
 
-.youtube-player-container { background: rgba(255,255,255,0.9); border-radius: 15px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin: 20px 0; }
+.youtube-player-container { background: color-mix(in srgb, var(--pixel-surface) 90%, transparent); border-radius: 15px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin: 20px 0; }
 
 /* Hero Toggle Button Styles */
 .hero-toggle-area {
@@ -29,7 +29,7 @@
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid color-mix(in srgb, var(--pixel-border) 10%, transparent);
 }
 
 .hero-toggle-btn:hover {

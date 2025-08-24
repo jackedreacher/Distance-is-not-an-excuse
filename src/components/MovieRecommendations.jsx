@@ -16,7 +16,7 @@ import { movieLikesService } from '../services/api'
 import CloseButton from './shared/CloseButton'
   
 
-const PAGE_SIZE = 6
+const PAGE_SIZE = 5
 const MAX_ITEMS = 1000 // Daha fazla içerik (1000 film ve 1000 dizi)
 
 const MovieRecommendations = ({ embedded = false }) => {

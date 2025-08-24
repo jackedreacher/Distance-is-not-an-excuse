@@ -19,7 +19,7 @@
 }
 
 .motivation-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--pixel-surface) 90%, transparent);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 30px;
@@ -27,7 +27,7 @@
   width: 100%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid color-mix(in srgb, var(--pixel-border) 20%, transparent);
 }
 
 .motivation-header {

@@ -10,7 +10,7 @@
   height: 48px;
   border: none;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--pixel-surface);
   backdrop-filter: blur(10px);
   box-shadow: var(--pomegranate-shadow-soft);
   display: flex;
@@ -22,12 +22,12 @@
 }
 
 .mobile-nav-toggle:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: color-mix(in srgb, var(--pixel-surface) 95%, transparent);
   transform: scale(1.05);
 }
 
 .mobile-nav-toggle.active {
-  background: rgba(236, 72, 153, 0.1);
+  background: color-mix(in srgb, var(--pixel-accent) 12%, transparent);
 }
 
 .toggle-icon {
@@ -48,7 +48,7 @@
     left: 0 !important;
     width: 280px !important;
     height: 100vh !important;
-    background: rgba(255, 255, 255, 0.95) !important;
+    background: var(--pixel-surface) !important;
     backdrop-filter: blur(15px) !important;
     box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1) !important;
     z-index: 1600 !important;
@@ -585,6 +585,56 @@
 }
 
 /* SCENARIO 2: Below the logo */
+
+/* ===================== */
+/* NES MEGA MENU THEME (Overrides) */
+/* ===================== */
+.mega-menu-overlay {
+  background: rgba(0,0,0,0.5) !important;
+  transition: opacity 100ms steps(5, end) !important;
+}
+.mega-menu-panel {
+  background: var(--pixel-surface) !important;
+  color: var(--pixel-text) !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--pixel-border) !important; /* inner 1px light */
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark), /* outer 2px dark */
+    8px 8px 0 0 var(--pixel-border-dark) !important; /* offset */
+  backdrop-filter: none !important;
+  transition: transform 100ms steps(5, end), opacity 100ms steps(5, end) !important;
+}
+.mega-menu-header { border-bottom: 1px solid var(--pixel-border) !important; padding-bottom: 8px !important; }
+.mega-menu-title { color: var(--pixel-accent) !important; text-transform: uppercase !important; font-weight: 900 !important; letter-spacing: 0.04em !important; }
+.mega-menu-close { border-radius: 0 !important; border: 1px solid var(--pixel-border) !important; background: transparent !important; color: var(--pixel-text) !important; box-shadow: 0 0 0 2px var(--pixel-border-dark), 6px 6px 0 0 var(--pixel-border-dark) !important; transition: transform 100ms steps(5, end), box-shadow 100ms steps(5, end) !important; }
+.mega-menu-close:hover { background: rgba(255,255,255,0.06) !important; }
+.mega-menu-close:active { transform: translateY(2px) !important; box-shadow: 0 0 0 2px var(--pixel-border-dark) !important; }
+
+/* 3-column grid on desktop */
+@media (min-width: 900px) { .mega-menu-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+.mega-menu-grid { gap: 16px !important; }
+
+/* Sections as pixel cards */
+.mega-menu-section { background: transparent !important; border-radius: 0 !important; border: 1px solid var(--pixel-border) !important; box-shadow: 0 0 0 2px var(--pixel-border-dark), 4px 4px 0 0 var(--pixel-border-dark) !important; transition: background-color 100ms steps(5, end), transform 100ms steps(5, end) !important; cursor: pointer !important; }
+.mega-menu-section:hover { background: rgba(255,255,255,0.04) !important; }
+.mega-menu-section:active { transform: translateY(2px) !important; box-shadow: 0 0 0 2px var(--pixel-border-dark) !important; }
+
+/* Icon: pixel frame + red accent */
+.mega-menu-section-icon { width: 32px !important; height: 32px !important; border-radius: 0 !important; border: 1px solid var(--pixel-border) !important; background: transparent !important; color: var(--pixel-accent) !important; box-shadow: 0 0 0 2px var(--pixel-border-dark) !important; margin-bottom: 10px !important; font-size: 16px !important; }
+
+/* Titles and descriptions */
+.mega-menu-section-title { color: var(--pixel-accent) !important; text-transform: uppercase !important; font-weight: 900 !important; margin: 0 0 6px 0 !important; letter-spacing: 0.04em !important; }
+.mega-menu-section-desc { color: var(--pixel-muted) !important; }
+
+/* Items: block uppercase links with separators */
+.mega-menu-section-items { margin-top: 10px !important; }
+.mega-menu-section-item { display: block !important; padding: 6px 8px !important; border-bottom: 1px solid rgba(43,43,43,0.6) !important; color: var(--pixel-text) !important; text-transform: uppercase !important; font-weight: 800 !important; letter-spacing: 0.03em !important; transition: background-color 100ms steps(5, end), transform 100ms steps(5, end) !important; }
+.mega-menu-section-item:hover { background: rgba(255,255,255,0.06) !important; }
+.mega-menu-section-item:active { transform: translateY(2px) !important; }
+.mega-menu-section-item:last-child { border-bottom: none !important; }
+
+/* Focus visibility */
+.mega-menu-section:focus-visible, .mega-menu-section-item:focus-visible, .mega-menu-close:focus-visible { outline: 2px solid var(--pixel-accent) !important; outline-offset: -2px !important; }
 
 /* Ensure desktop nav stays visible and inside viewport on medium widths */
 @media (max-width: 1024px) and (min-width: 769px) {
@@ -1583,6 +1633,61 @@
 }
 
 /* SCENARIO 2: Below the logo */
+.scenario-2 { display: block; margin-top: 6px; }
+
+/* NES-style mobile navigation overrides */
+.mobile-nav-toggle {
+  border: 2px solid #111;
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+  border-radius: 0;
+  background: var(--pixel-surface, #fefefe);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.6);
+  transition: transform 120ms steps(2, end), box-shadow 120ms steps(2, end);
+}
+.mobile-nav-toggle:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.6);
+}
+.mobile-nav-toggle:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.7), inset 0 2px 0 rgba(0,0,0,0.08);
+}
+
+.mobile-navigation {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.mobile-navigation .mobile-nav-container {
+  border-top: 2px solid #111;
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+  border-radius: 0;
+  background: var(--pixel-surface, #fafafa);
+  box-shadow: 0 -4px 0 rgba(0,0,0,0.6);
+}
+.mobile-navigation .nav-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: 52px;
+  border: 2px solid #111;
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+  border-radius: 0;
+  background: var(--pixel-surface, #ffffff);
+  transition: transform 120ms steps(2, end), filter 120ms steps(2, end);
+}
+.mobile-navigation .nav-item:hover { transform: translateY(-1px); }
+.mobile-navigation .nav-item:active { transform: translateY(1px); box-shadow: inset 0 2px 0 rgba(0,0,0,0.12); }
+.mobile-navigation .nav-item.active {
+  background: #ffe4e6;
+  box-shadow: inset 0 2px 0 rgba(0,0,0,0.12), 0 0 0 1px #fff;
+}
+.mobile-navigation .nav-label:first-child { font-size: 1.1rem; }
+.mobile-navigation .nav-label:last-child { font-size: 0.7rem; }
 .scenario-2 {
   position: absolute;
   bottom: -20px;

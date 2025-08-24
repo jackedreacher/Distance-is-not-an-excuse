@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { taskService } from '../../services/api';
 
-import { useSocket } from '../../contexts/SocketContext';
+import { useSocket } from '../../hooks/useSocket';
 import './SharedTasks.css';
 
 const SharedTasks = ({ channelId }) => {

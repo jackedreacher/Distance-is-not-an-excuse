@@ -175,6 +175,28 @@ export const planningService = {
       }
     });
     return response.json();
+  },
+  
+  // Added: fetch events by channel for SharedPlanning component
+  getEventsByChannel: async (channelId) => {
+    try {
+      if (!isBackendAvailable()) {
+        return [];
+      }
+      const url = `${API_BASE_URL}/events?channelId=${encodeURIComponent(channelId)}`;
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data?.data)) return data.data;
+      return [];
+    } catch (e) {
+      console.warn('getEventsByChannel failed, returning []:', e);
+      return [];
+    }
   }
 };
 

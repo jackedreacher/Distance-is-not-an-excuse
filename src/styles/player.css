@@ -7,81 +7,91 @@
 .hero-toggle-area {
   position: fixed;
   top: 50%;
-  right: 10px;
+  right: calc(8px + env(safe-area-inset-right, 0px));
   transform: translateY(-50%);
-  z-index: 1000;
+  z-index: 1400;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  transition: all 0.3s ease;
+  gap: 8px;
+  /* pointer-events: none;  kaldırıldı */
 }
 
-.hero-toggle-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  border: 1px solid color-mix(in srgb, var(--pixel-border) 10%, transparent);
-}
-
-.hero-toggle-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+/* Base button look inherits from .pixel-button */
+.hero-toggle-btn.pixel-button {
+  pointer-events: auto; /* butonlar tıklanabilir */
+  background: var(--pixel-surface) !important;
+  color: var(--pixel-text) !important;
+  border: 2px solid var(--pixel-border) !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark),
+    6px 6px 0 0 var(--pixel-border-dark) !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .hero-toggle-btn.visible {
-  transform: translateX(0);
-  opacity: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .hero-toggle-btn.hidden-arrow {
-  transform: translateX(0);
-  opacity: 0.8;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  padding: 8px 12px;
-  font-size: 14px;
-  animation: pulse-arrow 2s infinite;
-  cursor: pointer;
-  border-radius: 50% 0 0 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
 }
 
-@keyframes pulse-arrow {
-  0%, 100% {
-    transform: translateX(0) scale(1);
-  }
-  50% {
-    transform: translateX(0) scale(1.05);
-  }
+/* Subtle attention for hidden arrow */
+.hero-toggle-btn.hidden-arrow {
+  animation: pixel-pulse 2s infinite steps(6, end);
+}
+@keyframes pixel-pulse {
+  0%, 100% { transform: translateY(-50%) scale(1); }
+  50% { transform: translateY(-50%) scale(1.05); }
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .hero-toggle-btn {
-    top: 35%;
-    right: 8px;
-    padding: 10px 12px;
-    font-size: 12px;
-  }
-  
-  .hero-toggle-btn.hidden-arrow {
-    right: -40px;
-    padding: 6px 10px;
-    font-size: 16px;
-  }
-  
-  .hero-toggle-btn.hidden-arrow:hover {
-    right: -30px;
-  }
+  .hero-toggle-area { right: calc(6px + env(safe-area-inset-right, 0px)); }
+  .hero-toggle-btn.pixel-button { padding: 8px 12px; font-size: 12px; }
+  .hero-toggle-btn.hidden-arrow { width: 36px; height: 36px; }
 }
+
 .hero-drawer { position: fixed; top: 0; right: 0; width: 380px; max-width: 92vw; height: 100vh; transform: translateX(100%); transition: transform .25s ease; z-index: 1400; }
 .hero-drawer.open { transform: translateX(0); }
 .hero-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.35); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 1399; }
 .hero-backdrop.open { opacity: 1; pointer-events: auto; }
+
+/* Pixel-themed variants for hero toggle */
+.hero-toggle-btn.visible.pixel-button {
+  background: var(--pixel-accent) !important;
+  color: #1f2937 !important;
+  border-color: var(--pixel-accent-dark) !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-accent-dark),
+    6px 6px 0 0 var(--pixel-accent-dark) !important;
+}
+.hero-toggle-btn.visible.pixel-button:hover {
+  background: color-mix(in srgb, var(--pixel-accent) 88%, #ffffff 12%) !important;
+  transform: translate(-1px, -1px) !important;
+}
+.hero-toggle-btn.visible.pixel-button:active {
+  transform: translate(1px, 1px) !important;
+}
+
+.hero-toggle-btn.hidden-arrow.pixel-button {
+  background: transparent !important;
+}
+.hero-toggle-btn.hidden-arrow.pixel-button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  transform: translate(-1px, -1px) !important;
+}
+.hero-toggle-btn.hidden-arrow.pixel-button:active {
+  transform: translate(1px, 1px) !important;
+}

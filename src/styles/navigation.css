@@ -3,8 +3,8 @@
 /* Mobile Navigation Toggle Button */
 .mobile-nav-toggle {
   position: fixed;
-  top: 12px;
-  left: 12px;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  left: calc(12px + env(safe-area-inset-left, 0px));
   z-index: 1700;
   width: 48px;
   height: 48px;
@@ -66,7 +66,7 @@
   }
   
   .desktop-nav-container {
-    padding: 80px 20px 20px !important;
+    padding: calc(80px + env(safe-area-inset-top, 0px)) 20px 20px !important;
     height: 100% !important;
     justify-content: flex-start !important;
   }
@@ -108,8 +108,8 @@
 /* ENHANCED DESKTOP NAVIGATION WITH LOGO & CTA */
 .desktop-navigation {
   position: fixed;
-  top: 24px;
-  left: 24px;
+  top: calc(24px + env(safe-area-inset-top, 0px));
+  left: calc(24px + env(safe-area-inset-left, 0px));
   transform: none;
   width: auto;
   z-index: 1500;
@@ -365,11 +365,11 @@
 
 .mega-menu-panel {
   position: fixed;
-  top: 72px;
+  top: calc(72px + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%) translateY(-8px);
   width: min(1100px, 92vw);
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px - env(safe-area-inset-bottom, 0px));
   overflow: auto;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
@@ -682,7 +682,7 @@
    .page-container uses width: min(980px, 90vw), so its left margin equals (100vw - min(980px, 90vw)) / 2
    Shift slightly outward by 8px for visual spacing */
 /* Keep navbar outside any content overlays (mega menu: min(1100px, 92vw)) */
-.desktop-navigation { left: 24px; top: 24px; transform: none; z-index: 1300; }
+.desktop-navigation { left: calc(24px + env(safe-area-inset-left, 0px)); top: calc(24px + env(safe-area-inset-top, 0px)); transform: none; z-index: 1300; }
 .desktop-nav-container { justify-content: flex-start; }
 
 .nav-center-group {
@@ -824,11 +824,11 @@
 
 .mega-menu-panel {
   position: fixed;
-  top: 72px;
+  top: calc(72px + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%) translateY(-8px);
   width: min(1100px, 92vw);
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px - env(safe-area-inset-bottom, 0px));
   overflow: auto;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);

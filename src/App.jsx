@@ -24,6 +24,7 @@ import MiniPlayer from './components/MiniPlayer'
 // Removed custom Pixel components
 // import PixelCard from './components/PixelCard'
 // import PixelButton from './components/PixelButton'
+import PixelButton from './components/PixelButton'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -371,23 +372,25 @@ function App() {
                 onTouchStart={() => setIsToggleVisible(true)}
               >
                 {isToggleVisible ? (
-                  <button 
+                  <PixelButton 
                     type="button"
                     className="hero-toggle-btn visible"
                     aria-label="Müzik çalarını aç"
                     onClick={handleHeroToggleClick}
                     onMouseLeave={() => setIsToggleVisible(false)}
+                    onTouchEnd={() => setIsToggleVisible(false)}
                   >
                     🎵 Çaları Aç
-                  </button>
+                  </PixelButton>
                 ) : (
-                   <div 
-                     className="hero-toggle-btn hidden-arrow"
+                   <PixelButton 
+                     type="button"
+                     className="hero-toggle-btn hidden-arrow pixel-btn-icon"
                      aria-label="Müzik çalarını göster"
                      onClick={() => setIsToggleVisible(true)}
                    >
                      ◀
-                   </div>
+                   </PixelButton>
                  )}
               </div>
             )}

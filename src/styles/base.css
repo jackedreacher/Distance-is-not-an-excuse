@@ -137,3 +137,8 @@ body::before {
 .surprise-history-status { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
 .surprise-history-status.delivered { background: #d1fae5; color: #065f46; }
 .surprise-history-status.pending { background: #fee2e2; color: #991b1b; }
+/* Media elements should never overflow on mobile */
+img, video, canvas, svg, iframe { max-width: 100%; height: auto; }
+/* Mobile scroll/zoom constraints */
+html { width: 100%; max-width: 100%; overflow-x: hidden; overscroll-behavior-x: none; }
+body { touch-action: pan-y; -webkit-text-size-adjust: 100%; }

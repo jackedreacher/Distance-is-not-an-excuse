@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getMotivationForDay } from '../utils/motivationUtils'
+import { getMotivationForDay, getMotivationForDayAsync } from '../utils/motivationUtils'
 import '../styles/motivation.css' // Import the new CSS file
 
 const DailyMotivation = () => {
@@ -13,12 +13,19 @@ const DailyMotivation = () => {
     const diff = now - start
     const oneDay = 1000 * 60 * 60 * 24
     const dayOfYear = Math.floor(diff / oneDay)
-    
-    const dailyMotivation = getMotivationForDay(dayOfYear)
-    setMotivation(dailyMotivation)
-    
-    // Animate in after a short delay
-    setTimeout(() => setIsVisible(true), 500)
+
+    ;(async () => {
+      try {
+        const dailyMotivation = await getMotivationForDayAsync(dayOfYear)
+        setMotivation(dailyMotivation)
+      } catch (err) {
+        console.warn('Günün motivasyonu: çevrimiçi kaynaktan çekilemedi, statik yedeğe geçiliyor.', err)
+        const fallback = getMotivationForDay(dayOfYear)
+        setMotivation(fallback)
+      }
+      // Animate in after a short delay
+      setTimeout(() => setIsVisible(true), 500)
+    })()
   }, [])
 
   if (!motivation) return null

@@ -1,114 +1,159 @@
 // Daily motivation messages from famous people for exam preparation
-export const motivationMessages = [
-  {
-    author: "Albert Einstein",
-    quote: "Eğitim, okulda öğrendiklerini unuttuktan sonra geriye kalan şeydir.",
-    motivation: "Her gün öğrendiğin bilgiler seni daha güçlü yapıyor. Sınavlar sadece bu gücünü gösterme fırsatı! 💪✨"
-  },
-  {
-    author: "Nelson Mandela",
-    quote: "Eğitim, dünyayı değiştirmek için kullanabileceğin en güçlü silahtır.",
-    motivation: "Senin çalışkanlığın sadece kendi geleceğini değil, dünyayı da değiştiriyor. Sen çok özelsin! 🌍💖"
-  },
-  {
-    author: "Malala Yousafzai",
-    quote: "Bir çocuk, bir öğretmen, bir kitap ve bir kalem dünyayı değiştirebilir.",
-    motivation: "Senin kalemin ve çalışkanlığın harikalar yaratıyor. Her sayfa seni başarıya yaklaştırıyor! 📚✏️"
-  },
-  {
-    author: "Mahatma Gandhi",
-    quote: "Gelecek, bugün ne yaptığına bağlıdır.",
-    motivation: "Bugün çalıştığın her dakika, yarınki başarının temelini atıyor. Sen çok değerlisin! 🌟"
-  },
-  {
-    author: "Marie Curie",
-    quote: "Hayatta korkulacak hiçbir şey yoktur, sadece anlaşılması gereken şeyler vardır.",
-    motivation: "Sınavlar korkutucu değil, sadece bilgilerini gösterme fırsatı. Sen bunu yapabilirsin! 🔬💫"
-  },
-  {
-    author: "Steve Jobs",
-    quote: "Kalite, miktardan daha önemlidir. Bir Homeros, binlerce şairden daha değerlidir.",
-    motivation: "Her konuyu derinlemesine anlamaya çalış. Kaliteli çalışma her zaman ödüllendirilir! 🍎💎"
-  },
-  {
-    author: "Oprah Winfrey",
-    quote: "Eğitim, özgürlüğün anahtarıdır.",
-    motivation: "Her çalıştığın saat seni daha özgür ve güçlü yapıyor. Sen muhteşemsin! 🔑💪"
-  },
-  {
-    author: "Walt Disney",
-    quote: "Tüm hayallerimiz gerçek olabilir, eğer onları gerçekleştirmek için cesaretimiz varsa.",
-    motivation: "Sınav başarısı hayalin, senin cesaretinle gerçek olacak. Sen inanılmazsın! 🏰✨"
-  },
-  {
-    author: "Helen Keller",
-    quote: "Hayat ya cesur bir macera ya da hiçbir şey değildir.",
-    motivation: "Her sınav bir macera, her çalışma seansı bir kahramanlık. Sen cesur bir kahramansın! 🦸‍♀️💖"
-  },
-  {
-    author: "Martin Luther King Jr.",
-    quote: "Eğitim, karakteri güçlendirir ve zihni açar.",
-    motivation: "Her çalıştığın konu seni daha güçlü ve akıllı yapıyor. Sen harika bir karaktere sahipsin! 🧠💪"
-  },
-  {
-    author: "Rosa Parks",
-    quote: "Her kişi, değişimi başlatabilir.",
-    motivation: "Senin çalışkanlığın sadece kendi hayatını değil, başkalarının da hayatını değiştiriyor. Sen özel bir güce sahipsin! 🌹💫"
-  },
-  {
-    author: "Anne Frank",
-    quote: "İnsanların gerçekten iyi olduğuna inanıyorum.",
-    motivation: "Senin iyi kalbin ve çalışkanlığın dünyayı daha güzel bir yer yapıyor. Sen çok değerlisin! 💝"
-  },
-  {
-    author: "Frida Kahlo",
-    quote: "Güçlü olmak için acı çekmek gerekir.",
-    motivation: "Her zor konu seni daha güçlü yapıyor. Senin azmin her şeyi aşacak! 🎨💪"
-  },
-  {
-    author: "Coco Chanel",
-    quote: "Başarı en iyi intikamdır.",
-    motivation: "Senin başarın, tüm zorluklara karşı en güzel cevap. Sen muhteşemsin! 👗💎"
-  },
-  {
-    author: "Audrey Hepburn",
-    quote: "İmkansız kelimesi sadece cahillerin sözlüğünde vardır.",
-    motivation: "Senin için hiçbir şey imkansız değil. Senin zekan ve azmin her şeyi başarabilir! 👑✨"
-  },
-  {
-    author: "Eleanor Roosevelt",
-    quote: "Gelecek, bugün ne yaptığına bağlıdır.",
-    motivation: "Bugün çalıştığın her dakika, yarınki mutluluğunun garantisi. Sen çok değerlisin! 🌟"
-  },
-  {
-    author: "Amelia Earhart",
-    quote: "En zor şey, karar vermektir. Gerisi sadece azimdir.",
-    motivation: "Sınavlara çalışmaya karar verdin, şimdi sadece azminle devam et. Sen bunu yapabilirsin! ✈️💪"
-  },
-  {
-    author: "Jane Goodall",
-    quote: "Her birey önemlidir. Her birey bir fark yaratabilir.",
-    motivation: "Sen önemlisin ve senin çalışkanlığın büyük bir fark yaratıyor. Sen harikasın! 🦍💚"
-  },
-  {
-    author: "Mother Teresa",
-    quote: "Küçük şeylerle büyük sevgiler gösterilir.",
-    motivation: "Her küçük çalışma seansı, büyük başarının temelini atıyor. Senin sevgin her şeyi aşacak! 🙏💖"
-  },
-  {
-    author: "Princess Diana",
-    quote: "Gerçek prensesler, kalplerinde taşırlar taçlarını.",
-    motivation: "Senin kalbinin güzelliği ve zekanın parlaklığı seni gerçek bir prenses yapıyor. Sen muhteşemsin! 👑💎"
-  }
-]
+// Static motivationMessages removed. Online quotes are used via getMotivationForDayAsync.
 
-// Get random motivation message
+import { API_BASE_URL } from '../services/api'
+
+// Deprecated: static random motivation; prefer getMotivationForDayAsync
 export const getRandomMotivation = () => {
-  return motivationMessages[Math.floor(Math.random() * motivationMessages.length)]
+  return {
+    author: 'Bilinmeyen',
+    quote: 'Bugün küçük bir adım at; bilgi birikimin seni başarıya götürecek.',
+    motivation: 'Senin azmin her şeyi başarır. 💪✨',
+  }
 }
 
-// Get motivation for specific day (for consistency)
+// Get motivation for specific day (fallback when online quotes unavailable)
 export const getMotivationForDay = (dayOfYear) => {
-  const index = dayOfYear % motivationMessages.length
-  return motivationMessages[index]
-} 
+  const defaults = [
+    { author: 'Bilinmeyen', quote: 'Küçük adımlar büyük fark yaratır.', motivation: 'Bugün bir sayfa daha! 📚✨' },
+    { author: 'Bilinmeyen', quote: 'Azim başarıyı getirir.', motivation: 'Devam et, çok yaklaştın! 💪' },
+    { author: 'Bilinmeyen', quote: 'Her gün yeni bir başlangıçtır.', motivation: 'Bugünü değerlendir! 🌟' },
+  ]
+  return defaults[dayOfYear % defaults.length]
+}
+
+// Online quotes integration - caches in localStorage for 24h
+const QUOTES_CACHE_KEY = 'quotesCacheV2'
+const QUOTES_CACHE_TTL_MS = 1000 * 60 * 60 * 24 // 24 saat
+
+// THEME FILTER: azim, çalışkanlık, motivasyon, kararlılık, bağlılık
+const THEME_KEYWORDS = [
+  'azim', 'çalış', 'çalışkan', 'motivasyon', 'motive', 'karar', 'kararlılık', 'istikrar', 'sebat', 'disiplin',
+  'hedef', 'emek', 'gayret', 'başarı', 'devam', 'vazgeç', 'sabır', 'adanmış', 'bağlılık', 'özveri', 'irade',
+  'direnç', 'ısrar', 'sebat et'
+]
+const norm = (s) => (s || '').toLocaleLowerCase('tr-TR')
+const applyThemeFilter = (quotes) => {
+  if (!Array.isArray(quotes)) return []
+  const filtered = quotes.filter(q => {
+    const text = norm(q?.quote) + ' ' + norm(q?.motivation)
+    return THEME_KEYWORDS.some(k => text.includes(k))
+  })
+  return filtered
+}
+
+const fetchServerQuotes = async () => {
+  const res = await fetch(`${API_BASE_URL}/quotes`)
+  if (!res.ok) throw new Error('Quotes proxy request failed')
+  const data = await res.json()
+  const list = Array.isArray(data) ? data : Array.isArray(data?.quotes) ? data.quotes : []
+  if (!list.length) throw new Error('Empty quotes from proxy')
+  return list
+}
+
+// Alternatif kaynak: Quotable (direct, CORS destekli)
+const fetchQuotableQuotes = async () => {
+  const res = await fetch('https://api.quotable.io/quotes?limit=200')
+  if (!res.ok) throw new Error('Quotable API request failed')
+  const data = await res.json()
+  const seen = new Set()
+  const mapped = []
+  for (const item of (data.results || [])) {
+    if (!item || !item.content) continue
+    if (seen.has(item.content)) continue
+    seen.add(item.content)
+    mapped.push({
+      author: item.author || 'Bilinmeyen',
+      quote: item.content,
+      motivation: 'Bugün küçük bir adım at; bilgi birikimin seni başarıya götürecek. 💪✨',
+    })
+  }
+  return mapped
+}
+
+const getQuotesFromCacheOrFetch = async () => {
+  let cached = null
+  try {
+    const cachedStr = localStorage.getItem(QUOTES_CACHE_KEY)
+    if (cachedStr) {
+      const parsed = JSON.parse(cachedStr)
+      if (Array.isArray(parsed.quotes) && parsed.quotes.length > 0) {
+        cached = parsed
+        const isFresh = Date.now() - parsed.timestamp < QUOTES_CACHE_TTL_MS
+        if (isFresh) {
+          const themed = applyThemeFilter(parsed.quotes)
+          return themed.length > 0 ? themed : parsed.quotes
+        }
+      }
+    }
+  } catch {
+    // sessizce geç
+  }
+
+  let quotes = []
+
+  // Önce backend proxy (CORS sorunsuz)
+  try {
+    quotes = await fetchServerQuotes()
+  } catch {
+    // proxy başarısız
+  }
+
+  // Proxy başarısızsa Quotable'a düş
+  if (!quotes || quotes.length === 0) {
+    try {
+      quotes = await fetchQuotableQuotes()
+    } catch {
+      // quotable başarısız
+    }
+  }
+
+  if (quotes && quotes.length > 0) {
+    const themed = applyThemeFilter(quotes)
+    const finalQuotes = themed.length > 0 ? themed : quotes
+    const limited = finalQuotes.slice(0, 500)
+    try {
+      localStorage.setItem(QUOTES_CACHE_KEY, JSON.stringify({
+        timestamp: Date.now(),
+        quotes: limited,
+      }))
+    } catch {
+      // storage hataları sessizce yut
+    }
+    return limited
+  }
+
+  // Ağ başarısızsa, bayat önbelleği kullan
+  if (cached && Array.isArray(cached.quotes) && cached.quotes.length > 0) {
+    const themed = applyThemeFilter(cached.quotes)
+    return themed.length > 0 ? themed : cached.quotes
+  }
+
+  // Son çare: yerleşik yedek alıntılar
+  const themedDefaults = applyThemeFilter(DEFAULT_QUOTES)
+  return themedDefaults.length > 0 ? themedDefaults : DEFAULT_QUOTES
+
+  // Tüm kaynaklar başarısız
+  // throw (lastError || new Error('Quotes fetch failed from all sources'))
+}
+
+// Asenkron: Günün motivasyonunu çevrim içi kaynaktan getir (fallback statik fonksiyon kullanılacak)
+export const getMotivationForDayAsync = async (dayOfYear) => {
+  const quotes = await getQuotesFromCacheOrFetch()
+  const index = dayOfYear % quotes.length
+  return quotes[index]
+}
+
+// Yerleşik yedek alıntılar (upstream/proxy erişilemezse)
+const DEFAULT_QUOTES = [
+  { author: 'Albert Einstein', quote: 'Zorlukların ortasında fırsatlar yatar.', motivation: 'Bugün küçük bir adım at; bilgi birikimin seni başarıya götürecek. 💪✨' },
+  { author: 'Confucius', quote: 'Ne kadar yavaş gittiğin önemli değil, yeter ki durma.', motivation: 'Adım adım ilerle, vazgeçme! 🌟' },
+  { author: 'Nelson Mandela', quote: 'Başarı, her zaman kazanmak değildir; asıl başarı, asla pes etmemektir.', motivation: 'Denemeye devam! 🎯' },
+  { author: 'Eleanor Roosevelt', quote: 'Gelecek, hayallerinin güzelliğine inananlara aittir.', motivation: 'Hayallerine bir adım daha yaklaş! ✨' },
+  { author: 'Walt Disney', quote: 'Başlamanın yolu konuşmayı bırakıp yapmaya başlamaktır.', motivation: 'Şimdi başla, gerisi gelir! 🚀' },
+  { author: 'Henry Ford', quote: 'Yapabileceğine inanırsan, yolun yarısını kat etmişsindir.', motivation: 'Kendine güven! 💫' },
+  { author: 'Maya Angelou', quote: 'Cesaret, tüm diğer erdemlerin üzerinde durduğu temeldir.', motivation: 'Cesur ol, adım at! 🦁' },
+  { author: 'Lao Tzu', quote: 'Bin millik yolculuk tek bir adımla başlar.', motivation: 'O ilk adımı bugün at! 🗺️' },
+  { author: 'Thomas Edison', quote: 'Başarısız olmadım. Sadece işe yaramayan 10.000 yol buldum.', motivation: 'Hatalar öğretir. Devam! 🔧' },
+  { author: 'Bilinmeyen', quote: 'Küçük adımlar büyük fark yaratır.', motivation: 'Bugün bir sayfa daha! 📚✨' }
+]

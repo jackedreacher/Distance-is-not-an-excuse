@@ -1,5 +1,7 @@
 /* ===== Responsive Overrides ===== */
 @media (max-width: 768px) {
+  html, body { overflow-x: hidden; }
+  #root, .app, .main-content, .page-container { max-width: 100%; overflow-x: hidden; }
   .desktop-nav-container { grid-template-columns: 1fr auto 1fr; padding: 8px 12px; }
   .nav-logo .brand { display: none; }
   .mega-menu-button { font-size: 0.95rem; padding: 8px 12px; }

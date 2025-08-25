@@ -45,22 +45,34 @@
   align-items: center;
   justify-content: center;
   border-radius: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Subtle attention for hidden arrow */
-.hero-toggle-btn.hidden-arrow {
-  animation: pixel-pulse 2s infinite steps(6, end);
+/* Pixel outline görünüm ve ikon hizası */
+.hero-toggle-btn.hidden-arrow.pixel-button {
+  background: transparent !important;
+  border: 2px solid var(--pixel-border) !important;
+  box-shadow:
+    0 0 0 2px var(--pixel-border-dark),
+    6px 6px 0 0 var(--pixel-border-dark) !important;
 }
-@keyframes pixel-pulse {
-  0%, 100% { transform: translateY(-50%) scale(1); }
-  50% { transform: translateY(-50%) scale(1.05); }
+.hero-toggle-btn.hidden-arrow.pixel-button svg {
+  width: 18px; height: 18px;
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
   .hero-toggle-area { right: calc(6px + env(safe-area-inset-right, 0px)); }
   .hero-toggle-btn.pixel-button { padding: 8px 12px; font-size: 12px; }
-  .hero-toggle-btn.hidden-arrow { width: 36px; height: 36px; }
+  .hero-toggle-btn.hidden-arrow,
+  .hero-toggle-btn.hidden-arrow.pixel-button {
+    width: 44px; height: 44px; padding: 0;
+    box-shadow:
+      0 0 0 2px var(--pixel-border-dark),
+      4px 4px 0 0 var(--pixel-border-dark) !important; /* mobilde daha az offset */
+  }
 }
 
 .hero-drawer { position: fixed; top: 0; right: 0; width: 380px; max-width: 92vw; height: 100vh; transform: translateX(100%); transition: transform .25s ease; z-index: 1400; }
@@ -81,10 +93,18 @@
   background: color-mix(in srgb, var(--pixel-accent) 88%, #ffffff 12%) !important;
   transform: translate(-1px, -1px) !important;
 }
-/* Touch hover emulation */
+/* Touch hover emülasyonu */
 .hero-toggle-btn.pixel-button.is-touching,
 .hero-toggle-btn.pixel-button:active {
-  transform: translate(1px, 1px) !important;
+  transform: translateY(-50%) translate(1px, 1px);
+}
+
+/* Hidden arrow için aktif arka plan (şeffaf kalır ama outline kalınlaşır) */
+.hero-toggle-btn.hidden-arrow.pixel-button.is-touching,
+.hero-toggle-btn.hidden-arrow.pixel-button:active {
+  box-shadow:
+    0 0 0 3px var(--pixel-border-dark),
+    3px 3px 0 0 var(--pixel-border-dark) !important;
 }
 .hero-toggle-btn.visible.pixel-button.is-touching {
   background: color-mix(in srgb, var(--pixel-accent) 88%, #ffffff 12%) !important;

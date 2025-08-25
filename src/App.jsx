@@ -390,8 +390,11 @@ function App() {
                      className="hero-toggle-btn hidden-arrow pixel-btn-icon"
                      aria-label="Müzik çalarını göster"
                      onClick={() => setIsToggleVisible(true)}
+                     onTouchStart={(e) => { e.currentTarget.classList.add('is-touching'); }}
+                     onTouchEnd={(e) => { e.currentTarget.classList.remove('is-touching'); }}
+                     onTouchCancel={(e) => { e.currentTarget.classList.remove('is-touching'); }}
                    >
-                     ◀
+                     <ChevronLeft size={18} />
                    </PixelButton>
                  )}
               </div>

@@ -379,7 +379,7 @@ function App() {
                     onClick={handleHeroToggleClick}
                     onMouseLeave={() => setIsToggleVisible(false)}
                     onTouchStart={(e) => { e.currentTarget.classList.add('is-touching'); setIsToggleVisible(true); }}
-                    onTouchEnd={(e) => { e.currentTarget.classList.remove('is-touching'); }}
+                    onTouchEnd={(e) => { e.currentTarget.classList.remove('is-touching'); setTimeout(() => setIsToggleVisible(false), 200); }}
                     onTouchCancel={(e) => { e.currentTarget.classList.remove('is-touching'); }}
                   >
                     <Music size={16} style={{ marginRight: 6 }} /> Çaları Aç

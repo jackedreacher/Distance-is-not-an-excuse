@@ -33,7 +33,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
-import { Search, Plus, Info, Smile } from 'lucide-react'
+import { Search, Plus, Info, Smile, Music, ChevronLeft } from 'lucide-react'
 
 // Import pages
 import WeatherPage from './pages/WeatherPage'
@@ -378,9 +378,11 @@ function App() {
                     aria-label="Müzik çalarını aç"
                     onClick={handleHeroToggleClick}
                     onMouseLeave={() => setIsToggleVisible(false)}
-                    onTouchEnd={() => setIsToggleVisible(false)}
+                    onTouchStart={(e) => { e.currentTarget.classList.add('is-touching'); setIsToggleVisible(true); }}
+                    onTouchEnd={(e) => { e.currentTarget.classList.remove('is-touching'); setIsToggleVisible(false); }}
+                    onTouchCancel={(e) => { e.currentTarget.classList.remove('is-touching'); }}
                   >
-                    🎵 Çaları Aç
+                    <Music size={16} style={{ marginRight: 6 }} /> Çaları Aç
                   </PixelButton>
                 ) : (
                    <PixelButton 

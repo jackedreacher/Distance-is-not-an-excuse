@@ -81,10 +81,14 @@
   background: color-mix(in srgb, var(--pixel-accent) 88%, #ffffff 12%) !important;
   transform: translate(-1px, -1px) !important;
 }
-.hero-toggle-btn.visible.pixel-button:active {
+/* Touch hover emulation */
+.hero-toggle-btn.pixel-button.is-touching,
+.hero-toggle-btn.pixel-button:active {
   transform: translate(1px, 1px) !important;
 }
-
+.hero-toggle-btn.visible.pixel-button.is-touching {
+  background: color-mix(in srgb, var(--pixel-accent) 88%, #ffffff 12%) !important;
+}
 .hero-toggle-btn.hidden-arrow.pixel-button {
   background: transparent !important;
 }

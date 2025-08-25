@@ -168,14 +168,14 @@ import '../styles/navigation.css'
                 <img src={logo} alt="Logo" className="mega-menu-logo-img" />
               </div>
               <h3 id="mega-menu-title" className="mega-menu-title">Keşfet</h3>
-              <CloseButton 
+              {/* <CloseButton 
                 ref={closeBtnRef}
                 onClick={closeMega}
                 variant="overlay"
                 size="medium"
                 className="mega-menu-close"
                 ariaLabel="Kapat"
-              />
+              /> */}
             </div>
 
             <div className="mega-menu-grid">

@@ -272,4 +272,11 @@
   .approach-hero.settled .figure { top: calc(50% - 72px); }
   .center-heart { top: calc(50% - 86px); font-size: 26px; }
   .countdown-header { margin-top: calc(88px + env(safe-area-inset-top, 0px)); }
+  /* Title fit & alignment improvements on mobile */
+  .approach-hero .title-stack { width: 100%; padding: 0 12px; }
+  .approach-hero .title-stack .title { font-size: clamp(22px, 6.2vw, 28px); line-height: 1.15; text-align: center; }
+  .approach-hero .title-stack .title .title-piece { white-space: normal; display: inline; }
+  /* Keep figures a bit wider to avoid overlapping long titles */
+  .approach-hero.settled .figure.settle-left { left: 22%; }
+  .approach-hero.settled .figure.settle-right { right: 22%; }
 }

@@ -137,6 +137,129 @@ body::before {
 .surprise-history-status { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
 .surprise-history-status.delivered { background: #d1fae5; color: #065f46; }
 .surprise-history-status.pending { background: #fee2e2; color: #991b1b; }
+/* Mobile scroll/zoom constraints */
+html { width: 100%; max-width: 100%; overflow-x: hidden; overscroll-behavior-x: none; }
+body { touch-action: pan-y; -webkit-text-size-adjust: 100%; }
+
+/* PWA/Standalone and iOS safe-area adjustments */
+html, body { min-height: 100vh; }
+@supports (height: 100dvh) { html, body { min-height: 100dvh; } }
+
+/* Ensure app fills the viewport and respects iOS home indicator area */
+#root, .app { min-height: inherit; }
+body { padding-bottom: env(safe-area-inset-bottom, 0px); padding-top: env(safe-area-inset-top, 0px); }
+
+/* In standalone/fullscreen, make sure content is not covered and layout is stable */
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  body { background-color: #0b0b0f; padding-bottom: env(safe-area-inset-bottom, 0px); }
+}
+.page-container {
+  width: 90%;
+  max-width: 980px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: transparent;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Layout offsets for content */
+.main-content {
+  padding-top: 0;
+}
+
+/* Desktop navbar yüksekliğini telafi etmek için üst boşluk ekleyelim */
+@media (min-width: 769px) {
+  .main-content {
+    padding-top: 55px; /* desktop top navbar sabit ve tıklamaları engellemesin */
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-bottom: 90px;
+  }
+  .page-container {
+    padding: 1.5rem;
+    width: 95%;
+  }
+}
+
+/* Generic page header styles */
+.page-header { 
+  margin-bottom: 1.5rem; 
+}
+.page-title { 
+  font-size: 2rem; 
+  font-weight: 700; 
+  color: var(--pixel-text);
+}
+.page-subtitle { 
+  font-size: 1rem;
+  color: var(--pixel-muted); 
+  margin-top: 0.5rem;
+}
+
+/* WeatherSection */
+.weather-container { background: var(--pixel-surface); border: 1px solid var(--pixel-border); border-radius: 16px; padding: 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); color: var(--pixel-text); }
+.weather-note { color: var(--pixel-muted); margin-bottom: 8px; }
+.weather-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.weather-loading { text-align: center; color: var(--pixel-muted); }
+.weather-card { border: 1px solid var(--pixel-border); border-radius: 12px; padding: 12px; background: var(--pixel-surface); display: grid; gap: 6px; }
+.city-name { font-size: 18px; font-weight: 700; }
+.weather-icon { font-size: 28px; }
+.weather-temp { font-size: 20px; font-weight: 700; }
+.weather-message { color: var(--pixel-text); }
+.weather-error { display: grid; place-items: center; gap: 6px; color: var(--pixel-muted); }
+
+/* SurpriseNotifications */
+.surprise-notifications-container { background: var(--pixel-surface); border: 1px solid var(--pixel-border); border-radius: 16px; padding: 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); color: var(--pixel-text); }
+.surprise-notifications-header { text-align: center; margin-bottom: 12px; }
+.surprise-notifications-title { font-size: 22px; font-weight: 700; }
+.surprise-notifications-subtitle { color: var(--pixel-muted); }
+.surprise-notifications-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+.create-surprise-section { background: var(--pixel-surface); border: 1px solid var(--pixel-border); border-radius: 12px; padding: 12px; }
+.create-surprise-form { display: grid; gap: 10px; }
+.surprise-select, .surprise-textarea, .surprise-datetime { background: var(--pixel-surface); border: 1px solid var(--pixel-border); border-radius: 8px; padding: 10px; }
+.schedule-options { display: flex; gap: 12px; flex-wrap: wrap; }
+.schedule-option { display: inline-flex; align-items: center; gap: 6px; }
+.surprise-add-btn, .surprise-show-btn, .surprise-delete-btn { background: var(--pixel-accent); color: var(--pixel-text); border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.surprise-delete-btn { background: var(--pixel-accent-dark); }
+
+.surprise-history-section { margin-top: 12px; }
+.no-surprises { text-align: center; color: var(--pixel-muted); padding: 16px; }
+.surprise-history-list { display: grid; gap: 10px; margin-top: 10px; }
+.surprise-history-user, .surprise-history-date { color: var(--pixel-muted); }
+.surprise-history-scheduled { display: inline-flex; align-items: center; gap: 6px; color: var(--pixel-accent); }
+.surprise-history-schedule-type { display: inline-flex; align-items: center; gap: 6px; background: rgba(37,99,235,0.12); color: var(--pixel-accent); border: 1px solid rgba(37,99,235,0.3); border-radius: 999px; padding: 2px 8px; font-size: 12px; }
+.surprise-notification-message { margin-top: 8px; color: var(--pixel-text); }
+.surprise-notification-footer { margin-top: 12px; display: flex; justify-content: center; gap: 8px; }
+.surprise-history-header { display: flex; align-items: center; justify-content: space-between; }
+.surprise-history-type { font-weight: 600; }
+.surprise-history-message { color: var(--pixel-text); }
+.surprise-history-footer { display: flex; gap: 12px; color: var(--pixel-muted); font-size: 14px; }
+
+/* Surprise Notifications Modal */
+.surprise-notification-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: grid; place-items: center; z-index: 50; }
+.surprise-notification-content { background: var(--pixel-surface); border-radius: 16px; width: min(520px, 92vw); padding: 16px; position: relative; color: var(--pixel-text); }
+.surprise-notification-close { position: absolute; top: 8px; right: 8px; background: transparent; border: none; font-size: 20px; cursor: pointer; }
+.surprise-notification-header { text-align: center; margin-bottom: 10px; }
+.surprise-notification-icon { font-size: 28px; }
+.surprise-notification-title { font-size: 20px; font-weight: 700; }
+.surprise-notification-body { margin: 10px 0; }
+.surprise-notification-date { color: var(--pixel-muted); font-size: 14px; }
+/* SurpriseNotifications - tabs */
+.surprise-tab { background: transparent; border: 1px solid var(--pixel-border); border-radius: 999px; padding: 8px 12px; cursor: pointer; color: var(--pixel-text); }
+.surprise-tab.active { background: var(--pixel-accent); color: #0b1220; border-color: var(--pixel-accent); }
+/* Surprise history list items */
+.surprise-history-item { background: var(--pixel-surface); border: 1px solid var(--pixel-border); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+.surprise-history-item.delivered { border-color: #d1fae5; box-shadow: 0 0 0 3px rgba(16,185,129,0.15); }
+.surprise-history-status { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.surprise-history-status.delivered { background: #d1fae5; color: #065f46; }
+.surprise-history-status.pending { background: #fee2e2; color: #991b1b; }
 /* Media elements should never overflow on mobile */
 img, video, canvas, svg, iframe { max-width: 100%; height: auto; }
 /* Mobile scroll/zoom constraints */

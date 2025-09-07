@@ -118,3 +118,41 @@
 .user-btn.selected { border-color: var(--pixel-accent); background: color-mix(in srgb, var(--pixel-accent) 15%, transparent); color: var(--pixel-text); }
 .track-number { color: var(--pixel-muted); }
 .result-item:hover { background: color-mix(in srgb, var(--pixel-surface) 85%, transparent); }
+
+/* ========================= */
+/* Mobile responsive tweaks  */
+/* ========================= */
+@media (max-width: 768px) {
+  /* Header + counters */
+  .songs-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+
+  /* Now playing block stacks */
+  .now-playing-content { grid-template-columns: 1fr; }
+  .album-art-container { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+
+  /* Reduce paddings for compact view */
+  .songs-section { padding: 10px; }
+  .spotify-add-section { padding: 10px; }
+
+  /* Compress list to 3 columns: number | title | actions */
+  .songs-list-header,
+  .songs-list-body { grid-template-columns: 28px 1fr 72px; gap: 6px; }
+
+  /* Hide less-important columns on mobile */
+  .header-artist, .header-user { display: none; }
+  .song-artist, .song-user { display: none; }
+
+  /* Make text wrap nicely */
+  .song-title-col { min-width: 0; }
+  .song-title { font-size: 15px; }
+  .song-story { font-size: 12px; }
+
+  /* Smaller buttons */
+  .action-btn { padding: 6px 8px; }
+}
+
+@media (max-width: 420px) {
+  .songs-list-header,
+  .songs-list-body { grid-template-columns: 24px 1fr 64px; }
+  .action-btn { padding: 5px 6px; }
+}

@@ -86,22 +86,7 @@ const MusicPlayer = ({ embedded = false }) => {
   }
 
   // Test audio context and user interaction
-  const testAudio = () => {
-    console.log('🔊 SES TESTİ BAŞLATILDI!');
-    console.log('ctxCurrentSongIndex:', ctxCurrentSongIndex);
-    console.log('songs length:', songs.length);
-    
-    // If there are songs available, try to play the first audio song
-    if (songs.length > 0) {
-      const audioSongs = songs.filter(song => getURLType(song.url) === 'audio');
-      if (audioSongs.length > 0) {
-        console.log('🎵 Playing first audio song for test');
-        const firstAudioIndex = songs.findIndex(song => getURLType(song.url) === 'audio');
-        playFromContext(firstAudioIndex, songs);
-        return;
-      }
-    }
-  };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -483,7 +468,7 @@ const MusicPlayer = ({ embedded = false }) => {
                   </div>
                 </div>
                 
-                <div className="song-info-section">
+                <div className="song-info-section now-playing-content">
                   <div className="song-meta">
                     <h2 className="current-title">{currentSong?.title}</h2>
                     <p className="current-artist">{currentSong?.artist}</p>
@@ -505,8 +490,9 @@ const MusicPlayer = ({ embedded = false }) => {
                         onClick={togglePlay}
                       >
                         {isPlayingGlobal ? (
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M5.5 3.5A1.5 1.5 0 0 1 7 2h2a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 9 14H7a1.5 1.5 0 0 1-1.5-1.5v-9z"/>
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                            <rect x="4" y="2" width="3" height="12" rx="1" />
+                            <rect x="9" y="2" width="3" height="12" rx="1" />
                           </svg>
                         ) : (
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -558,22 +544,7 @@ const MusicPlayer = ({ embedded = false }) => {
                       />
                       
                       {/* Audio Test Button */}
-                      <button 
-                        className="test-audio-btn"
-                        onClick={testAudio}
-                        style={{
-                          padding: '8px 16px',
-                          backgroundColor: '#1db954',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '20px',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          marginLeft: '10px'
-                        }}
-                      >
-                        🔊 Ses Testi
-                      </button>
+                      
                     </div>
                   </div>
                 </div>

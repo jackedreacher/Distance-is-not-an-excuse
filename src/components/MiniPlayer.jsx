@@ -92,7 +92,9 @@ const MiniPlayer = () => {
             onClick={playPrevious}
             title="Previous Song"
           >
-            ⏮️
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.588a.7.7 0 0 1-1.05.606L4 8.149V13.3a.7.7 0 0 1-1.4 0V1.7a.7.7 0 0 1 .7-.7z"/>
+            </svg>
           </button>
           
           <button 
@@ -100,7 +102,16 @@ const MiniPlayer = () => {
             onClick={togglePlay}
             title={isPlaying ? 'Pause' : 'Play'}
           >
-            {isPlaying ? '⏸️' : '▶️'}
+            {isPlaying ? (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                <rect x="4" y="2" width="3" height="12" rx="1" />
+                <rect x="9" y="2" width="3" height="12" rx="1" />
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+              </svg>
+            )}
           </button>
           
           <button 
@@ -108,7 +119,9 @@ const MiniPlayer = () => {
             onClick={playNext}
             title="Next Song"
           >
-            ⏭️
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05 1.107A.7.7 0 0 0 1 1.712v12.588a.7.7 0 0 0 1.05.606L12 8.149V13.3a.7.7 0 0 0 1.4 0V1.7a.7.7 0 0 0-.7-.7z"/>
+            </svg>
           </button>
         </div>
 

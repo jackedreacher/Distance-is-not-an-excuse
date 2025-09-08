@@ -38,7 +38,8 @@ export const SocketProvider = ({ children }) => {
 
     const newSocket = io(socketUrl, {
       path: '/socket.io',
-      transports: ['websocket', 'polling'], // allow fallback to polling for serverless
+      // Prefer polling first; Socket.IO will upgrade to WebSocket if mümkün
+      transports: ['polling', 'websocket'],
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 5,

@@ -46,6 +46,7 @@ import WishlistPage from './pages/WishlistPage'
 import MusicPlaylistPage from './pages/MusicPlaylistPage'
 import SurpriseNotificationsPage from './pages/SurpriseNotificationsPage'
 import BotsPage from './pages/BotsPage'
+import ChatPage from './pages/ChatPage.jsx'
 
 // Import Contexts
 import { SocketProvider } from './contexts/SocketContext.jsx'
@@ -673,6 +674,10 @@ function App() {
                           </TooltipTrigger>
                           <TooltipContent>Son eklenen özellikleri gör.</TooltipContent>
                         </Tooltip>
+                        
+                        <Button size="sm" className="pixel-btn-sm" onClick={() => navigate('/chat')}>
+                          💬 Sohbet
+                        </Button>
                       </div>
                     </header>
                     {/* Countdown Timer */}
@@ -876,6 +881,7 @@ function App() {
                 <Route path="/music-playlist" element={<MusicPlaylistPage />} />
                 <Route path="/surprise-notifications" element={<SurpriseNotificationsPage />} />
                 <Route path="/bots" element={<BotsPage />} />
+                <Route path="/chat" element={<ChatPage />} />
 
               </Routes>
             </div>

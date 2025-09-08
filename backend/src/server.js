@@ -58,19 +58,83 @@ const io = new Server(server, {
 
 // No authentication middleware - allow all connections
 io.use(async (socket, next) => {
-  // Set a demo user for all connections
+  // Assign a per-connection identity
   socket.user = {
-    id: 'demo-user',
+    id: socket.id,
     name: 'Demo User',
-    username: 'demo-user'
+    username: `user-${socket.id.slice(-4)}`
   };
-  socket.userId = 'demo-user';
+  socket.userId = socket.id;
   next();
 });
+
+// In-memory chat history per room (last 50 messages)
+const roomMessages = new Map();
 
 // Socket events
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.user.username}`);
+  
+  // Join a chat room
+  socket.on('chat:join', ({ roomId, name }) => {
+    if (!roomId) return;
+    socket.join(roomId);
+    socket.data.name = name || 'Guest';
+
+    // Send recent history to the newly joined socket
+    const history = roomMessages.get(roomId) || [];
+    socket.emit('chat:history', history);
+
+    // Notify others in the room
+    socket.to(roomId).emit('chat:system', { type: 'join', name: socket.data.name, at: Date.now() });
+  });
+
+  // Receive and broadcast a message
+  socket.on('chat:message', ({ roomId, text, name, tempId }) => {
+    if (!roomId || !text) return;
+    const msg = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      roomId,
+      text: String(text).slice(0, 2000),
+      name: name || socket.data.name || 'Guest',
+      senderId: socket.id,
+      at: Date.now(),
+      tempId: tempId || null,
+      deleted: false
+    };
+
+    const list = roomMessages.get(roomId) || [];
+    list.push(msg);
+    // Keep only last 50
+    if (list.length > 50) list.splice(0, list.length - 50);
+    roomMessages.set(roomId, list);
+
+    io.to(roomId).emit('chat:message', msg);
+  });
+
+  // Typing indicators
+  socket.on('chat:typing', ({ roomId }) => {
+    if (!roomId) return;
+    socket.to(roomId).emit('chat:typing', { name: socket.data.name || 'Guest', at: Date.now() });
+  });
+  socket.on('chat:stopTyping', ({ roomId }) => {
+    if (!roomId) return;
+    socket.to(roomId).emit('chat:stopTyping', { name: socket.data.name || 'Guest', at: Date.now() });
+  });
+
+  // Delete a message (soft delete, only by sender)
+  socket.on('chat:delete', ({ roomId, messageId }) => {
+    if (!roomId || !messageId) return;
+    const list = roomMessages.get(roomId) || [];
+    const idx = list.findIndex((m) => m.id === messageId);
+    if (idx === -1) return;
+    const msg = list[idx];
+    if (msg.senderId !== socket.id) return; // Only allow owner to delete
+    msg.deleted = true;
+    msg.text = '';
+    roomMessages.set(roomId, list);
+    io.to(roomId).emit('chat:deleted', { id: messageId, roomId, at: Date.now() });
+  });
   
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.user.username}`);
@@ -130,16 +194,15 @@ app.use((err, req, res, _next) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).json({ error: 'Not Found' });
 });
 
-// Start server
+// Start server (dev only; in production, platform may start it)
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5001;
   server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server listening on port ${PORT}`);
   });
 }
 
-// Export the Express app for Vercel
 module.exports = app;

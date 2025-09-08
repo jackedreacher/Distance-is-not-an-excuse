@@ -146,6 +146,19 @@ export const SocketProvider = ({ children }) => {
     }
   };
 
+  // Chat helpers (no auth required)
+  const chatJoin = (roomId, name) => {
+    socketRef.current?.emit('chat:join', { roomId, name });
+  };
+  const chatSend = (roomId, text, name) => {
+    const tempId = `${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+    socketRef.current?.emit('chat:message', { roomId, text, name, tempId });
+    return tempId;
+  };
+  const chatTyping = (roomId) => socketRef.current?.emit('chat:typing', { roomId });
+  const chatStopTyping = (roomId) => socketRef.current?.emit('chat:stopTyping', { roomId });
+  const chatDelete = (roomId, messageId) => socketRef.current?.emit('chat:delete', { roomId, messageId });
+
   const value = {
     socket,
     connected,
@@ -155,7 +168,13 @@ export const SocketProvider = ({ children }) => {
     updateContent,
     startTyping,
     stopTyping,
-    updatePresence
+    updatePresence,
+    // chat
+    chatJoin,
+    chatSend,
+    chatTyping,
+    chatStopTyping,
+    chatDelete
   };
 
   return (

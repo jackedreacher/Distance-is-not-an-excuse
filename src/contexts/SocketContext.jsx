@@ -10,7 +10,6 @@ export const SocketProvider = ({ children }) => {
   const [connected, setConnected] = useState(false);
   const [roomState, setRoomState] = useState(null);
   const [deviceConnections, setDeviceConnections] = useState([]);
-  // Use a default user ID for demo purposes
   const userId = 'demo-user';
   const socketRef = useRef(socket);
   const reconnectTimeoutRef = useRef(null);
@@ -20,22 +19,27 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    // Cleanup existing socket with proper disconnect
     if (socketRef.current) {
       socketRef.current.removeAllListeners();
       socketRef.current.disconnect();
       socketRef.current = null;
     }
 
-    // Clear any pending reconnection
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
     }
 
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001';
+    const prodDefault = typeof window !== 'undefined' ? window.location.origin : '';
+    const socketUrl = import.meta.env.PROD
+      ? (import.meta.env.VITE_SOCKET_URL || prodDefault)
+      : (import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001');
+
     console.log('Connecting to Socket.IO server at:', socketUrl);
-    
+
     const newSocket = io(socketUrl, {
+      path: '/socket.io',
+      transports: ['websocket', 'polling'], // allow fallback to polling for serverless
+      withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
@@ -51,10 +55,7 @@ export const SocketProvider = ({ children }) => {
     newSocket.on('disconnect', (reason) => {
       console.log('Disconnected from Socket.IO server:', reason);
       setConnected(false);
-      
-      // Only attempt reconnection for network issues, not manual disconnects
       if (reason === 'io server disconnect') {
-        // Server initiated disconnect, don't reconnect automatically
         return;
       }
     });
@@ -64,7 +65,6 @@ export const SocketProvider = ({ children }) => {
       setConnected(false);
     });
 
-    // Handle multiple device notifications
     newSocket.on('newDeviceConnected', (data) => {
       console.log('New device connected:', data);
       setDeviceConnections(prev => [...prev, data]);
@@ -80,27 +80,21 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('contentUpdated', (data) => {
-      // Handle content updates
       console.log('Content updated:', data);
-      // This will trigger re-renders in components that listen for updates
     });
 
     newSocket.on('userTyping', (data) => {
-      // Handle typing indicators
       console.log('User typing:', data);
     });
 
     newSocket.on('userStopTyping', (data) => {
-      // Handle typing stop indicators
       console.log('User stopped typing:', data);
     });
 
     newSocket.on('presenceUpdated', (data) => {
-      // Handle presence updates
       console.log('Presence updated:', data);
     });
 
-    // Update state and ref
     setSocket(newSocket);
     socketRef.current = newSocket;
 
@@ -146,7 +140,6 @@ export const SocketProvider = ({ children }) => {
     }
   };
 
-  // Chat helpers (no auth required)
   const chatJoin = (roomId, name) => {
     socketRef.current?.emit('chat:join', { roomId, name });
   };
@@ -169,7 +162,6 @@ export const SocketProvider = ({ children }) => {
     startTyping,
     stopTyping,
     updatePresence,
-    // chat
     chatJoin,
     chatSend,
     chatTyping,

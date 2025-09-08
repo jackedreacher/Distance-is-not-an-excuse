@@ -34,17 +34,22 @@ const DEFAULT_ORIGINS = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:5174',
-  'http://127.0.0.1:5174',
-  'https://distance-is-not-an-excuse-e1efyjaae-jackedreachers-projects.vercel.app',
-  'https://distance-is-not-an-excuse-j1hpw67i0-jackedreachers-projects.vercel.app'
+  'http://127.0.0.1:5174'
 ];
+// Accept any Vercel frontend by default if not explicitly configured
+const DEFAULT_ORIGIN_PATTERNS = [/^https?:\/\/[a-z0-9-]+\.vercel\.app$/i];
+
 const envOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map((o) => o.trim()).filter(Boolean)
   : [];
 const allowedOrigins = envOrigins.length ? envOrigins : DEFAULT_ORIGINS;
+
 const corsOrigin = (origin, callback) => {
   if (!origin) return callback(null, true); // non-browser or same-origin
+  // Direct match
   if (allowedOrigins.includes(origin)) return callback(null, true);
+  // Pattern match (e.g., any *.vercel.app)
+  if (DEFAULT_ORIGIN_PATTERNS.some((re) => re.test(origin))) return callback(null, true);
   return callback(new Error('Not allowed by CORS'), false);
 };
 
@@ -122,20 +127,17 @@ io.on('connection', (socket) => {
     socket.to(roomId).emit('chat:stopTyping', { name: socket.data.name || 'Guest', at: Date.now() });
   });
 
-  // Delete a message (soft delete, only by sender)
+  // Delete message (soft delete)
   socket.on('chat:delete', ({ roomId, messageId }) => {
     if (!roomId || !messageId) return;
     const list = roomMessages.get(roomId) || [];
-    const idx = list.findIndex((m) => m.id === messageId);
-    if (idx === -1) return;
-    const msg = list[idx];
-    if (msg.senderId !== socket.id) return; // Only allow owner to delete
-    msg.deleted = true;
-    msg.text = '';
-    roomMessages.set(roomId, list);
-    io.to(roomId).emit('chat:deleted', { id: messageId, roomId, at: Date.now() });
+    const msg = list.find((m) => m.id === messageId);
+    if (msg) {
+      msg.deleted = true;
+      io.to(roomId).emit('chat:deleted', { id: messageId });
+    }
   });
-  
+
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.user.username}`);
   });
@@ -151,13 +153,12 @@ app.use(morgan('combined')); // Logging
 app.use(express.json({ limit: '10mb' })); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
-// Database connection
+// Connect to MongoDB (optional for chat)
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/romantic_app')
-.then(() => console.log('Connected to MongoDB'))
-.catch((error) => {
-  console.error('MongoDB connection error:', error);
-  console.log('Starting server without database connection...');
-});
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+  });
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -171,33 +172,24 @@ app.use('/api/movie-likes', movieLikesRoutes);
 app.use('/api/video', videoProxyRoutes);
 app.use('/api/quotes', quotesRoutes);
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
-    message: 'Romantic App API is running!',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
+  res.status(200).json({ status: 'ok', time: Date.now() });
 });
 
-// Error handling middleware
+// Error handler
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
-  console.error('Error stack:', err.stack);
-  console.error('Error message:', err.message);
-  res.status(500).json({ 
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
-  });
+  console.error(err);
+  res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Not Found' });
+  res.status(404).json({ message: 'Not Found' });
 });
 
-// Start server (dev only; in production, platform may start it)
+// Start the server only in development (Vercel will handle production)
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5001;
   server.listen(PORT, () => {
@@ -205,4 +197,7 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-module.exports = app;
+// Vercel serverless entrypoint: emit requests to our HTTP server (so Socket.IO handles /socket.io)
+module.exports = (req, res) => {
+  server.emit('request', req, res);
+};
